@@ -1,9 +1,11 @@
 import React from "react";
+import { MainNav } from "./MainNav";
+import "./styles/App.css";
 
 function App() {
   return (
     <div className="App">
-      <p>Hi! This is the beginning! Welcome</p>
+      <MainNav navItemOptions={["howdy"]} />
     </div>
   );
 }
