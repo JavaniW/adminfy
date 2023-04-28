@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "./styles/MainNav.css";
+import { MainNavMenuToggle } from "./MainNavMenuToggle";
 
 interface MainNavProps {
   navItemOptions: string[];
@@ -10,14 +11,11 @@ const isMobile: boolean = true;
 export function MainNav(props: MainNavProps) {
   return (
     <nav className="adminfy-main-nav">
-      <ul className="adminfy-main-nav-items">
+      <ul className="adminfy-main-nav-list">
         {!isMobile && (
           <>
             <Link className="adminfy-main-nav-item" to={"/"}>
-              Home
-            </Link>
-            <Link className="adminfy-main-nav-item" to={"/"}>
-              Administration
+              Faculty
             </Link>
             <Link className="adminfy-main-nav-item" to={"/"}>
               Courses
@@ -28,12 +26,11 @@ export function MainNav(props: MainNavProps) {
           </>
         )}
         <li>
-          <img
-            className="adminfy-main-nav-hamburger-icon"
-            src={`/icons8-menu-24.png`}
-            alt="hamburger menu"
-          />
+          <Link className="adminfy-main-nav-logo" to={"/"}>
+            <h1>ADMINFY</h1>
+          </Link>
         </li>
+        <MainNavMenuToggle />
       </ul>
     </nav>
   );
