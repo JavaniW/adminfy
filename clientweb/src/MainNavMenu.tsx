@@ -23,7 +23,7 @@ export function MainNavMenu(props : any) {
                 </Link>
             </li>
             <li className="adminfy-main-nav-item">
-                <Link to={"/"}>
+                <Link to={"/course"}>
                 Courses
                 </Link>
             </li>

@@ -4,6 +4,7 @@ import "./styles/App.css";
 import Dashboard from "./Dashboard";
 import { Route, Routes } from "react-router";
 import { FacultyPage } from "./FacultyPage";
+import { CoursesPage } from "./CoursesPage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route  path="/" element={<MainNav navItemOptions={[]} />}>
             <Route index element={<Dashboard />} />
             <Route path="faculty" element={<FacultyPage />}/>
+            <Route path="course" element={<CoursesPage />}/>
           </Route>
         </Routes>
       </div>
