@@ -5,7 +5,7 @@
   justify-content: space-evenly;
   max-height: 8vh;
   min-height: 70px;
-  width: 100%;
+  max-width: 100%;
   background-color: rgb(250, 255, 148);
   border-color: black;
   border-top: 2px solid black;
@@ -31,6 +31,7 @@
   border:5px solid black;
   height: auto;
   width: 100%;
+  max-width: 100%;
   background-color: bisque;
 }
 
@@ -49,14 +50,12 @@
   right: 2.5vw;
   min-width: 55px;
   height: auto;
-  /* transform: scaleX(180%) scaleY(180%); */
 }
 
 .adminfy-main-nav-hamburger-icon:active {
   transform: rotate(-90deg);
   -webkit-transform: rotate(-90deg);
   -ms-transform: rotate(-90deg);
-  /* transform: scaleX(180%) scaleY(180%); */
 }
 
 .adminfy-main-nav-logo {

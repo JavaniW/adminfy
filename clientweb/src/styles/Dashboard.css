@@ -10,6 +10,7 @@
     margin-top: 2vh;
     width: 80vw;
     height: auto;
+    max-height: 100%;
 }
 
 .dash-announcements-header {

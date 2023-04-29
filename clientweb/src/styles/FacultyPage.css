@@ -1,0 +1,19 @@
+.faculty-list {
+    text-align: center;
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+}
+
+.faculty-list tr {
+    width: 100%;
+}
+
+.faculty-list td {
+    width: fit-content;
+}
+
+.faculty-list-item-img {
+    width: 20vw;
+    height: auto;
+}

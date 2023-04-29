@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import "./styles/MainNav.css";
 import { MainNavMenuToggle } from "./MainNavMenuToggle";
 
@@ -10,6 +10,7 @@ const isMobile: boolean = true;
 
 export function MainNav(props: MainNavProps) {
   return (
+    <>
     <nav className="adminfy-main-nav">
       <ul className="adminfy-main-nav-list">
         {!isMobile && (
@@ -33,5 +34,7 @@ export function MainNav(props: MainNavProps) {
         <MainNavMenuToggle />
       </ul>
     </nav>
+    <Outlet />
+    </>
   );
 }
