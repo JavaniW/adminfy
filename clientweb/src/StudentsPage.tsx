@@ -1,27 +1,105 @@
-function StudentsPage() {
+import { useEffect, useState } from "react";
+import GradeLevel from "./GradeLevel";
+import Student from "./models/Student";
+import { Header, TableList } from "./TableList";
+import "./styles/TableList.css";
+import { nameof } from "./extensions";
+
+export function StudentsPage() {
+
+  const [selectedGrade, setSelectedGrade] = useState<string>();
+  const [showGrade, setShowGrade] = useState<boolean>();
+
+  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedGrade(event.target.value);
+    setShowGrade(selectedGrade === "Any");
+  } 
+  const selectOptions = [
+    "All",
+    GradeLevel.Nine,
+    GradeLevel.Ten,
+    GradeLevel.Eleven,
+    GradeLevel.Twelve,
+  ];
+
+  const data: Student[] = [
+    {
+        firstName: "Ham",
+        lastName: "Hooker",
+        dateOfBirth: "01/02/2004",
+        gradeLevel: GradeLevel.Ten
+    },
+    {
+        firstName: "Tom",
+        lastName: "Tommy",
+        dateOfBirth: "03/13/2003",
+        gradeLevel: GradeLevel.Twelve
+    },
+    {
+        firstName: "Sarah",
+        lastName: "Love",
+        dateOfBirth: "07/17/2002",
+        gradeLevel: GradeLevel.Twelve
+    },
+    {
+        firstName: "Rusty",
+        lastName: "Bolt",
+        dateOfBirth: "12/20/2002",
+        gradeLevel: GradeLevel.Ten
+    },
+    {
+        firstName: "Luke",
+        lastName: "Skywalker",
+        dateOfBirth: "11/09/2000",
+        gradeLevel: GradeLevel.Nine
+    }
+  ];
+
+  const headers: Header<Student>[] = [
+    {
+      headerLabel: "First Name",
+      isOptional: false,
+      referenceData: "firstName"
+    },
+    {
+      headerLabel: "Last Name",
+      isOptional: false,
+      referenceData: "lastName"
+    },
+    {
+      headerLabel: "Birth Date",
+      isOptional: false,
+      referenceData: "dateOfBirth"
+    },
+    {
+      headerLabel: "Grade Level",
+      isOptional: true,
+      dependentValue: showGrade,
+      referenceData: "gradeLevel"
+    },
+  ]
+
   return (
     <div className="students-page">
       <select
         className="student-page-select"
-        name="subject"
-        id="subject"
+        name="grade"
+        id="grade"
         onChange={handleSelectChange}
-        value={selectedSubject}
+        value={selectedGrade}
+        defaultValue={selectOptions[0]}
       >
-        <option key={"all"} value={"all"} selected>
-          All
-        </option>
-        {Object.values(CourseSubject).map((x, idx) => (
+        {/* {selectOptions.map((x) => (
+          <option key={x} value={x}>{x.toString()}</option>
+        ))} */
+        Object.values(GradeLevel).map((x, idx) => (
           <option key={idx} value={x}>
             {x}
           </option>
-        ))}
+        ))
+        }
       </select>
-      <CourseList
-        showSubject={showSubject}
-        subject={selectedSubject}
-        courses={courses}
-      />
+      <TableList data={data} headers={headers} filterSource={nameof<Student>("gradeLevel")} filterValue={selectedGrade}/>
     </div>
   );
 }

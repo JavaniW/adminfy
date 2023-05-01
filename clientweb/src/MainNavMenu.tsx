@@ -1,19 +1,6 @@
 import { Link } from "react-router-dom";
-// import { useOutsideClick } from "./hooks/customHooks";
-// import { useState } from "react";
-
-/*interface MainNavMenuProps {
-    visible: boolean;
-}*/
 
 export function MainNavMenu(props : any) {
-    // const [visible, setVisible] = useState(props.visible);
-
-    /*function handleClickOutside() {
-        setVisible(false);
-    }
-
-    const ref = useOutsideClick(handleClickOutside);*/
 
     return (
         <ul className={`adminfy-main-nav-menu`}>
@@ -23,12 +10,12 @@ export function MainNavMenu(props : any) {
                 </Link>
             </li>
             <li className="adminfy-main-nav-item">
-                <Link to={"/course"}>
+                <Link to={"/courses"}>
                 Courses
                 </Link>
             </li>
             <li className="adminfy-main-nav-item">
-                <Link to={"/"}>
+                <Link to={"/students"}>
                 Students
                 </Link>
             </li>

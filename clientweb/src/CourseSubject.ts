@@ -5,3 +5,5 @@ export enum CourseSubject {
   English = "English",
   Science = "Science",
 }
+
+export default CourseSubject;

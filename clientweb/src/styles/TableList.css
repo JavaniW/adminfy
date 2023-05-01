@@ -1,0 +1,16 @@
+.table-list-item {
+    text-align: center;
+    border: 2px solid #1a9bfe;
+    margin-top: 10px;
+    width: 100%;
+    border-radius: 20px;
+    border-collapse: collapse;
+  }
+
+  .table-list-item td {
+    background-color: var(--secondary-color);
+  }
+  
+  table-list-item-header {
+    background-color: var(--primary-color);
+  }
