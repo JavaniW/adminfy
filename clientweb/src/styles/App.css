@@ -3,11 +3,13 @@
   border: 0;
   padding: 0;
   box-sizing: border-box;
+  --primary-color: rgb(250, 255, 148);
+  --secondary-color: hsla(0, 0%, 71%, 0.426);
+  --tertiary-color: bisque;
+  --quaternary-color: rgb(255, 244, 196);
+  --app-background-color: rgb(218, 233, 228);
 }
- Link {
-  text-decoration: none;
- }
 
- body {
-  background-color: rgb(218, 233, 228);
- }
+body {
+  background-color: var(--app-background-color);
+}

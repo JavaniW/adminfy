@@ -28,11 +28,11 @@
   list-style: none;
   position: absolute;
   top: 65px;
-  border:5px solid black;
+  border: 5px solid black;
   height: auto;
   width: 100%;
   max-width: 100%;
-  background-color: bisque;
+  background-color: rgb(255, 244, 196);
 }
 
 .adminfy-main-nav-item {
@@ -43,7 +43,6 @@
   display: inline block;
   margin-bottom: 15px;
 }
-
 
 .adminfy-main-nav-hamburger-icon {
   position: relative;

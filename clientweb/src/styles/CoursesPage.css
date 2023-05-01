@@ -1,3 +1,22 @@
-.courses-list {
-    margin-top: 20px;
+.courses-page {
+  margin: 1vh 1vh;
+}
+.courses-list-item {
+  text-align: center;
+  border: 2px solid #1a9bfe;
+  margin-top: 10px;
+  width: 100%;
+  border-radius: 20px;
+  border-collapse: collapse;
+}
+
+/* .courses-page-select {
+} */
+
+.courses-list-item td {
+  background-color: var(--secondary-color);
+}
+
+thead {
+  background-color: var(--primary-color);
 }

@@ -1,30 +1,88 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./styles/CoursesPage.css";
+import { CourseSubject } from "./CourseSubject";
+import { CourseList } from "./CourseList";
+import { Course } from "./models/Course";
 
 export function CoursesPage() {
+  // const [courses, setCourses] = useState<string[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("all");
+  const [showSubject, setShowSubject] = useState<boolean>(false);
 
-    // const [courses, setCourses] = useState<string[]>([]);
-    // const [subjects, setsubjects] = useState<string[]>([]);
+  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedSubject(event.target.value);
+  }
 
-    const subjects = [
-        "Math",
-        "English",
-        "Social Studies",
-        "History"
-    ];
+  const courses: Course[] = [
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.Science,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.Math,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.English,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.Math,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.English,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.History,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.SocialStudies,
+      teacher: "Mr. James",
+    },
+    {
+      courseNumber: 1234,
+      subject: CourseSubject.Science,
+      teacher: "Mr. Burke",
+    },
+  ];
 
-    return (
-        <table className="courses-list">
-            <thead>
-                <th>
-                    <select name="subject" id="subject">
-                        <option key={"all"} value={"all"} selected>All</option>
-                        {subjects.map((x, idx) => (
-                            <option key={idx} value={x}>{x}</option>
-                        ))}
-                    </select>
-                </th>
-            </thead>
-        </table>
-    )
+  useEffect(() => {
+    setShowSubject(selectedSubject === "all" ? true : false);
+  }, [selectedSubject]);
+
+  return (
+    <div className="courses-page">
+      <select
+        className="courses-page-select"
+        name="subject"
+        id="subject"
+        onChange={handleSelectChange}
+        value={selectedSubject}
+      >
+        <option key={"all"} value={"all"} selected>
+          All
+        </option>
+        {Object.values(CourseSubject).map((x, idx) => (
+          <option key={idx} value={x}>
+            {x}
+          </option>
+        ))}
+      </select>
+      <CourseList
+        showSubject={showSubject}
+        subject={selectedSubject}
+        courses={courses}
+      />
+    </div>
+  );
 }
