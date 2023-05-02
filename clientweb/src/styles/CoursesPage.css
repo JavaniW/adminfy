@@ -10,8 +10,15 @@
   border-collapse: collapse;
 }
 
-/* .courses-page-select {
-} */
+.courses-page-select-label {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.courses-page-select-label p {
+  display: inline-block;
+  margin-right: 10px;
+}
 
 .courses-list-item td {
   background-color: var(--secondary-color);

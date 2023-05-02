@@ -96,8 +96,8 @@ export function CoursesPage() {
 
   return (
     <div className="courses-page">
-      <label>
-        Subject:
+      <label className="courses-page-select-label">
+        <p>Subject:</p>
         <select
           className="courses-page-select"
           name="subject"

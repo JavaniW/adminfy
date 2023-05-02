@@ -7,20 +7,28 @@ import { nameof } from "./extensions";
 
 export function StudentsPage() {
 
-  const [selectedGrade, setSelectedGrade] = useState<string>();
-  const [showGrade, setShowGrade] = useState<boolean>();
-
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedGrade(event.target.value);
-    setShowGrade(selectedGrade === "Any");
-  } 
   const selectOptions = [
     "All",
     GradeLevel.Nine,
     GradeLevel.Ten,
     GradeLevel.Eleven,
     GradeLevel.Twelve,
-  ];
+  ] as const;
+
+  type selectOptionsType = typeof selectOptions[number];
+
+  const [selectedGrade, setSelectedGrade] = useState<typeof selectOptions[number]>("All");
+  const [showGrade, setShowGrade] = useState<boolean>();
+
+  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedGrade(event.target.value as selectOptionsType );
+  } 
+
+  useEffect(() => {
+    setShowGrade(selectedGrade === "All");
+    console.log("Rendered");
+    // debugger;
+  }, [selectedGrade])
 
   const data: Student[] = [
     {
@@ -87,15 +95,10 @@ export function StudentsPage() {
         id="grade"
         onChange={handleSelectChange}
         value={selectedGrade}
-        defaultValue={selectOptions[0]}
+        defaultValue={"All"}
       >
-        {/* {selectOptions.map((x) => (
-          <option key={x} value={x}>{x.toString()}</option>
-        ))} */
-        Object.values(GradeLevel).map((x, idx) => (
-          <option key={idx} value={x}>
-            {x}
-          </option>
+        {selectOptions.map((x) => (
+          <option key={x} value={x}>{x}</option>
         ))
         }
       </select>

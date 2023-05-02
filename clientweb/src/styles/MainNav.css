@@ -1,5 +1,4 @@
 .adminfy-main-nav {
-  /* position: fixed; */
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -10,6 +9,7 @@
   border-color: black;
   border-top: 2px solid black;
   border-bottom: 2px solid black;
+  margin-bottom: 20px;
 }
 
 .adminfy-main-nav-list {
@@ -38,10 +38,14 @@
 .adminfy-main-nav-item {
   border: 1px dotted red;
   text-decoration: none;
-  color: blue;
+  color: red;
   font-size: 50px;
   display: inline block;
   margin-bottom: 15px;
+}
+
+.adminfy-main-nav-item {
+  
 }
 
 .adminfy-main-nav-hamburger-icon {

@@ -1,5 +1,4 @@
-import { ReactNode, useEffect } from "react";
-import { nameof } from "./extensions";
+import { ReactNode } from "react";
 
 export type Header<T> = {
     headerLabel?: string;
@@ -16,23 +15,17 @@ interface TableListProps<T extends Object> {
 }
 
 export function TableList<T extends Object>(props : TableListProps<T>) {
-
-    function debug(args : any) {
-        debugger;
-        return true;
-   }
-    
     return (
         <>
         {props.data
-            .filter((x) => {return props.filterValue === "All" ? true : x[props.filterSource] === props.filterValue })
+            .filter((x) => { return props.filterValue === "All" ? true : x[props.filterSource] === props.filterValue })
             .map((x, idx) => (
             <table key={idx} className="table-list-item">
                 <thead key={idx} className="table-list-item-header">
                     <tr key={idx}>
                         {
-                            props.headers.map((header, idx1) => (
-                                header.isOptional ? (header.dependentValue ? <th key={idx1}>{header.headerLabel}</th> : null) : <th key={idx1}>{header.headerLabel}</th>
+                            props.headers.map((header, idx) => (
+                                header.isOptional ? (header.dependentValue ? <th key={idx}>{header.headerLabel}</th> : null) : <th key={idx}>{header.headerLabel}</th>
                             ))
                         }
                     </tr>
@@ -40,8 +33,8 @@ export function TableList<T extends Object>(props : TableListProps<T>) {
                 <tbody>
                 <tr>
                     {
-                        props.headers.filter(y => !y.isOptional || y.dependentValue).map((header, idx2) => (
-                            <td key={idx2}>{x[header.referenceData] as ReactNode}</td>
+                        props.headers.filter(y => !y.isOptional || y.dependentValue).map((header, idx) => (
+                            <td key={idx}>{x[header.referenceData] as ReactNode}</td>
                         ))
                     }
                 </tr>
