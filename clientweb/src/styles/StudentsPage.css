@@ -1,0 +1,14 @@
+.students-page {
+  margin-bottom: 1vh;
+  padding: 1vmax;
+}
+
+.students-page-select-label {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.students-page-select {
+  display: inline-block;
+  margin-right: 10px;
+}

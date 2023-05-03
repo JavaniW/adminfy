@@ -1,0 +1,71 @@
+.adminfy-main-nav {
+  display: flex;
+  position: fixed;
+  top: 0%;
+  align-items: center;
+  justify-content: space-evenly;
+  max-height: 8vh;
+  min-height: 70px;
+  width: 100%;
+  background-color: rgb(250, 255, 148);
+  border-color: black;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  margin-bottom: 20px;
+}
+
+.adminfy-main-nav-list {
+  display: flex;
+  list-style: none;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adminfy-main-nav-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  position: absolute;
+  top: 65px;
+  border: 5px solid black;
+  height: auto;
+  width: 100%;
+  max-width: 100%;
+  background-color: rgb(255, 244, 196);
+}
+
+.adminfy-main-nav-item {
+  border: 1px dotted red;
+  text-decoration: none;
+  color: red;
+  font-size: 50px;
+  display: inline block;
+  margin-bottom: 15px;
+}
+
+.adminfy-main-nav-hamburger-icon {
+  position: relative;
+  right: 2.5vw;
+  min-width: 55px;
+  height: auto;
+}
+
+.adminfy-main-nav-hamburger-icon:active {
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+}
+
+.adminfy-main-nav-logo {
+  position: relative;
+  left: 2.5vw;
+  text-decoration: none;
+  color: black;
+}
+
+.hide {
+  display: none;
+}

@@ -1,0 +1,23 @@
+.main-dashboard {
+    display: flex;
+    margin-top: 2.5vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.main-user-pic {
+    margin-top: 2vh;
+    width: 80vw;
+    height: auto;
+    max-height: 100%;
+}
+
+.dash-announcements-header {
+    text-decoration: underline;
+    margin-top: inherit;
+}
+
+.dash-announcements-content {
+    margin: 1vh 5vw 0;
+}
