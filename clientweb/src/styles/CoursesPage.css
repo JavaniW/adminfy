@@ -1,5 +1,6 @@
 .courses-page {
-  margin: 1vh 1vh;
+  margin-bottom: 1vh;
+  padding: 1vmax;
 }
 .courses-list-item {
   text-align: center;

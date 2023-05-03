@@ -1,10 +1,12 @@
 .adminfy-main-nav {
   display: flex;
+  position: fixed;
+  top: 0%;
   align-items: center;
   justify-content: space-evenly;
   max-height: 8vh;
   min-height: 70px;
-  max-width: 100%;
+  width: 100%;
   background-color: rgb(250, 255, 148);
   border-color: black;
   border-top: 2px solid black;
@@ -42,10 +44,6 @@
   font-size: 50px;
   display: inline block;
   margin-bottom: 15px;
-}
-
-.adminfy-main-nav-item {
-  
 }
 
 .adminfy-main-nav-hamburger-icon {

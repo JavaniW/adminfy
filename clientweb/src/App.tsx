@@ -9,16 +9,16 @@ import { StudentsPage } from "./StudentsPage";
 
 function App() {
   return (
-      <div className="App">
-        <Routes>
-          <Route  path="/" element={<MainNav navItemOptions={[]} />}>
-            <Route index element={<Dashboard />} />
-            <Route path="faculty" element={<FacultyPage />}/>
-            <Route path="courses" element={<CoursesPage />}/>
-            <Route path="students" element={<StudentsPage />}/>
-          </Route>
-        </Routes>
-      </div>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<MainNav navItemOptions={[]} />}>
+          <Route index element={<Dashboard />} />
+          <Route path="faculty" element={<FacultyPage />} />
+          <Route path="courses" element={<CoursesPage />} />
+          <Route path="students" element={<StudentsPage />} />
+        </Route>
+      </Routes>
+    </div>
   );
 }
 

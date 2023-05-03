@@ -12,7 +12,16 @@
 
 body {
   background-color: var(--app-background-color);
-  font-family:Arial, Helvetica, sans-serif;
-  font-size: medium; 
-  color: #141414
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  color: #141414;
+  overflow: hidden;
+}
+
+.main {
+  margin-top: 9vh;
+  /* display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: scroll; */
 }

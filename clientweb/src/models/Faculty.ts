@@ -1,6 +1,9 @@
+import GradeLevel from "../GradeLevel";
+
 export interface Faculty {
-    image: string,
-    name: string;
-    subject: string;
-    grade: number
+  image: string;
+  firstName: string;
+  lastName: string;
+  subject: string;
+  grade: GradeLevel;
 }

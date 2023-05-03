@@ -1,108 +1,112 @@
 import { useEffect, useState } from "react";
-import GradeLevel from "./GradeLevel";
+import GradeLevel, { gradeSelectOptions, gradeOptions } from "./GradeLevel";
 import Student from "./models/Student";
 import { Header, TableList } from "./TableList";
 import "./styles/TableList.css";
 import { nameof } from "./extensions";
 
 export function StudentsPage() {
-
-  const selectOptions = [
-    "All",
-    GradeLevel.Nine,
-    GradeLevel.Ten,
-    GradeLevel.Eleven,
-    GradeLevel.Twelve,
-  ] as const;
-
-  type selectOptionsType = typeof selectOptions[number];
-
-  const [selectedGrade, setSelectedGrade] = useState<typeof selectOptions[number]>("All");
+  const [selectedGrade, setSelectedGrade] = useState<gradeSelectOptions>("All");
   const [showGrade, setShowGrade] = useState<boolean>();
 
   function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedGrade(event.target.value as selectOptionsType );
-  } 
+    setSelectedGrade(event.target.value as gradeSelectOptions);
+    console.log(`Type of selectedGrade is ${typeof selectedGrade}`);
+    console.log(`Value of selectedGrade is ${selectedGrade}`);
+  }
 
   useEffect(() => {
     setShowGrade(selectedGrade === "All");
-    console.log("Rendered");
     // debugger;
-  }, [selectedGrade])
+  }, [selectedGrade]);
 
   const data: Student[] = [
     {
-        firstName: "Ham",
-        lastName: "Hooker",
-        dateOfBirth: "01/02/2004",
-        gradeLevel: GradeLevel.Ten
+      firstName: "Ham",
+      lastName: "Hooker",
+      dateOfBirth: "01/02/2004",
+      gradeLevel: GradeLevel.Ten,
     },
     {
-        firstName: "Tom",
-        lastName: "Tommy",
-        dateOfBirth: "03/13/2003",
-        gradeLevel: GradeLevel.Twelve
+      firstName: "Tom",
+      lastName: "Tommy",
+      dateOfBirth: "03/13/2003",
+      gradeLevel: GradeLevel.Twelve,
     },
     {
-        firstName: "Sarah",
-        lastName: "Love",
-        dateOfBirth: "07/17/2002",
-        gradeLevel: GradeLevel.Twelve
+      firstName: "Sarah",
+      lastName: "Love",
+      dateOfBirth: "07/17/2002",
+      gradeLevel: GradeLevel.Twelve,
     },
     {
-        firstName: "Rusty",
-        lastName: "Bolt",
-        dateOfBirth: "12/20/2002",
-        gradeLevel: GradeLevel.Ten
+      firstName: "Rusty",
+      lastName: "Bolt",
+      dateOfBirth: "12/20/2002",
+      gradeLevel: GradeLevel.Ten,
     },
     {
-        firstName: "Luke",
-        lastName: "Skywalker",
-        dateOfBirth: "11/09/2000",
-        gradeLevel: GradeLevel.Nine
-    }
+      firstName: "Patrick",
+      lastName: "Star",
+      dateOfBirth: "02/20/2002",
+      gradeLevel: GradeLevel.Eleven,
+    },
+    {
+      firstName: "Luke",
+      lastName: "Skywalker",
+      dateOfBirth: "11/09/2000",
+      gradeLevel: GradeLevel.Nine,
+    },
   ];
 
   const headers: Header<Student>[] = [
     {
       headerLabel: "First Name",
       isOptional: false,
-      referenceData: "firstName"
+      referenceData: "firstName",
     },
     {
       headerLabel: "Last Name",
       isOptional: false,
-      referenceData: "lastName"
+      referenceData: "lastName",
     },
     {
       headerLabel: "Birth Date",
       isOptional: false,
-      referenceData: "dateOfBirth"
+      referenceData: "dateOfBirth",
     },
     {
       headerLabel: "Grade Level",
       isOptional: true,
       dependentValue: showGrade,
-      referenceData: "gradeLevel"
+      referenceData: "gradeLevel",
     },
-  ]
+  ];
 
   return (
-    <div className="students-page">
-      <select
-        className="student-page-select"
-        name="grade"
-        id="grade"
-        onChange={handleSelectChange}
-        value={selectedGrade}
-        defaultValue={"All"}
-      >
-        {selectOptions.map((x) => (
-          <option key={x} value={x}>{x}</option>
-        ))
-        }
-      </select>
-      <TableList data={data} headers={headers} filterSource={nameof<Student>("gradeLevel")} filterValue={selectedGrade}/>
+    <div className="table-list-page">
+      <label className="table-list-page-select-label">
+        <p>Grade Level:</p>
+        <select
+          className="table-list-page-select"
+          name="grade"
+          id="grade"
+          onChange={handleSelectChange}
+          value={selectedGrade}
+        >
+          {gradeOptions.map((x) => (
+            <option key={x} value={x}>
+              {x}
+            </option>
+          ))}
+        </select>
+      </label>
+      <TableList
+        data={data}
+        headers={headers}
+        filterSource={nameof<Student>("gradeLevel")}
+        filterValue={selectedGrade}
+      />
     </div>
   );
 }
