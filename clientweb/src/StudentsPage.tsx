@@ -1,24 +1,19 @@
-import { useEffect, useState } from "react";
-import GradeLevel, { gradeSelectOptions, gradeOptions } from "./GradeLevel";
+import { useState } from "react";
+import GradeLevel, { GradeLevelType, GradeLevels } from "./GradeLevel";
 import Student from "./models/Student";
 import { Header, TableList } from "./TableList";
 import "./styles/TableList.css";
 import { nameof } from "./extensions";
+import { Select } from "./Select";
 
 export function StudentsPage() {
-  const [selectedGrade, setSelectedGrade] = useState<gradeSelectOptions>("All");
-  const [showGrade, setShowGrade] = useState<boolean>();
+  const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
+  const [showGrade, setShowGrade] = useState<boolean>(true);
 
   function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedGrade(event.target.value as gradeSelectOptions);
-    console.log(`Type of selectedGrade is ${typeof selectedGrade}`);
-    console.log(`Value of selectedGrade is ${selectedGrade}`);
+    setSelectedGrade(event.target.value as GradeLevelType | "All");
+    setShowGrade(event.target.value === "All");
   }
-
-  useEffect(() => {
-    setShowGrade(selectedGrade === "All");
-    // debugger;
-  }, [selectedGrade]);
 
   const data: Student[] = [
     {
@@ -84,29 +79,16 @@ export function StudentsPage() {
   ];
 
   return (
-    <div className="table-list-page">
-      <label className="table-list-page-select-label">
-        <p>Grade Level:</p>
-        <select
-          className="table-list-page-select"
-          name="grade"
-          id="grade"
-          onChange={handleSelectChange}
-          value={selectedGrade}
-        >
-          {gradeOptions.map((x) => (
-            <option key={x} value={x}>
-              {x}
-            </option>
-          ))}
-        </select>
-      </label>
-      <TableList
-        data={data}
-        headers={headers}
-        filterSource={nameof<Student>("gradeLevel")}
-        filterValue={selectedGrade}
-      />
+    <div className="students-page" >
+      <div className="table-list-page">
+        <Select default={"All"} label={"Grade Level"} onChange={handleSelectChange} options={GradeLevels} />
+        <TableList
+          data={data}
+          headers={headers}
+          filterSource={nameof<Student>("gradeLevel")}
+          filterValue={selectedGrade}
+        />
+      </div>
     </div>
   );
 }

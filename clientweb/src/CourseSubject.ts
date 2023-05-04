@@ -6,4 +6,14 @@ export enum CourseSubject {
   Science = "Science",
 }
 
+export const CourseSubjects = [
+  CourseSubject.Math,
+  CourseSubject.History,
+  CourseSubject.SocialStudies,
+  CourseSubject.English,
+  CourseSubject.Science
+] as const;
+
+export type CourseSubjectType = (typeof CourseSubjects)[number];
+
 export default CourseSubject;

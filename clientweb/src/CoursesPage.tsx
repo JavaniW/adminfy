@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import "./styles/CoursesPage.css";
 import { CourseSubject } from "./CourseSubject";
 import { Course } from "./models/Course";
 import { Header, TableList } from "./TableList";
 import { nameof } from "./extensions";
+import { Select } from "./Select";
 
 export function CoursesPage() {
   const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
     "All"
   );
-  const [showSubject, setShowSubject] = useState<boolean>(false);
+  const [showSubject, setShowSubject] = useState<boolean>(true);
 
   function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setSelectedSubject(event.target.value as keyof Course | "All");
+    setShowSubject(event.target.value === "All");
   }
 
   useEffect(() => {
@@ -96,32 +97,16 @@ export function CoursesPage() {
   ];
 
   return (
-    <div className="table-list-page">
-      <label className="table-list-page-select-label">
-        <p>Subject:</p>
-        <select
-          className="table-list-page-select"
-          name="subject"
-          id="subject"
-          onChange={handleSelectChange}
-          value={selectedSubject}
-        >
-          <option key={"All"} value={"All"}>
-            All
-          </option>
-          {Object.values(CourseSubject).map((x, idx) => (
-            <option key={idx} value={x}>
-              {x}
-            </option>
-          ))}
-        </select>
-      </label>
-      <TableList
-        data={courses}
-        headers={headers}
-        filterSource={nameof<Course>("subject")}
-        filterValue={selectedSubject}
-      />
+    <div className="courses-page">
+      <div className="table-list-page">
+        <Select default={"All"} options={Object.values(CourseSubject)} label={"Subject"} onChange={handleSelectChange} />
+        <TableList
+          data={courses}
+          headers={headers}
+          filterSource={nameof<Course>("subject")}
+          filterValue={selectedSubject}
+        />
+      </div>
     </div>
   );
 }

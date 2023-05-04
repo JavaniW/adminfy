@@ -5,14 +5,13 @@ export enum GradeLevel {
   Twelve = "12",
 }
 
-export const gradeOptions = [
-  "All",
-  GradeLevel.Nine.toString(),
+export const GradeLevels = [
+  GradeLevel.Nine,
   GradeLevel.Ten,
   GradeLevel.Eleven,
   GradeLevel.Twelve,
 ] as const;
 
-export type gradeSelectOptions = (typeof gradeOptions)[number];
+export type GradeLevelType = (typeof GradeLevels)[number];
 
 export default GradeLevel;

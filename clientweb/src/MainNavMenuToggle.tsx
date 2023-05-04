@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MainNavMenu } from "./MainNavMenu";
 
 export function MainNavMenuToggle() {
-    const [ menuVisible, setMenuVisible ] = useState(true);
+    const [ menuVisible, setMenuVisible ] = useState(false);
 
     function onClick() {
         setMenuVisible(!menuVisible);

@@ -1,0 +1,8 @@
+.select {
+    margin-bottom: 10px;
+}
+
+.select-label p {
+    display: inline-block;
+    margin-right: 10px;
+}
