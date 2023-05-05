@@ -1,10 +1,10 @@
-import "./styles/ActionMenu.css";
+import "../../styles/ActionMenu.css";
 
 export function ActionMenu() {
     return (
         <th>
             <div className="action-menu">
-                <p>...</p>
+                <img className="action-menu-icon" src="./ellipsis.png" alt="ellipsis"></img>
             </div>
         </th>
     )

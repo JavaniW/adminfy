@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import "./styles/Select.css";
+import "../../styles/Select.css";
 
 interface SelectProps {
     options: (string | number | undefined)[] | readonly any[];

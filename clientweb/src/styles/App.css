@@ -3,11 +3,22 @@
   border: 0;
   padding: 0;
   box-sizing: border-box;
-  --primary-color: rgb(250, 255, 148);
+  --og-primary-color: rgb(250, 255, 148);
+  --og-secondary-color: hsla(0, 0%, 71%, 0.426);
+  --og-tertiary-color: bisque;
+  --og-quaternary-color: rgb(255, 244, 196);
+  --og-app-background-color: rgb(218, 233, 228);
+  --primary-color: var(--test-color1);
   --secondary-color: hsla(0, 0%, 71%, 0.426);
   --tertiary-color: bisque;
   --quaternary-color: rgb(255, 244, 196);
   --app-background-color: rgb(218, 233, 228);
+  --font-color: #141414;
+  --test-color1: #0074D9;
+  --test-color2: #001f3f;
+  --test-color3: #7FDBFF;
+  --test-color3: #3D9970;
+  --test-color3: #111111;
 }
 
 body {
@@ -27,8 +38,15 @@ th {
   font-weight: normal;
 }
 
+td {
+  font-size: 13px;
+  font-weight: 450;
+}
+
+
 .main {
   margin-top: 9vh;
+  padding: 1vmax;
   /* display: flex;
   flex-direction: column;
   height: 100%;

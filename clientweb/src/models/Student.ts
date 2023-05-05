@@ -1,4 +1,4 @@
-import GradeLevel from "../GradeLevel";
+import GradeLevel from "../enums/GradeLevel";
 
 export interface Student {
     firstName: string;

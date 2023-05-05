@@ -1,10 +1,13 @@
-import { Faculty } from "./models/Faculty";
-import "./styles/FacultyPage.css";
-import { Header, TableList } from "./TableList";
-import { nameof } from "./extensions";
+import { Faculty } from "../../models/Faculty";
+import "../../styles/FacultyPage.css";
+import { Header, TableList } from "../common/TableList";
+import { nameof } from "../../extensions";
 import { useState } from "react";
-import GradeLevel, { GradeLevelType, GradeLevels} from "./GradeLevel";
-import { Select } from "./Select";
+import GradeLevel, { GradeLevelType, GradeLevels} from "../../enums/GradeLevel";
+import { Select } from "../common/Select";
+import CourseSubject from "../../enums/CourseSubject";
+import { AddEditDrawer } from "../common/AddEditDrawer";
+import ModelType from "../../enums/ModelType";
 
 export function FacultyPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
@@ -15,54 +18,57 @@ export function FacultyPage() {
     setShowGrade(event.target.value === "All");
   }
 
+  const addFacultyButton = <button className="add-faculty-button"><p>New Faculty</p></button>;
+  
+
   const data: Faculty[] = [
     {
       image: "/spongebob.png",
       firstName: "Frank",
       lastName: "Castle",
-      subject: "English",
+      subject: CourseSubject.English,
       grade: GradeLevel.Nine,
     },
     {
       image: "/spongebob.png",
       firstName: "Henry",
       lastName: "Hammer",
-      subject: "English",
+      subject: CourseSubject.Math,
       grade: GradeLevel.Ten,
     },
     {
       image: "/spongebob.png",
       firstName: "Lucy",
       lastName: "Dom",
-      subject: "English",
+      subject: CourseSubject.Science,
       grade: GradeLevel.Ten,
     },
     {
       image: "/spongebob.png",
       firstName: "DJ",
       lastName: "White",
-      subject: "English",
+      subject: CourseSubject.SocialStudies,
       grade: GradeLevel.Eleven,
     },
     {
       image: "/spongebob.png",
       firstName: "Tara",
       lastName: "Pink",
-      subject: "English",
+      subject: CourseSubject.English,
       grade: GradeLevel.Twelve,
     },
     {
       image: "/spongebob.png",
       firstName: "Ruckus",
       lastName: "Fam",
-      subject: "English",
+      subject: CourseSubject.Math,
       grade: GradeLevel.Eleven,
     },
     {
       image: "/spongebob.png",
       firstName: "Rack",
       lastName: "Up",
-      subject: "English",
+      subject: CourseSubject.Science,
       grade: GradeLevel.Nine,
     },
   ];
@@ -98,15 +104,17 @@ export function FacultyPage() {
 
   return (
     <div className="faculty-page">
-      <div className="table-list-page">
         <Select default={"All"} label={"Grade"} onChange={handleSelectChange} options={GradeLevels} />
-        <TableList
-          data={data}
-          headers={headers}
-          filterSource={nameof<Faculty>("grade")}
-          filterValue={selectedGrade}
-        />
-      </div>
+        <div className="table-list-page">
+          <TableList
+            data={data}
+            headers={headers}
+            filterSource={nameof<Faculty>("grade")}
+            filterValue={selectedGrade}
+          />
+        </div>
+        <AddEditDrawer handleOpen={openDrawer} model={ModelType.Faculty} />
+
     </div>
   );
 }

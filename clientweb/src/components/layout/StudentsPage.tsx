@@ -1,10 +1,10 @@
 import { useState } from "react";
-import GradeLevel, { GradeLevelType, GradeLevels } from "./GradeLevel";
-import Student from "./models/Student";
-import { Header, TableList } from "./TableList";
-import "./styles/TableList.css";
-import { nameof } from "./extensions";
-import { Select } from "./Select";
+import GradeLevel, { GradeLevelType, GradeLevels } from "../../enums/GradeLevel";
+import Student from "../../models/Student";
+import { Header, TableList } from "../common/TableList";
+import "../../styles/TableList.css";
+import { nameof } from "../../extensions";
+import { Select } from "../common/Select";
 
 export function StudentsPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
