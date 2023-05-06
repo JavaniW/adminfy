@@ -1,19 +1,18 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import { Select } from "./Select";
 import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
 import GradeLevel, { GradeLevels } from "../../enums/GradeLevel";
-import { Faculty } from "../../models/Faculty";
+import "../../styles/Modal.css";
 
+interface AddEditFacultyFormProps {
+    onSubmit?: (x : any) => any;
+    changeHandler: (event : ChangeEvent) => any;
+}
 
-export function AddEditFacultyForm() {
-    const [faculty, setFaculty] = useState<Faculty>({ } as Faculty);
-
-    function handleSelectChange (event : ChangeEvent<HTMLSelectElement>) {
-        setFaculty({...faculty, [event.target.name]: event.target.value});
-    };
+export function AddEditFacultyForm(props : AddEditFacultyFormProps) {
 
     return (
-        <form className="add-edit-from course-form">
+        <form onSubmit={props.onSubmit} id="add-edit-faculty-form" className="add-edit-form course-form">
             <label>
                 <p>First Name:</p>
                 <input type="text" name="firstName" id="firstName"/>
@@ -22,8 +21,8 @@ export function AddEditFacultyForm() {
                 <p>Last Name:</p>
                 <input type="text" name="lastName" id="lastName"/>
             </label>
-            <Select onChange={handleSelectChange} label={"Subject:"} options={CourseSubjects} default={CourseSubject.English}/>
-            <Select onChange={handleSelectChange} label={"Grade:"} options={GradeLevels} default={GradeLevel.Nine}/>
+            <Select onChange={props.changeHandler} label={"Subject"} options={CourseSubjects} default={CourseSubject.English}/>
+            <Select onChange={props.changeHandler} label={"Grade"} options={GradeLevels} default={GradeLevel.Nine}/>
         </form>
     )
 }

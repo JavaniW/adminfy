@@ -5,7 +5,6 @@ import { Header, TableList } from "../common/TableList";
 import { nameof } from "../../extensions";
 import { Select } from "../common/Select";
 import "../../styles/CoursesPage.css";
-import { AddEditDrawer } from "../common/AddEditDrawer";
 
 export function CoursesPage() {
   const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
@@ -22,11 +21,6 @@ export function CoursesPage() {
   function handleClick() {
     setOpenDrawer(true);
   }
-
-  useEffect(() => {
-    setShowSubject(selectedSubject === "All");
-    console.log("Rendered");
-  }, [selectedSubject]);
 
   const courses: Course[] = [
     {
@@ -114,8 +108,7 @@ export function CoursesPage() {
           filterSource={nameof<Course>("subject")}
           filterValue={selectedSubject}
         />
-        {/* <AddEditDrawer model={Course} /> */}
-      </div>
+       </div>
     </div>
   );
 }

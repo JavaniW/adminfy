@@ -24,4 +24,5 @@ app.listen( port, () => {
 app.use(baseRoute, courseRouter);
 app.use(baseRoute, studentRouter);
 app.use(baseRoute, facultyrouter);
+app.use(express.urlencoded({extended: true}));
 

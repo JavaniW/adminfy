@@ -11,6 +11,7 @@
   border-top: 2px solid var(--test-color2);
   border-bottom: 2px solid var(--test-color2);
   margin-bottom: 20px;
+  z-index: 1;
 }
 
 .adminfy-main-nav-list {

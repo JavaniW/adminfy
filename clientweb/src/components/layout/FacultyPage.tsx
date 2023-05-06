@@ -6,8 +6,10 @@ import { useState } from "react";
 import GradeLevel, { GradeLevelType, GradeLevels} from "../../enums/GradeLevel";
 import { Select } from "../common/Select";
 import CourseSubject from "../../enums/CourseSubject";
-import { AddEditDrawer } from "../common/AddEditDrawer";
+import { AddEditDrawer } from "../common/AddEditModal";
 import ModelType from "../../enums/ModelType";
+import FacultyApi from "../../api/facultyApi";
+import { AddEditFacultyForm } from "../common/AddEditFacultyForm";
 
 export function FacultyPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
@@ -105,6 +107,12 @@ export function FacultyPage() {
   return (
     <div className="faculty-page">
         <Select default={"All"} label={"Grade"} onChange={handleSelectChange} options={GradeLevels} />
+        <AddEditDrawer 
+          model={ModelType.Faculty} 
+          onSave={(faculty: Faculty) => FacultyApi.saveFaculty(faculty)} 
+          trigger={addFacultyButton}
+          form={AddEditFacultyForm} 
+          />
         <div className="table-list-page">
           <TableList
             data={data}
@@ -113,8 +121,6 @@ export function FacultyPage() {
             filterValue={selectedGrade}
           />
         </div>
-        <AddEditDrawer handleOpen={openDrawer} model={ModelType.Faculty} />
-
     </div>
   );
 }

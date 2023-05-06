@@ -1,7 +1,7 @@
 export enum ModelType {
-    Faculty,
-    Student,
-    Course
+    Faculty = "faculty",
+    Student = "student",
+    Course = "course"
 };
 
 export default ModelType;
