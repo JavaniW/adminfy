@@ -1,11 +1,11 @@
 import React from "react";
-import { MainNav } from "./MainNav";
+import { MainNav } from "./components/layout/MainNav";
 import "./styles/App.css";
-import Dashboard from "./Dashboard";
+import Dashboard from "./components/layout/Dashboard";
 import { Route, Routes } from "react-router";
-import { FacultyPage } from "./FacultyPage";
-import { CoursesPage } from "./CoursesPage";
-import { StudentsPage } from "./StudentsPage";
+import { FacultyPage } from "./components/layout/FacultyPage";
+import { CoursesPage } from "./components/layout/CoursesPage";
+import { StudentsPage } from "./components/layout/StudentsPage";
 
 function App() {
   return (

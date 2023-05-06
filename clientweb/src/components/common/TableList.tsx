@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ActionMenu } from "./ActionMenu";
 
 export type Header<T> = {
   headerLabel?: string;
@@ -38,9 +39,10 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
                     <th key={idx}>{header.headerLabel}</th>
                   )
                 )}
+                <ActionMenu />
               </tr>
             </thead>
-            <tbody>
+            <tbody className="table-list-item-body">
               <tr>
                 {props.headers
                   .filter((y) => !y.isOptional || y.dependentValue)
@@ -57,6 +59,7 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
                       )}
                     </td>
                   ))}
+                  <td></td>
               </tr>
             </tbody>
           </table>

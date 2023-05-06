@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router-dom";
-import "./styles/MainNav.css";
-import { MainNavMenuToggle } from "./MainNavMenuToggle";
+import "../../styles/MainNav.css";
+import { Dropdown } from "../common/Dropdown";
 
 interface MainNavProps {
   navItemOptions: string[];
@@ -9,6 +9,25 @@ interface MainNavProps {
 const isMobile: boolean = true;
 
 export function MainNav(props: MainNavProps) {
+
+  const dropdownIcon = <img
+          className="adminfy-main-nav-hamburger-icon"
+          src={`/icons8-menu-24.png`}
+          alt="hamburger menu"
+  />;
+
+  const menu = [
+    <Link to={"/faculty"}>
+      Faculty
+    </Link>,
+    <Link to={"/courses"}>
+      Courses
+    </Link>,
+    <Link to={"/students"}>
+      Students
+    </Link>
+  ];
+
   return (
     <>
       <nav className="adminfy-main-nav">
@@ -31,7 +50,9 @@ export function MainNav(props: MainNavProps) {
               <h1>ADMINFY</h1>
             </Link>
           </li>
-          <MainNavMenuToggle />
+          <li>
+            <Dropdown trigger={dropdownIcon} menu={menu} />
+          </li>
         </ul>
       </nav>
       <main className="main">

@@ -1,30 +1,15 @@
-.courses-page {
-  margin-bottom: 1vh;
-  padding: 1vmax;
-}
-.courses-list-item {
-  text-align: center;
-  border: 2px solid #1a9bfe;
-  margin-top: 10px;
-  width: 100%;
-  border-radius: 20px;
-  border-collapse: collapse;
-}
+/* .courses-page {
+    position: relative;
+    z-index: 0;
+}*/
 
-.courses-page-select-label {
-  display: inline-block;
-  margin-bottom: 10px;
-}
-
-.courses-page-select-label p {
-  display: inline-block;
-  margin-right: 10px;
-}
-
-.courses-list-item td {
-  background-color: var(--secondary-color);
-}
-
-thead {
-  background-color: var(--primary-color);
-}
+.add-course-button {
+    display: inline;
+    /* position: relative; */
+    /* float: right; */
+    top: 0px;
+    /* right: 50px; */
+    left: 250px;
+    padding: 2.5px;
+    border-radius: 7.5px;
+} 
