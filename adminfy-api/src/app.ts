@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import courseRouter from "./routes/coursesRoutes";
 import studentRouter from "./routes/studentsRoutes";
 import facultyrouter from "./routes/facultyRoutes";
+import cors from "cors";
 
 
 const app = express();
@@ -20,9 +21,11 @@ app.listen( port, () => {
     console.log( `server started at http://localhost:${ port }` );
 } );
 
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.use(cors());
 // registering routers
 app.use(baseRoute, courseRouter);
 app.use(baseRoute, studentRouter);
 app.use(baseRoute, facultyrouter);
-app.use(express.urlencoded({extended: true}));
 

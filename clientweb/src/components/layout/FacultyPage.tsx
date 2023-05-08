@@ -7,13 +7,21 @@ import GradeLevel, { GradeLevelType, GradeLevels} from "../../enums/GradeLevel";
 import { Select } from "../common/Select";
 import CourseSubject from "../../enums/CourseSubject";
 import { AddEditDrawer } from "../common/AddEditModal";
-import ModelType from "../../enums/ModelType";
-import FacultyApi from "../../api/facultyApi";
 import { AddEditFacultyForm } from "../common/AddEditFacultyForm";
+import ModelType from "../../enums/ModelType";
 
 export function FacultyPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
   const [showGrade, setShowGrade] = useState<boolean>(true);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  function handleOpenModal() {
+      setOpenModal(true);
+    };
+
+  function handleAfterSubmit() {
+      setOpenModal(false);
+  }
 
   function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setSelectedGrade(event.target.value as GradeLevelType | "All");
@@ -107,12 +115,9 @@ export function FacultyPage() {
   return (
     <div className="faculty-page">
         <Select default={"All"} label={"Grade"} onChange={handleSelectChange} options={GradeLevels} />
-        <AddEditDrawer 
-          model={ModelType.Faculty} 
-          onSave={(faculty: Faculty) => FacultyApi.saveFaculty(faculty)} 
-          trigger={addFacultyButton}
-          form={AddEditFacultyForm} 
-          />
+          <AddEditDrawer openModal={handleOpenModal} closeModal={handleAfterSubmit} open={openModal} form={ModelType.Faculty} trigger={addFacultyButton}>
+            <AddEditFacultyForm onAfterSubmit={handleAfterSubmit} />
+          </AddEditDrawer>
         <div className="table-list-page">
           <TableList
             data={data}

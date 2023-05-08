@@ -1,7 +1,7 @@
 import { handleError, handleResponse } from "./apiUtils"
 import {Course} from "../models/Course";
 
-const BASE_URL = "localhost:8080/api/course";
+const BASE_URL = "http://localhost:8080/api/course";
 
 export function getCourses() {
     return fetch(BASE_URL)

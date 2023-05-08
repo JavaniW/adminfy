@@ -11,21 +11,22 @@ router.get(`/faculty/:id`, (request, response) => {
 })
 
 router.post(`/faculty`, (request, response) => {
-    const _faculty = JSON.parse(request.body);
+    const data = request.body;
     const newFaculty = new Faculty(
-        request.body
-        // {
-        // firstName: _faculty.firstName,
-        // lastName: _faculty.lastName,
-        // subject: _faculty.subject,
-        // grade: _faculty.grade
-        //  }
+        {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            subject: data.subject,
+            grade: data.grade
+        }
     );
     newFaculty.save()
-        .then(res => {
-            response.redirect("localhost:3000/courses");
+        .then((res) => {
+            response.setHeader("content-type", "application/json");
+            console.log(res);
+            response.send(res.toJSON());
         })
-        .catch(console.log);
+        .catch(console.error);
 }); 
 
 router.put(`/faculty/:id`, (request, response) => {
