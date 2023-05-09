@@ -1,7 +1,7 @@
-import CourseSubject from "../enums/CourseSubject";
-import GradeLevel from "../enums/GradeLevel";
+import CourseSubject from '../enums/CourseSubject';
+import GradeLevel from '../enums/GradeLevel';
 
-export interface Faculty {
+export interface Teacher {
   _id?: string | number;
   image: string;
   firstName: string;

@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import courseRouter from "./routes/coursesRoutes";
 import studentRouter from "./routes/studentsRoutes";
-import facultyrouter from "./routes/facultyRoutes";
+import teacherrouter from "./routes/teacherRoutes";
 import cors from "cors";
 
 
@@ -27,5 +27,5 @@ app.use(cors());
 // registering routers
 app.use(baseRoute, courseRouter);
 app.use(baseRoute, studentRouter);
-app.use(baseRoute, facultyrouter);
+app.use(baseRoute, teacherrouter);
 

@@ -1,9 +1,10 @@
-import { PropsWithChildren } from "react";
-import React from "react";
-import "../../styles/Modal.css";
-import ModelType from "../../enums/ModelType";
+import '../../styles/Modal.css';
 
-interface AddEditDrawerProps {
+import React, { PropsWithChildren } from 'react';
+
+import ModelType from '../../enums/ModelType';
+
+interface AddEditModalProps {
     openModal: () => void;
     closeModal: () => void;
     form: ModelType;
@@ -11,7 +12,7 @@ interface AddEditDrawerProps {
     open: boolean;
 }
 
-export function AddEditDrawer(props : PropsWithChildren<AddEditDrawerProps>) {
+export function AddEditModal(props : PropsWithChildren<AddEditModalProps>) {
     return (
         <>
             {React.cloneElement(props.trigger, {

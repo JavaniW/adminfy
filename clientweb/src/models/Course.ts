@@ -1,9 +1,13 @@
-import CourseSubject from "../enums/CourseSubject";
+import CourseSubject from '../enums/CourseSubject';
+import { Teacher } from './Teacher';
+import Student from './Student';
 
 export interface Course {
   _id?: string | number;
-  teacher: string;
-  courseNumber: Number;
+  number: string | number;
+  name: string;
+  teacher: Teacher;
   subject: CourseSubject;
   enrolled?: number | string;
+  students: Student[];
 }

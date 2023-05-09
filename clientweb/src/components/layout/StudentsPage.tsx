@@ -1,10 +1,12 @@
-import { useState } from "react";
-import GradeLevel, { GradeLevelType, GradeLevels } from "../../enums/GradeLevel";
-import Student from "../../models/Student";
-import { Header, TableList } from "../common/TableList";
-import "../../styles/TableList.css";
-import { nameof } from "../../extensions";
-import { Select } from "../common/Select";
+import '../../styles/TableList.css';
+
+import { useState } from 'react';
+
+import GradeLevel, { GradeLevels, GradeLevelType } from '../../enums/GradeLevel';
+import { nameof } from '../../extensions';
+import Student from '../../models/Student';
+import { Select } from '../common/Select';
+import { Header, TableList } from '../common/TableList';
 
 export function StudentsPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
@@ -56,32 +58,28 @@ export function StudentsPage() {
 
   const headers: Header<Student>[] = [
     {
-      headerLabel: "First Name",
-      isOptional: false,
-      referenceData: "firstName",
+      label: "First Name",
+      referenceData: (x : Student) => x.firstName,
     },
     {
-      headerLabel: "Last Name",
-      isOptional: false,
-      referenceData: "lastName",
+      label: "Last Name",
+      referenceData: (x : Student) => x.lastName,
     },
     {
-      headerLabel: "Birth Date",
-      isOptional: false,
-      referenceData: "dateOfBirth",
+      label: "Birth Date",
+      referenceData: (x : Student) => x.dateOfBirth,
     },
     {
-      headerLabel: "Grade Level",
-      isOptional: true,
-      dependentValue: showGrade,
-      referenceData: "gradeLevel",
+      label: "Grade Level",
+      referenceData: (x : Student) => x.gradeLevel,
+      show: () => showGrade
     },
   ];
 
   return (
     <div className="students-page" >
       <div className="table-list-page">
-        <Select default={"All"} label={"Grade Level"} onChange={handleSelectChange} options={GradeLevels} />
+        <Select name='Grade Level' default={"All"} label={"Grade Level"} onChange={handleSelectChange} options={GradeLevels} />
         <TableList
           data={data}
           headers={headers}

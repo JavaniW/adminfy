@@ -1,5 +1,5 @@
 export enum ModelType {
-    Faculty = "faculty",
+    Teacher = "teacher",
     Student = "student",
     Course = "course"
 };

@@ -1,0 +1,10 @@
+.add-edit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.add-edit-form .select {
+    align-self: center;
+}

@@ -1,7 +1,7 @@
-import { handleError, handleResponse } from "./apiUtils"
-import {Student} from "../models/Student";
+import { Student } from '../models/Student';
+import { handleError, handleResponse } from './apiUtils';
 
-const BASE_URL = "http://localhost:8080/api/student";
+const BASE_URL = "http://localhost:8080/api/students";
 
 export function getStudents() {
     return fetch(BASE_URL)
@@ -19,7 +19,7 @@ export function saveStudent(student : Student) {
     return fetch(BASE_URL + (student._id || ""), {
         method: student._id ? "PUT" : "POST",
         headers: {"content-type": "application/json"},
-        body: JSON.stringify({...student})
+        body: JSON.stringify(student)
     })
         .then(handleResponse)
         .catch(handleError);

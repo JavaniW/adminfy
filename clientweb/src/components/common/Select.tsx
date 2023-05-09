@@ -1,28 +1,30 @@
-import { ChangeEvent } from "react";
-import "../../styles/Select.css";
+import '../../styles/Select.css';
+
+import { ChangeEvent } from 'react';
 
 interface SelectProps {
+    label: string;
     options: (string | number | undefined)[] | readonly any[];
     onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
-    label: string | number;
     default?: string | number;
     value?: any;
+    name: string;
 }
 
 export function Select(props: SelectProps) {
     return (
         <div className="select">
             <label className="select-label">
-                <p>{props.label.toString()[0].toUpperCase() + props.label.toString().slice(1)}:</p>
+                <p>{props.label}:</p>
                 <select
                     className="select-component"
-                    name={props.label.toString()}
+                    name={props.name}
                     onChange={props.onChange}
                     value={props.value}
                 >
-                    <option key={props.default} value={props.default}>
+                    {props.default && <option key={props.default} value={props.default}>
                     {props.default}
-                    </option>
+                    </option> }
                     {props.options.map((x, idx) => (
                     <option key={idx} value={x}>
                         {x}

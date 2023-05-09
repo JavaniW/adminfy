@@ -1,5 +1,6 @@
-import React, {ReactElement, useState} from "react";
-import "../../styles/Dropdown.css";
+import '../../styles/Dropdown.css';
+
+import React, { ReactElement, useState } from 'react';
 
 interface DropdownProps {
     trigger: ReactElement;

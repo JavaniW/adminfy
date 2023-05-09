@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useOutsideClick (callback : any) {
     const ref:any = useRef();
@@ -19,3 +19,13 @@ export function useOutsideClick (callback : any) {
   
     return ref;
   };
+
+  export function useModalHooks() : [boolean, () => void] {
+    const [visible, setVisible] = useState<boolean>(true);
+
+    const closeDrawer = useCallback((): void => {
+        setVisible(false);
+    }, [setVisible]);
+
+    return [visible, closeDrawer];
+  }
