@@ -3,7 +3,8 @@ import CourseSubject from "../CourseSubject";
 const Schema = mongoose.Schema;
 
 const courseSchema = new Schema({
-    courseNumber: {type: Number, required: true, unique: true},
+    number: {type: Number, required: true, unique: true},
+    name : {type: String, required: true},
     teacher: { type: mongoose.Types.ObjectId, ref: "Teacher", required: true},
     subject: { type: String, enum: Object.values(CourseSubject), required: true},
 }, {timestamps: true})

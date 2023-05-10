@@ -1,4 +1,4 @@
-import '../../styles/Modal.css';
+import '../../styles/AddEditModal.css';
 
 import React, { PropsWithChildren } from 'react';
 

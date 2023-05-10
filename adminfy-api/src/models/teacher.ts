@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
+import CourseSubject from "../CourseSubject";
+import GradeLevel from "../GradeLevel";
 const Schema = mongoose.Schema;
 
 const teacherSchema = new Schema({
+    image: {type: String, required: false},
     firstName: {type: String, required: true},
     lastName: {type: String, required: true},
-    image: {type: String, required: false},
-    subject: {type: String, enum: ["Math", "History", "Social Studies", "English", 'Science'], required: true},
-    grade: {type: String, enum: ['9', '10', '11', '12'], required: true}
+    subject: {type: String, enum: Object.values(CourseSubject), required: true},
+    grade: {type: String, enum: Object.values(GradeLevel), required: true}
 }, {timestamps: true })
 
 const Teacher = mongoose.model(`Teacher`, teacherSchema);

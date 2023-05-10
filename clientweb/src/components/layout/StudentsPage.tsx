@@ -7,14 +7,15 @@ import { nameof } from '../../extensions';
 import Student from '../../models/Student';
 import { Select } from '../common/Select';
 import { Header, TableList } from '../common/TableList';
+import { DynamicSelect, option } from '../common/DynamicSelect';
 
 export function StudentsPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
   const [showGrade, setShowGrade] = useState<boolean>(true);
 
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedGrade(event.target.value as GradeLevelType | "All");
-    setShowGrade(event.target.value === "All");
+  function handleSelectChange({value} : {value: string}) {
+    setSelectedGrade(value as GradeLevelType | "All");
+    setShowGrade(value === "All");
   }
 
   const data: Student[] = [
@@ -76,10 +77,17 @@ export function StudentsPage() {
     },
   ];
 
+  const studentGradeOptions : option[] = [
+    {
+      label: "All",
+      value: "All"
+    },
+    ...GradeLevels.map(x => ({ label: x, value: x }))
+  ]
   return (
     <div className="students-page" >
       <div className="table-list-page">
-        <Select name='Grade Level' default={"All"} label={"Grade Level"} onChange={handleSelectChange} options={GradeLevels} />
+        <DynamicSelect value={selectedGrade} name='Grade Level' label={"Grade Level"} onSelectChange={handleSelectChange} arrayOfOptions={studentGradeOptions} />
         <TableList
           data={data}
           headers={headers}

@@ -3,7 +3,7 @@ import { handleError, handleResponse } from './apiUtils';
 
 const BASE_URL = "http://localhost:8080/api/teachers";
 
-export function getTeacher() {
+export function getTeachers() {
     return fetch(BASE_URL)
         .then(handleResponse)
         .catch(handleError);
@@ -33,7 +33,7 @@ export function saveTeacher(teacher : Teacher) {
 }
 
 const TeacherApi = {
-    getTeacher,
+    getTeachers,
     getTeacherById,
     saveTeacher
 };

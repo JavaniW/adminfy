@@ -24,7 +24,8 @@ router.post(`/courses`, (request, response) => {
     const data = request.body;
     const newCourse = new Course(
         {
-            courseNumber: data.courseNumber,
+            name: data.name,
+            number: data.number,
             teacher: data.teacher,
             subject: data.subject
         }
@@ -33,7 +34,7 @@ router.post(`/courses`, (request, response) => {
         .then((res) => {
             response.setHeader("content-type", "application/json");
             response.send(res.toJSON());
-        }, (err) => response.send(err))
+        }, (err) => {console.log("Error on backend"); console.log(data);response.send(err)})
         .catch(console.error);
 }); 
 
@@ -41,7 +42,7 @@ router.put(`/courses/:id`, (request, response) => {
     const data = request.body;
     Course.findOneAndUpdate({_id: data._id}, {
         courseNumber: data.courseNumber,
-        teacher: data.teacher,
+        teacher: data.teacher._id,
         subject: data.subject
     }, {new: true})
     .then(res => {

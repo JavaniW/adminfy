@@ -8,21 +8,23 @@ import ModelType from '../../enums/ModelType';
 import { nameof } from '../../extensions';
 import { Teacher } from '../../models/Teacher';
 import { AddEditModal } from '../common/AddEditModal';
-import { AddEditTeacherForm } from '../common/AddEditTeacherForm';
+import { AddEditTeacherForm } from './AddEditTeacherForm';
 import { Select } from '../common/Select';
 import { Header, TableList } from '../common/TableList';
+import { TeachersContext } from '../../Context';
+import { DynamicSelect, option } from '../common/DynamicSelect';
 
 export function TeachersPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
   const [showGrade, setShowGrade] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [teacher, setTeacher] = useState<Teacher[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   const loadData = useCallback(() => {
-    TeacherApi.getTeacher()
+    TeacherApi.getTeachers()
       .then(results => {
-        const _teacher = results.map((x : Teacher )=> x as Teacher);
-        setTeacher(_teacher);
+        const _teachers = results.map((x : Teacher )=> x as Teacher);
+        setTeachers(_teachers);
       });
   }, []);
 
@@ -42,10 +44,11 @@ export function TeachersPage() {
 
   useEffect(loadData, [loadData]);
 
-  const handleSelectChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedGrade(event.target.value as GradeLevelType | "All");
-    setShowGrade(event.target.value === "All");
-  }, []);
+  const handleSelectChange = useCallback(({name, value} : {name: string, value: any}) => {
+    // debugger;
+    setSelectedGrade(value);
+    setShowGrade(value === "All");
+  }, [])
 
   const addTeacherButton = <button className="add-teacher-button"><p>New Teacher</p></button>;
 
@@ -73,20 +76,32 @@ export function TeachersPage() {
     }
   ]
 
+  const gradeOptions : option[] = [
+    {
+      label: "All",
+      value: "All",
+    },
+    ...GradeLevels.map(x => ({label: x, value: x}))
+  ];
+
   return (
+    <>
     <div className="teachers-page">
-        <Select name='Grade' default={"All"} label={"Grade"} onChange={handleSelectChange} options={GradeLevels} />
+      <DynamicSelect label={"Grade"} name='Grade' value={selectedGrade} onSelectChange={handleSelectChange} arrayOfOptions={gradeOptions} />
           <AddEditModal openModal={handleOpenModal} closeModal={handleCloseModal} open={openModal} form={ModelType.Teacher} trigger={addTeacherButton}>
             <AddEditTeacherForm onAfterSubmit={handleAfterSubmit} />
           </AddEditModal>
         <div className="table-list-page">
-          <TableList
-            data={teacher}
-            headers={headers}
-            filterSource={nameof<Teacher>("grade")}
-            filterValue={selectedGrade}
-          />
+          <TeachersContext.Provider value={teachers} >
+            <TableList
+              data={teachers}
+              headers={headers}
+              filterSource={nameof<Teacher>("grade")}
+              filterValue={selectedGrade}
+              />
+          </TeachersContext.Provider>
         </div>
     </div>
+              </>
   );
 }

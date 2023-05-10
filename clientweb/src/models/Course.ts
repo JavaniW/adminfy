@@ -8,6 +8,5 @@ export interface Course {
   name: string;
   teacher: Teacher;
   subject: CourseSubject;
-  enrolled?: number | string;
   students: Student[];
 }

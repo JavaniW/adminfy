@@ -4,16 +4,14 @@ import "../../styles/AddEditModal.css";
 import { useCallback, useEffect, useState } from 'react';
 
 import CourseApi from '../../api/courseApi';
-import { CourseSubject, CourseSubjects } from '../../enums/CourseSubject';
-import GradeLevel from '../../enums/GradeLevel';
 import ModelType from '../../enums/ModelType';
 import { nameof } from '../../extensions';
 import { Course } from '../../models/Course';
-import { Teacher } from '../../models/Teacher';
-import { AddEditCourseForm } from '../common/AddEditCourseForm';
+import { AddEditCourseForm } from './AddEditCourseForm';
 import { AddEditModal } from '../common/AddEditModal';
-import { Select } from '../common/Select';
 import { Header, TableList } from '../common/TableList';
+import { DynamicSelect, option } from '../common/DynamicSelect';
+import { CourseSubjects } from '../../enums/CourseSubject';
 
 export function CoursesPage() {
   const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
@@ -21,18 +19,22 @@ export function CoursesPage() {
   );
   const [showSubject, setShowSubject] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [courses, setCourses] = useState<Course[]>();
+  const [courses, setCourses] = useState<Course[]>([]);
 
   const addCourseButton = <button className="add-course-button"><p>New Course</p></button>;
 
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedSubject(event.target.value as keyof Course | "All");
-    setShowSubject(event.target.value === "All");
+  function handleSelectChange({value} : {value: string}) {
+    setSelectedSubject(value as keyof Course | "All");
+    setShowSubject(value === "All");
   }
 
   function handleOpenModal() {
     setOpenModal(true);
   };
+
+  const handleCloseModal = useCallback(() => {
+    setOpenModal(false);
+  }, [setOpenModal]);
 
 function handleAfterSubmit() {
   setOpenModal(false);
@@ -47,53 +49,53 @@ const loadData = useCallback(() => {
     });
 }, []);
 
-const teacher : Teacher = {
-  image: "",
-  firstName: "James",
-  lastName: "Gunn",
-  grade: GradeLevel.Nine,
-  subject: CourseSubject.English
-}
+// const teacher : Teacher = {
+//   image: "",
+//   firstName: "James",
+//   lastName: "Gunn",
+//   grade: GradeLevel.Nine,
+//   subject: CourseSubject.English
+// }
 
 useEffect(loadData, [loadData]);
 
-  const _courses: Course[] = [
-    {
-      number: 1234,
-      name: "Intro to Science",
-      subject: CourseSubject.Science,
-      teacher: teacher,
-      students: [],
-    },
-    {
-      number: 1234,
-      name: "Intro to Math",
-      subject: CourseSubject.Math,
-      teacher: teacher,
-      students: [],
-    },
-    {
-      number: 1234,
-      name: "Intro to English",
-      subject: CourseSubject.English,
-      teacher: teacher,
-      students: [],
-    },
-    {
-      number: 1234,
-      name: "Calc I",
-      subject: CourseSubject.Math,
-      teacher: teacher,
-      students: [],
-    },
-    {
-      number: 1234,
-      name: "English I",
-      subject: CourseSubject.English,
-      teacher: teacher,
-      students: [],
-    }
-  ];
+  // const _courses: Course[] = [
+  //   {
+  //     number: 1234,
+  //     name: "Intro to Science",
+  //     subject: CourseSubject.Science,
+  //     teacher: teacher,
+  //     students: [],
+  //   },
+  //   {
+  //     number: 1234,
+  //     name: "Intro to Math",
+  //     subject: CourseSubject.Math,
+  //     teacher: teacher,
+  //     students: [],
+  //   },
+  //   {
+  //     number: 1234,
+  //     name: "Intro to English",
+  //     subject: CourseSubject.English,
+  //     teacher: teacher,
+  //     students: [],
+  //   },
+  //   {
+  //     number: 1234,
+  //     name: "Calc I",
+  //     subject: CourseSubject.Math,
+  //     teacher: teacher,
+  //     students: [],
+  //   },
+  //   {
+  //     number: 1234,
+  //     name: "English I",
+  //     subject: CourseSubject.English,
+  //     teacher: teacher,
+  //     students: [],
+  //   }
+  // ];
 
   const headers: Header<Course>[] = [
     {
@@ -103,6 +105,7 @@ useEffect(loadData, [loadData]);
     {
       label: "Subject",
       referenceData: (x : Course) => x.subject,
+      show: () => showSubject
     },
     {
       label: "Teacher",
@@ -110,16 +113,24 @@ useEffect(loadData, [loadData]);
     },
     {
       label: "Students Enrolled",
-      referenceData: (x : Course) => x.students.length,
+      referenceData: (x : Course) => x.students ? x.students.length : 0,
     }
+  ];
+
+  const options: option[] = [
+    {
+      label: "All",
+      value: "All"
+    },
+    ...CourseSubjects.map(x => ({label: x, value: x}))
   ];
 
   return (
     <div className="courses-page">
-        <Select name='Subject' default={"All"} options={CourseSubjects} label={"Subject"} onChange={handleSelectChange} />
+        <DynamicSelect name='Subject' value={selectedSubject} arrayOfOptions={options} label={"Subject"} onSelectChange={handleSelectChange} />
         <AddEditModal 
           openModal={handleOpenModal} 
-          closeModal={() => setOpenModal(false)} 
+          closeModal={handleCloseModal} 
           form={ModelType.Course} 
           trigger={addCourseButton} 
           open={openModal}
@@ -128,7 +139,7 @@ useEffect(loadData, [loadData]);
         </AddEditModal>
         <div className="table-list-page">
           <TableList
-            data={_courses}
+            data={courses}
             headers={headers}
             filterSource={nameof<Course>("subject")}
             filterValue={selectedSubject}

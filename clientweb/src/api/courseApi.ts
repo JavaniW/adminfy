@@ -1,4 +1,4 @@
-import { Course } from '../models/Course';
+import { CourseDto } from '../components/layout/AddEditCourseForm';
 import { handleError, handleResponse } from './apiUtils';
 
 const BASE_URL = "http://localhost:8080/api/courses";
@@ -15,7 +15,7 @@ export function getCourseById(id : number) {
         .catch(handleError);
 }
 
-export function saveCourse(course : Course) {
+export function saveCourse(course : CourseDto) {
     return fetch(BASE_URL + (course._id || ""), {
         method: course._id ? "PUT" : "POST",
         headers: {"content-type": "application/json"},

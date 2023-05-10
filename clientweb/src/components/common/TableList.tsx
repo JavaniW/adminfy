@@ -17,9 +17,9 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
 
   if (!props.data.length) return <p>{`No Data...`}</p>
 
-  function renderTableListItem(item : T) {
+  function renderTableListItem(item : T, key: number) {
     return (
-      <table className="table-list-item">
+      <table key={key} className="table-list-item">
             <thead className="table-list-item-header">
             <tr>
                 {props.headers.map((header, idx) => (
