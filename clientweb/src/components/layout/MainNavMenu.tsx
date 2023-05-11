@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 export function MainNavMenu(props : any) {
 
     return (
         <ul className={`adminfy-main-nav-menu`}>
             <li className="adminfy-main-nav-item">
-                <Link to={"/faculty"}>
+                <Link to={"/teacher"}>
                 Falculty
                 </Link>
             </li>

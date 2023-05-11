@@ -1,4 +1,4 @@
-import "../../styles/ActionMenu.css";
+import '../../styles/ActionMenu.css';
 
 export function ActionMenu() {
     return (

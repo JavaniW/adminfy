@@ -1,6 +1,8 @@
-import { Link, Outlet } from "react-router-dom";
-import "../../styles/MainNav.css";
-import { Dropdown } from "../common/Dropdown";
+import '../../styles/MainNav.css';
+
+import { Link, Outlet } from 'react-router-dom';
+
+import { Dropdown } from '../common/Dropdown';
 
 interface MainNavProps {
   navItemOptions: string[];
@@ -17,8 +19,8 @@ export function MainNav(props: MainNavProps) {
   />;
 
   const menu = [
-    <Link to={"/faculty"}>
-      Faculty
+    <Link to={"/teacher"}>
+      Teacher
     </Link>,
     <Link to={"/courses"}>
       Courses
@@ -35,7 +37,7 @@ export function MainNav(props: MainNavProps) {
           {!isMobile && (
             <>
               <Link className="adminfy-main-nav-item" to={"/"}>
-                Faculty
+                Teacher
               </Link>
               <Link className="adminfy-main-nav-item" to={"/"}>
                 Courses

@@ -1,7 +1,7 @@
-import { handleError, handleResponse } from "./apiUtils"
-import {Course} from "../models/Course";
+import { CourseDto } from '../components/layout/AddEditCourseForm';
+import { handleError, handleResponse } from './apiUtils';
 
-const BASE_URL = "localhost:8080/api/course";
+const BASE_URL = "http://localhost:8080/api/courses";
 
 export function getCourses() {
     return fetch(BASE_URL)
@@ -15,11 +15,11 @@ export function getCourseById(id : number) {
         .catch(handleError);
 }
 
-export function saveCourse(course : Course) {
+export function saveCourse(course : CourseDto) {
     return fetch(BASE_URL + (course._id || ""), {
         method: course._id ? "PUT" : "POST",
         headers: {"content-type": "application/json"},
-        body: JSON.stringify({...course})
+        body: JSON.stringify(course)
     })
         .then(handleResponse)
         .catch(handleError);
