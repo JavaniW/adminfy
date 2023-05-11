@@ -9,7 +9,6 @@ import { nameof } from '../../extensions';
 import { Teacher } from '../../models/Teacher';
 import { AddEditModal } from '../common/AddEditModal';
 import { AddEditTeacherForm } from './AddEditTeacherForm';
-import { Select } from '../common/Select';
 import { Header, TableList } from '../common/TableList';
 import { TeachersContext } from '../../Context';
 import { DynamicSelect, option } from '../common/DynamicSelect';

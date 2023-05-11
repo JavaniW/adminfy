@@ -1,3 +1,4 @@
+import "../../styles/DynamicSelect.css";
 import React, {ChangeEvent, PropsWithChildren} from 'react';
 
 export type option = {
@@ -6,7 +7,6 @@ export type option = {
 }
 
 interface OptionProps {
-    key: string | number;
     value: any;
 }
 
@@ -21,7 +21,7 @@ interface DynamicSelectProps {
 
 function Option(props : PropsWithChildren<OptionProps>) {
     return (
-        <option key={props.key} value={props.value}>
+        <option value={props.value}>
             {props.children}
         </option>
     )

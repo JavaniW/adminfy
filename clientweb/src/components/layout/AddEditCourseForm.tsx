@@ -29,7 +29,6 @@ export function AddEditCourseForm(props: AddEditFormProps) {
     const [_teacherOptions, setTeacherOptions] = useState<Teacher[]>([]);
 
     useEffect(() => {
-        console.log("rendering...")
         TeacherApi.getTeachers()
             .then(res => {
                 setTeacherOptions(res);
@@ -46,6 +45,7 @@ export function AddEditCourseForm(props: AddEditFormProps) {
 
     function handleSubmit(event : SyntheticEvent) {
         event.preventDefault();
+        console.log(course);
         CourseApi.saveCourse(course)
             .then((addedCourse : Course) => {
                 console.log(addedCourse);

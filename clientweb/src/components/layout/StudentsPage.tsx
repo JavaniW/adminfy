@@ -1,61 +1,92 @@
 import '../../styles/TableList.css';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import GradeLevel, { GradeLevels, GradeLevelType } from '../../enums/GradeLevel';
 import { nameof } from '../../extensions';
 import Student from '../../models/Student';
-import { Select } from '../common/Select';
 import { Header, TableList } from '../common/TableList';
 import { DynamicSelect, option } from '../common/DynamicSelect';
+import { AddEditModal } from '../common/AddEditModal';
+import StudentApi from '../../api/studentApi';
+import ModelType from '../../enums/ModelType';
+import { AddEditStudentForm } from './AddEditStudentForm';
 
 export function StudentsPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
   const [showGrade, setShowGrade] = useState<boolean>(true);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [students, setStudents] = useState<Student[]>([]);
 
   function handleSelectChange({value} : {value: string}) {
     setSelectedGrade(value as GradeLevelType | "All");
     setShowGrade(value === "All");
   }
 
-  const data: Student[] = [
-    {
-      firstName: "Ham",
-      lastName: "Hooker",
-      dateOfBirth: "01/02/2004",
-      gradeLevel: GradeLevel.Ten,
-    },
-    {
-      firstName: "Tom",
-      lastName: "Tommy",
-      dateOfBirth: "03/13/2003",
-      gradeLevel: GradeLevel.Twelve,
-    },
-    {
-      firstName: "Sarah",
-      lastName: "Love",
-      dateOfBirth: "07/17/2002",
-      gradeLevel: GradeLevel.Twelve,
-    },
-    {
-      firstName: "Rusty",
-      lastName: "Bolt",
-      dateOfBirth: "12/20/2002",
-      gradeLevel: GradeLevel.Ten,
-    },
-    {
-      firstName: "Patrick",
-      lastName: "Star",
-      dateOfBirth: "02/20/2002",
-      gradeLevel: GradeLevel.Eleven,
-    },
-    {
-      firstName: "Luke",
-      lastName: "Skywalker",
-      dateOfBirth: "11/09/2000",
-      gradeLevel: GradeLevel.Nine,
-    },
-  ];
+  const loadData = useCallback(() => {
+    StudentApi.getStudents()
+      .then(results => {
+        const _students = results.map((x : Student )=> x as Student);
+        setStudents(_students);
+      });
+  }, []);
+
+  useEffect(loadData, [loadData]);
+  
+  const handleOpenModal = useCallback(() => {
+      setOpenModal(true);
+    }, [setOpenModal]);
+
+  const handleCloseModal = useCallback(() => {
+      setOpenModal(false);
+    }, [setOpenModal]);
+
+  const handleAfterSubmit = useCallback(() => {
+    setOpenModal(false);
+    loadData();
+  }, [loadData])
+
+  const addStudentButton = <button className="add-student-button"><p>New Student</p></button>;
+
+
+  // const data: Student[] = [
+  //   {
+  //     firstName: "Ham",
+  //     lastName: "Hooker",
+  //     dateOfBirth: "01/02/2004",
+  //     gradeLevel: GradeLevel.Ten,
+  //   },
+  //   {
+  //     firstName: "Tom",
+  //     lastName: "Tommy",
+  //     dateOfBirth: "03/13/2003",
+  //     gradeLevel: GradeLevel.Twelve,
+  //   },
+  //   {
+  //     firstName: "Sarah",
+  //     lastName: "Love",
+  //     dateOfBirth: "07/17/2002",
+  //     gradeLevel: GradeLevel.Twelve,
+  //   },
+  //   {
+  //     firstName: "Rusty",
+  //     lastName: "Bolt",
+  //     dateOfBirth: "12/20/2002",
+  //     gradeLevel: GradeLevel.Ten,
+  //   },
+  //   {
+  //     firstName: "Patrick",
+  //     lastName: "Star",
+  //     dateOfBirth: "02/20/2002",
+  //     gradeLevel: GradeLevel.Eleven,
+  //   },
+  //   {
+  //     firstName: "Luke",
+  //     lastName: "Skywalker",
+  //     dateOfBirth: "11/09/2000",
+  //     gradeLevel: GradeLevel.Nine,
+  //   },
+  // ];
 
   const headers: Header<Student>[] = [
     {
@@ -86,10 +117,13 @@ export function StudentsPage() {
   ]
   return (
     <div className="students-page" >
+      <DynamicSelect value={selectedGrade} name='Grade Level' label={"Grade Level"} onSelectChange={handleSelectChange} arrayOfOptions={studentGradeOptions} />
+      <AddEditModal open={openModal} openModal={handleOpenModal} closeModal={handleCloseModal} form={ModelType.Course} trigger={addStudentButton}>
+        <AddEditStudentForm onAfterSubmit={handleAfterSubmit}/>
+      </AddEditModal>
       <div className="table-list-page">
-        <DynamicSelect value={selectedGrade} name='Grade Level' label={"Grade Level"} onSelectChange={handleSelectChange} arrayOfOptions={studentGradeOptions} />
         <TableList
-          data={data}
+          data={students}
           headers={headers}
           filterSource={nameof<Student>("gradeLevel")}
           filterValue={selectedGrade}

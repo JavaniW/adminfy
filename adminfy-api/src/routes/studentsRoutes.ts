@@ -29,7 +29,7 @@ router.post(`/students`, (request, response) => {
         .then(res => {
             response.setHeader("content-type", "application/json");
             response.send(res.toJSON());
-        }, (err) => response.send(err))
+        }, (err) => { console.log(err); response.send(err)})
         .catch(console.error);
 })
 

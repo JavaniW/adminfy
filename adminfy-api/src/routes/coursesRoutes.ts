@@ -34,7 +34,7 @@ router.post(`/courses`, (request, response) => {
         .then((res) => {
             response.setHeader("content-type", "application/json");
             response.send(res.toJSON());
-        }, (err) => {console.log("Error on backend"); console.log(data);response.send(err)})
+        }, (err) => {console.log("Error on backend"); console.log(data); console.log(err); response.send(err)})
         .catch(console.error);
 }); 
 

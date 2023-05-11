@@ -52,7 +52,7 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
     <>
       {
         props.data
-          .filter((x, idx) => props.filterValue === "All" ||  x[props.filterSource] === props.filterValue)
+          .filter((x) => props.filterValue === "All" ||  x[props.filterSource] === props.filterValue)
           .map(renderTableListItem)
       }
     </>
