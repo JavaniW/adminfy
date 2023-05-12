@@ -1,6 +1,6 @@
 import '../../styles/TableList.css';
 
-import { useCallback, useEffect, useState } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 
 import GradeLevel, { GradeLevels, GradeLevelType } from '../../enums/GradeLevel';
 import { nameof } from '../../extensions';
@@ -11,6 +11,7 @@ import { AddEditModal } from '../common/AddEditModal';
 import StudentApi from '../../api/studentApi';
 import ModelType from '../../enums/ModelType';
 import { AddEditStudentForm } from './AddEditStudentForm';
+import { Action } from '../common/ActionMenu';
 
 export function StudentsPage() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
@@ -48,45 +49,16 @@ export function StudentsPage() {
 
   const addStudentButton = <button className="add-student-button"><p>New Student</p></button>;
 
-
-  // const data: Student[] = [
-  //   {
-  //     firstName: "Ham",
-  //     lastName: "Hooker",
-  //     dateOfBirth: "01/02/2004",
-  //     gradeLevel: GradeLevel.Ten,
-  //   },
-  //   {
-  //     firstName: "Tom",
-  //     lastName: "Tommy",
-  //     dateOfBirth: "03/13/2003",
-  //     gradeLevel: GradeLevel.Twelve,
-  //   },
-  //   {
-  //     firstName: "Sarah",
-  //     lastName: "Love",
-  //     dateOfBirth: "07/17/2002",
-  //     gradeLevel: GradeLevel.Twelve,
-  //   },
-  //   {
-  //     firstName: "Rusty",
-  //     lastName: "Bolt",
-  //     dateOfBirth: "12/20/2002",
-  //     gradeLevel: GradeLevel.Ten,
-  //   },
-  //   {
-  //     firstName: "Patrick",
-  //     lastName: "Star",
-  //     dateOfBirth: "02/20/2002",
-  //     gradeLevel: GradeLevel.Eleven,
-  //   },
-  //   {
-  //     firstName: "Luke",
-  //     lastName: "Skywalker",
-  //     dateOfBirth: "11/09/2000",
-  //     gradeLevel: GradeLevel.Nine,
-  //   },
-  // ];
+  const actions : Action[] = [
+    {
+      label: "edit",
+      action: () => alert("You want to edit")
+    },
+    {
+      label: "delete",
+      action: () => alert("You want to delete")
+    },
+  ];
 
   const headers: Header<Student>[] = [
     {
@@ -115,6 +87,11 @@ export function StudentsPage() {
     },
     ...GradeLevels.map(x => ({ label: x, value: x }))
   ]
+
+  const handleListItemClick = useCallback((event: SyntheticEvent) => {
+    
+  }, []);
+
   return (
     <div className="students-page" >
       <DynamicSelect value={selectedGrade} name='Grade Level' label={"Grade Level"} onSelectChange={handleSelectChange} arrayOfOptions={studentGradeOptions} />
@@ -123,10 +100,13 @@ export function StudentsPage() {
       </AddEditModal>
       <div className="table-list-page">
         <TableList
+          // onClick={}
+          key={nameof<Student>("_id")}
           data={students}
           headers={headers}
           filterSource={nameof<Student>("gradeLevel")}
           filterValue={selectedGrade}
+          actions={actions}
         />
       </div>
     </div>

@@ -6,6 +6,7 @@
 }
 
 .table-list-item {
+  table-layout: fixed;
   text-align: center;
   margin-bottom: 10px;
   width: 100%;
@@ -27,6 +28,8 @@
 .table-list-item-header {
   background-color: var(--primary-color);
 }
+
+
 
 .table-list-item-header tr th:last-child {
   border-top-right-radius: 10px;

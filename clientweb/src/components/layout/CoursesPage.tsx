@@ -49,53 +49,7 @@ const loadData = useCallback(() => {
     });
 }, []);
 
-// const teacher : Teacher = {
-//   image: "",
-//   firstName: "James",
-//   lastName: "Gunn",
-//   grade: GradeLevel.Nine,
-//   subject: CourseSubject.English
-// }
-
 useEffect(loadData, [loadData]);
-
-  // const _courses: Course[] = [
-  //   {
-  //     number: 1234,
-  //     name: "Intro to Science",
-  //     subject: CourseSubject.Science,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "Intro to Math",
-  //     subject: CourseSubject.Math,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "Intro to English",
-  //     subject: CourseSubject.English,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "Calc I",
-  //     subject: CourseSubject.Math,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "English I",
-  //     subject: CourseSubject.English,
-  //     teacher: teacher,
-  //     students: [],
-  //   }
-  // ];
 
   const headers: Header<Course>[] = [
     {
@@ -139,6 +93,7 @@ useEffect(loadData, [loadData]);
         </AddEditModal>
         <div className="table-list-page">
           <TableList
+            key={nameof<Course>("_id")}
             data={courses}
             headers={headers}
             filterSource={nameof<Course>("subject")}

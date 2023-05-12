@@ -23,9 +23,23 @@ export function useOutsideClick (callback : any) {
   export function useModalHooks() : [boolean, () => void] {
     const [visible, setVisible] = useState<boolean>(true);
 
-    const closeDrawer = useCallback((): void => {
+    const closeModal = useCallback((): void => {
         setVisible(false);
     }, [setVisible]);
 
-    return [visible, closeDrawer];
+    return [visible, closeModal];
   }
+
+  export function useLoadingState(initialState: boolean | (() => boolean) = false): [boolean, () => void, () => void, React.Dispatch<boolean>] {
+        const [loading, setLoading] = useState<boolean>(initialState);
+
+        const startLoading = useCallback((): void => {
+            setLoading(true);
+        }, []);
+
+        const doneLoading = useCallback((): void => {
+            setLoading(false);
+        }, []);
+
+        return [loading, startLoading, doneLoading, setLoading];
+    };

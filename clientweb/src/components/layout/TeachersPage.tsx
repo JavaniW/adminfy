@@ -93,6 +93,7 @@ export function TeachersPage() {
         <div className="table-list-page">
           <TeachersContext.Provider value={teachers} >
             <TableList
+              key={nameof<Teacher>("_id")}
               data={teachers}
               headers={headers}
               filterSource={nameof<Teacher>("grade")}

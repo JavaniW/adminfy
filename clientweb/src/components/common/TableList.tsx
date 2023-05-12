@@ -1,4 +1,5 @@
-import { ActionMenu } from './ActionMenu';
+import { SyntheticEvent } from 'react';
+import { Action, ActionMenu } from './ActionMenu';
 
 export interface Header<T> {
   label: string;
@@ -7,10 +8,13 @@ export interface Header<T> {
 }
 
 interface TableListProps<T extends Object> {
+  key: keyof T;
   data: T[];
   headers: Header<T>[];
   filterSource: keyof T;
   filterValue: any;
+  actions?: Action[];
+  onClick?: (event: SyntheticEvent) => any;
 }
 
 export function TableList<T extends Object>(props: TableListProps<T>) {
@@ -19,7 +23,7 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
 
   function renderTableListItem(item : T, key: number) {
     return (
-      <table key={key} className="table-list-item">
+      <table onClick={props.onClick} key={String(item[props.key])} className="table-list-item">
             <thead className="table-list-item-header">
             <tr>
                 {props.headers.map((header, idx) => (
@@ -28,7 +32,7 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
                         {header.label}
                     </th>
                 ))}
-                <ActionMenu />
+                {/* <ActionMenu actions={props.actions || []}/> */}
             </tr>
             </thead>
             <tbody className="table-list-item-body">
@@ -41,7 +45,6 @@ export function TableList<T extends Object>(props: TableListProps<T>) {
                     </td>
                   ))
                 }
-                <td></td>
               </tr>
             </tbody>
         </table>
