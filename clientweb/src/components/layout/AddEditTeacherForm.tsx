@@ -10,13 +10,13 @@ import { Teacher } from "../../models/Teacher";
 import { DynamicSelect } from "../common/DynamicSelect";
 import { TextInput } from "../common/TextInput";
 
-interface AddEditTeacherFormProps {
+interface Props {
   onAfterSubmit: () => any;
   teacher?: Teacher;
   edit: boolean;
 }
 
-export function AddEditTeacherForm(props: AddEditTeacherFormProps) {
+export const AddEditTeacherForm : React.FunctionComponent<Props> = (props) =>{
   const _teacher = props.edit
     ? props.teacher!
     : ({
@@ -29,15 +29,15 @@ export function AddEditTeacherForm(props: AddEditTeacherFormProps) {
 
   const [teacher, setTeacher] = useState<Teacher>(_teacher);
 
-  function handleLabelChange(event: ChangeEvent<any>) {
+  const handleLabelChange = (event: ChangeEvent<any>) => {
     setTeacher({ ...teacher, [event.target.name]: event.target.value });
   }
 
-  function handleSelectChange({ name, value }: { name: string; value: any }) {
+  const handleSelectChange = ({ name, value }: { name: string; value: any }) => {
     setTeacher({ ...teacher, [name]: value });
   }
 
-  function handleSubmit(event: SyntheticEvent) {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     TeacherApi.saveTeacher(teacher)
       .then(

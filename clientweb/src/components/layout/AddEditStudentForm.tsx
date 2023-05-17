@@ -7,13 +7,13 @@ import GradeLevel, { GradeLevels } from "../../enums/GradeLevel";
 import { toast } from "react-toastify";
 import { DateInput } from "../common/DateInput";
 
-interface AddEditStudentFormProps {
+interface Props {
   onAfterSubmit: () => void;
   student?: Student;
   edit: boolean;
 }
 
-export function AddEditStudentForm(props: AddEditStudentFormProps) {
+export const AddEditStudentForm : React.FunctionComponent<Props> = (props) => {
   const _student = props.edit
     ? props.student!
     : {
@@ -24,7 +24,7 @@ export function AddEditStudentForm(props: AddEditStudentFormProps) {
       };
   const [student, setStudent] = useState<Student>(_student);
 
-  function handleSubmit(event: SyntheticEvent) {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     StudentApi.saveStudent(student)
       .then(() => {
@@ -37,11 +37,11 @@ export function AddEditStudentForm(props: AddEditStudentFormProps) {
       .catch(console.error);
   }
 
-  function handleSelectChange({ name, value }: { name: string; value: any }) {
+  const handleSelectChange = ({ name, value }: { name: string; value: any }) => {
     setStudent({ ...student, [name]: value });
   }
 
-  function handleChange(event: ChangeEvent<any>) {
+  const handleChange = (event: ChangeEvent<any>) => {
     setStudent({ ...student, [event.target.name]: event.target.value });
   }
 

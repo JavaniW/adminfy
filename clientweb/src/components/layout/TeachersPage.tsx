@@ -13,7 +13,7 @@ import Modal from "../common/Modal";
 import { Header, TableList } from "../common/TableList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
 
-export function TeachersPage() {
+export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
     "All"
   );
@@ -137,4 +137,4 @@ export function TeachersPage() {
       </div>
     </>
   );
-}
+};

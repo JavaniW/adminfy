@@ -13,7 +13,7 @@ import Modal from "../common/Modal";
 import { Header, TableList } from "../common/TableList";
 import { AddEditCourseForm } from "./AddEditCourseForm";
 
-export function CoursesPage() {
+export const CoursesPage : React.FunctionComponent = () => {
   const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
     "All"
   );
@@ -30,7 +30,7 @@ export function CoursesPage() {
     });
   }, []);
 
-  function handleSelectChange({ value }: { value: string }) {
+  const handleSelectChange = ({ value }: { value: string }) => {
     setSelectedSubject(value as keyof Course | "All");
     setShowSubject(value === "All");
   }
@@ -41,7 +41,7 @@ export function CoursesPage() {
     setEdit(false);
   }, [loadData]);
 
-  function handleAfterSubmit() {
+  const handleAfterSubmit = () => {
     setOpenModal(false);
     loadData();
   }

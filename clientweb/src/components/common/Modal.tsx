@@ -7,7 +7,9 @@ interface Props {
   header: string;
 }
 
-export function Modal(props: PropsWithChildren<Props>) {
+export const Modal: React.FunctionComponent<PropsWithChildren<Props>> = (
+  props
+) => {
   const { onAfterClose } = props;
   useEffect(() => {
     return () => onAfterClose();
@@ -29,6 +31,6 @@ export function Modal(props: PropsWithChildren<Props>) {
       </div>
     </div>
   );
-}
+};
 
 export default Modal;

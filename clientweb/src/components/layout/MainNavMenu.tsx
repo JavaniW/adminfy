@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export function MainNavMenu(props : any) {
+export const MainNavMenu : React.FunctionComponent = () => {
 
     return (
         <ul className={`adminfy-main-nav-menu`}>

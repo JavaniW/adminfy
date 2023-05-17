@@ -1,8 +1,7 @@
-import { SyntheticEvent, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import "../../styles/ActionMenu.css";
-import { relative } from "path";
 
-interface ActionMenuProps {
+interface Props {
   actions: Action[];
 }
 
@@ -11,7 +10,7 @@ export interface Action {
   action: () => any;
 }
 
-export function ActionMenu(props: ActionMenuProps) {
+export const ActionMenu : React.FunctionComponent<Props> = (props) => {
   const [showActionMenu, setShowActionMenu] = useState<boolean>(false);
 
   const openActionMenu = useCallback(() => {

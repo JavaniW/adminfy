@@ -1,4 +1,4 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import CourseApi from "../../api/courseApi";
@@ -10,7 +10,7 @@ import { Teacher } from "../../models/Teacher";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import { TextInput } from "../common/TextInput";
 
-interface AddEditFormProps {
+interface Props {
   onAfterSubmit: () => any;
   course?: Course;
   edit: boolean;
@@ -18,7 +18,7 @@ interface AddEditFormProps {
 
 export type CourseDto = Omit<Course, "teacher"> & { teacher: string };
 
-export function AddEditCourseForm(props: AddEditFormProps) {
+export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
   const _course = props.edit
     ? ({
         ...props.course!,
@@ -42,15 +42,21 @@ export function AddEditCourseForm(props: AddEditFormProps) {
     });
   }, [course, props.course]);
 
-  function handleSelectChange({ name, value }: { name: string; value: any }) {
+  const handleSelectChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: any;
+  }) => {
     setCourse({ ...course, [name]: value });
-  }
+  };
 
-  function handleChange(event: ChangeEvent<any>) {
+  const handleChange = (event: ChangeEvent<any>) => {
     setCourse({ ...course, [event.target.name]: event.target.value });
-  }
+  };
 
-  function handleSubmit(event: SyntheticEvent) {
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     CourseApi.saveCourse(course)
       .then(() => {
@@ -61,7 +67,7 @@ export function AddEditCourseForm(props: AddEditFormProps) {
         props.onAfterSubmit();
       })
       .catch(console.error);
-  }
+  };
 
   const teacherOptionsReal: option[] = [
     {
@@ -140,4 +146,4 @@ export function AddEditCourseForm(props: AddEditFormProps) {
       />
     </form>
   );
-}
+};

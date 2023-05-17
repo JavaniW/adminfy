@@ -1,13 +1,14 @@
 import { ChangeEvent } from "react";
 import "../../styles/DateInput.css";
 
-interface DateInputProps {
+interface Props {
   label?: string;
   name: string;
   handleChange: (event: ChangeEvent<any>) => void;
   value: any;
 }
-export function DateInput(props: DateInputProps) {
+
+export const DateInput : React.FunctionComponent<Props> = (props) => {
   if (!props.label)
     return (
       <input

@@ -16,7 +16,7 @@ import Modal from "../common/Modal";
 import { Header, TableList } from "../common/TableList";
 import { AddEditStudentForm } from "./AddEditStudentForm";
 
-export function StudentsPage() {
+export const StudentsPage : React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
     "All"
   );
@@ -26,7 +26,7 @@ export function StudentsPage() {
   const [selectedStudent, setSelectedStudent] = useState<Student>();
   const [edit, setEdit] = useState<boolean>(false);
 
-  function handleSelectChange({ value }: { value: string }) {
+  const handleSelectChange = ({ value }: { value: string }) => {
     setSelectedGrade(value as GradeLevelType | "All");
     setShowGrade(value === "All");
   }

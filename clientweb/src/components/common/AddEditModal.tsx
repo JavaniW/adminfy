@@ -4,7 +4,7 @@ import React, { PropsWithChildren } from "react";
 
 import ModelType from "../../enums/ModelType";
 
-interface AddEditModalProps {
+interface Props {
   openModal: () => void;
   closeModal: () => void;
   form: ModelType;
@@ -12,7 +12,9 @@ interface AddEditModalProps {
   open: boolean;
 }
 
-export function AddEditModal(props: PropsWithChildren<AddEditModalProps>) {
+export const AddEditModal: React.FunctionComponent<PropsWithChildren<Props>> = (
+  props
+) => {
   return (
     <>
       {React.cloneElement(props.trigger, {
@@ -39,4 +41,4 @@ export function AddEditModal(props: PropsWithChildren<AddEditModalProps>) {
       )}
     </>
   );
-}
+};
