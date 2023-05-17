@@ -1,98 +1,143 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-import CourseApi from '../../api/courseApi';
-import CourseSubject, { CourseSubjects } from '../../enums/CourseSubject';
-import { Course } from '../../models/Course';
-import { Teacher } from '../../models/Teacher';
-import { TextInput } from '../common/TextInput';
-import TeacherApi from '../../api/teacherApi';
-import { DynamicSelect, option } from '../common/DynamicSelect';
+import CourseApi from "../../api/courseApi";
+import TeacherApi from "../../api/teacherApi";
+import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
+import { getFullName } from "../../helpers";
+import { Course } from "../../models/Course";
+import { Teacher } from "../../models/Teacher";
+import { DynamicSelect, option } from "../common/DynamicSelect";
+import { TextInput } from "../common/TextInput";
 
 interface AddEditFormProps {
-    onAfterSubmit : () => any;
+  onAfterSubmit: () => any;
+  course?: Course;
+  edit: boolean;
 }
 
-export type CourseDto = Omit<Course, "teacher"> & { teacher: string}
+export type CourseDto = Omit<Course, "teacher"> & { teacher: string };
 
-export function AddEditCourseForm(props: AddEditFormProps) { 
-    const [course, setCourse] = useState<CourseDto>(
-        {
-            number: "",
-            name: "",
-            teacher: "",
-            subject: "" as CourseSubject,
-            students: []
-        }
-    );
+export function AddEditCourseForm(props: AddEditFormProps) {
+  const _course = props.edit
+    ? ({
+        ...props.course!,
+        teacher: getFullName(props.course!.teacher, "firstName", "lastName"),
+      } as CourseDto)
+    : {
+        number: "",
+        name: "",
+        teacher: "",
+        subject: "" as CourseSubject,
+        students: [],
+      };
 
-    const [_teacherOptions, setTeacherOptions] = useState<Teacher[]>([]);
+  const [course, setCourse] = useState<CourseDto>(_course);
 
-    useEffect(() => {
-        TeacherApi.getTeachers()
-            .then(res => {
-                setTeacherOptions(res);
-            })
-    }, [])
+  const [_teacherOptions, setTeacherOptions] = useState<Teacher[]>([]);
 
-    function handleSelectChange ({name, value} : {name: string, value: any}) {
-        setCourse({...course, [name]: value});
-    };
+  useEffect(() => {
+    TeacherApi.getTeachers().then((res) => {
+      setTeacherOptions(res);
+    });
+  }, [course, props.course]);
 
-    function handleChange (event : ChangeEvent<any>) {
-        setCourse({...course, [event.target.name]: event.target.value});
-    };
+  function handleSelectChange({ name, value }: { name: string; value: any }) {
+    setCourse({ ...course, [name]: value });
+  }
 
-    function handleSubmit(event : SyntheticEvent) {
-        event.preventDefault();
-        console.log(course);
-        CourseApi.saveCourse(course)
-            .then((addedCourse : Course) => {
-                console.log(addedCourse);
-                toast("successfully added", {
-                    position: "top-right",
-                    autoClose: 3000
-                });
-                props.onAfterSubmit();
-            })
-            .catch(console.error);
-    }
+  function handleChange(event: ChangeEvent<any>) {
+    setCourse({ ...course, [event.target.name]: event.target.value });
+  }
 
-    const teacherOptionsReal : option[] = [
-        {
-            label: "",
-            value: {}
-        },
-        ..._teacherOptions
-        .filter(x => x.subject === course.subject)
-        .map(x => (
-            {
-                label: x.firstName + " " + x.lastName,
-                value: x._id
-            } as option
-        ))
-    ];
+  function handleSubmit(event: SyntheticEvent) {
+    event.preventDefault();
+    CourseApi.saveCourse(course)
+      .then(() => {
+        toast("successfully added", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        props.onAfterSubmit();
+      })
+      .catch(console.error);
+  }
 
-    const courseSubjectOptions : option[] = [
-        {
-            label: "",
-            value: ""
-        },
-        ...CourseSubjects
-        .map(x => (
-            {
-                label: x,
-                value: x
-            } as option
-        ))
-    ]
+  const teacherOptionsReal: option[] = [
+    {
+      label: "",
+      value: {},
+    },
+    ..._teacherOptions
+      .filter((x) => x.subject === course.subject)
+      .map(
+        (x) =>
+          ({
+            label: x.firstName + " " + x.lastName,
+            value: x._id,
+          } as option)
+      ),
+  ];
 
-    return (
-        <form onSubmit={handleSubmit} id="add-edit-course-form" className="add-edit-form course-form">
-            <TextInput label='Number:' handleChange={handleChange} value={course.number} name='number' required={true}/>
-            <TextInput label='Name:' handleChange={handleChange} value={course.name} name='name' required={true}/>
-            <DynamicSelect label="Subject" name='subject' onSelectChange={handleSelectChange} arrayOfOptions={courseSubjectOptions} value={course.subject}/>
-            <DynamicSelect label="Teacher" name='teacher' onSelectChange={handleSelectChange} arrayOfOptions={teacherOptionsReal} value={course.teacher}/>
-        </form>
-    )
+  const courseSubjectOptions: option[] = [
+    {
+      label: "",
+      value: "",
+    },
+    ...CourseSubjects.map(
+      (x) =>
+        ({
+          label: x,
+          value: x,
+        } as option)
+    ),
+  ];
+
+  useEffect(() => {
+    //   debugger;
+    //   const propVal = getFullName(props.course!.teacher, "firstName", "lastName");
+    //   const controlVal = course.teacher;
+    //   console.log(`props course teacher value: ${propVal}`);
+    //   console.log(`Controlled value :  ${controlVal}`);
+    //   console.log(`Are they equal: ${propVal === controlVal}`);
+    console.log(props.course);
+    console.log(props.edit);
+  }, [props.edit, props.course]);
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      id="add-edit-course-form"
+      className="add-edit-form course-form"
+    >
+      <TextInput
+        label="Number:"
+        handleChange={handleChange}
+        value={course.number}
+        name="number"
+        required={true}
+      />
+      <TextInput
+        label="Name:"
+        handleChange={handleChange}
+        value={course.name}
+        name="name"
+        required={true}
+      />
+      <DynamicSelect
+        label="Subject"
+        name="subject"
+        onSelectChange={handleSelectChange}
+        arrayOfOptions={courseSubjectOptions}
+        value={course.subject}
+      />
+      <DynamicSelect
+        label="Teacher"
+        name="teacher"
+        onSelectChange={handleSelectChange}
+        arrayOfOptions={teacherOptionsReal}
+        value={course.teacher}
+      />
+    </form>
+  );
 }
