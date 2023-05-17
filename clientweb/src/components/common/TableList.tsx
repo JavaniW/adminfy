@@ -1,8 +1,8 @@
 import { SyntheticEvent } from "react";
-import { Action, ActionMenu } from "./ActionMenu";
-import { Teacher } from "../../models/Teacher";
-import Student from "../../models/Student";
 import { Course } from "../../models/Course";
+import Student from "../../models/Student";
+import { Teacher } from "../../models/Teacher";
+import { Action } from "./ActionMenu";
 
 type TableListModel = Teacher | Student | Course;
 export interface Header<T> {

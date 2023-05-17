@@ -11,6 +11,7 @@ interface OptionProps {
 }
 
 interface Props {
+  disabled?: boolean;
   label?: string | number;
   id?: string;
   name: string;
@@ -33,6 +34,7 @@ export const DynamicSelect: React.FunctionComponent<Props> & {
   if (!props.label)
     return (
       <select
+        disabled={!!props.disabled}
         id={props.id}
         className="select"
         value={props.value}
@@ -52,6 +54,7 @@ export const DynamicSelect: React.FunctionComponent<Props> & {
       <label>
         <p>{props.label}</p>
         <select
+          disabled={!!props.disabled}
           id={props.id}
           value={props.value}
           onChange={handleChange}

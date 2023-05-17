@@ -1,55 +1,42 @@
 import "../../styles/TableList.css";
 
-import { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import { SyntheticEvent, useCallback, useState } from "react";
 
-import StudentApi from "../../api/studentApi";
-import {
-  GradeLevels,
-  GradeLevelType,
-} from "../../enums/GradeLevel";
+import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
 import { nameof } from "../../extensions";
 import { useModalHooks } from "../../hooks/customHooks";
 import Student from "../../models/Student";
+import { useGetStudentsQuery } from "../../redux/apiSlice";
 import { Action } from "../common/ActionMenu";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import Modal from "../common/Modal";
+import { Spinner } from "../common/Spinner";
 import { Header, TableList } from "../common/TableList";
 import { AddEditStudentForm } from "./AddEditStudentForm";
 
-export const StudentsPage : React.FunctionComponent = () => {
+export const StudentsPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
     "All"
   );
   const [showGrade, setShowGrade] = useState<boolean>(true);
   const [openModal, setOpenModal, closeModal] = useModalHooks();
-  const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student>();
   const [edit, setEdit] = useState<boolean>(false);
+  const { data: students, isLoading } = useGetStudentsQuery();
 
   const handleSelectChange = ({ value }: { value: string }) => {
     setSelectedGrade(value as GradeLevelType | "All");
     setShowGrade(value === "All");
-  }
-
-  const loadData = useCallback(() => {
-    StudentApi.getStudents().then((results) => {
-      const _students = results.map((x: Student) => x as Student);
-      setStudents(_students);
-    });
-  }, []);
+  };
 
   const handleAfterCloseModal = useCallback(() => {
-    loadData();
     setSelectedStudent(undefined);
     setEdit(false);
-  }, [loadData]);
-
-  useEffect(loadData, [loadData]);
+  }, []);
 
   const handleAfterSubmit = useCallback(() => {
     closeModal();
-    loadData();
-  }, [closeModal, loadData]);
+  }, [closeModal]);
 
   const actions: Action[] = [
     {
@@ -92,7 +79,7 @@ export const StudentsPage : React.FunctionComponent = () => {
 
   const handleListItemClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
-      const studentToEdit = students.find(
+      const studentToEdit = students!.find(
         (x) => x._id === event.currentTarget.dataset!.id
       );
       setEdit(true);
@@ -105,13 +92,18 @@ export const StudentsPage : React.FunctionComponent = () => {
   return (
     <div className="students-page">
       <DynamicSelect
+        disabled={isLoading}
         value={selectedGrade}
         name="Grade Level"
         label={"Grade Level"}
         onSelectChange={handleSelectChange}
         arrayOfOptions={studentGradeOptions}
       />
-      <button onClick={() => setOpenModal(true)} className="add-student-button">
+      <button
+        disabled={isLoading}
+        className="add-student-button"
+        onClick={() => setOpenModal(true)}
+      >
         <p>New Student</p>
       </button>
       {openModal && (
@@ -128,16 +120,19 @@ export const StudentsPage : React.FunctionComponent = () => {
         </Modal>
       )}
       <div className="table-list-page">
-        <TableList
-          onClick={handleListItemClick}
-          key={nameof<Student>("_id")}
-          data={students}
-          headers={headers}
-          filterSource={nameof<Student>("gradeLevel")}
-          filterValue={selectedGrade}
-          actions={actions}
-        />
+        {isLoading && <Spinner />}
+        {students && (
+          <TableList
+            onClick={handleListItemClick}
+            key={nameof<Student>("_id")}
+            data={students}
+            headers={headers}
+            filterSource={nameof<Student>("gradeLevel")}
+            filterValue={selectedGrade}
+            actions={actions}
+          />
+        )}
       </div>
     </div>
   );
-}
+};

@@ -5,7 +5,7 @@ import CourseApi from "../../api/courseApi";
 import TeacherApi from "../../api/teacherApi";
 import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
 import { getFullName } from "../../helpers";
-import { Course } from "../../models/Course";
+import { Course, CourseQuery } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import { TextInput } from "../common/TextInput";
@@ -14,16 +14,15 @@ interface Props {
   onAfterSubmit: () => any;
   course?: Course;
   edit: boolean;
+  teachers: Teacher[];
 }
-
-export type CourseDto = Omit<Course, "teacher"> & { teacher: string };
 
 export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
   const _course = props.edit
     ? ({
         ...props.course!,
         teacher: getFullName(props.course!.teacher, "firstName", "lastName"),
-      } as CourseDto)
+      } as CourseQuery)
     : {
         number: "",
         name: "",
@@ -32,15 +31,16 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         students: [],
       };
 
-  const [course, setCourse] = useState<CourseDto>(_course);
+  const [course, setCourse] = useState<CourseQuery>(_course);
 
   const [_teacherOptions, setTeacherOptions] = useState<Teacher[]>([]);
 
-  useEffect(() => {
-    TeacherApi.getTeachers().then((res) => {
-      setTeacherOptions(res);
-    });
-  }, [course, props.course]);
+
+  // useEffect(() => {
+  //   TeacherApi.getTeachers().then((res) => {
+  //     setTeacherOptions(res);
+  //   });
+  // }, [course, props.course]);
 
   const handleSelectChange = ({
     name,
@@ -74,7 +74,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       label: "",
       value: {},
     },
-    ..._teacherOptions
+    ...props.teachers
       .filter((x) => x.subject === course.subject)
       .map(
         (x) =>
@@ -99,16 +99,10 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     ),
   ];
 
-  useEffect(() => {
-    //   debugger;
-    //   const propVal = getFullName(props.course!.teacher, "firstName", "lastName");
-    //   const controlVal = course.teacher;
-    //   console.log(`props course teacher value: ${propVal}`);
-    //   console.log(`Controlled value :  ${controlVal}`);
-    //   console.log(`Are they equal: ${propVal === controlVal}`);
-    console.log(props.course);
-    console.log(props.edit);
-  }, [props.edit, props.course]);
+  // useEffect(() => {
+  //   console.log(props.course);
+  //   console.log(props.edit);
+  // }, []);
 
   return (
     <form

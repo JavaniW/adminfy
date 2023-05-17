@@ -1,15 +1,15 @@
 import "../../styles/TeachersPage.css";
 
-import { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import { SyntheticEvent, useCallback, useState } from "react";
 
-import TeacherApi from "../../api/teacherApi";
-import { TeachersContext } from "../../Context";
 import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
 import { nameof } from "../../extensions";
 import { useModalHooks } from "../../hooks/customHooks";
 import { Teacher } from "../../models/Teacher";
+import { useGetTeachersQuery } from "../../redux/apiSlice";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import Modal from "../common/Modal";
+import { Spinner } from "../common/Spinner";
 import { Header, TableList } from "../common/TableList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
 
@@ -18,33 +18,32 @@ export const TeachersPage: React.FunctionComponent = () => {
     "All"
   );
   const [showGrade, setShowGrade] = useState<boolean>(true);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
   const [edit, setEdit] = useState<boolean>(false);
-
-  const loadData = useCallback(() => {
-    TeacherApi.getTeachers().then((results) => {
-      const _teachers = results.map((x: Teacher) => x as Teacher);
-      setTeachers(_teachers);
-    });
-  }, []);
+  const {
+    data: teachers,
+    isLoading,
+    // isFetching,
+    // isSuccess,
+    // isError,
+    // error,
+  } = useGetTeachersQuery();
 
   const handleAfterCloseModal = useCallback(() => {
-    loadData();
     setSelectedTeacher(undefined);
     setEdit(false);
-  }, [loadData]);
+  }, []);
 
   const handleAfterSubmit = useCallback(() => {
     closeModal();
-    loadData();
+    // loadData();
     // addEditForm!.current.reset();
-  }, [closeModal, loadData]);
+  }, [closeModal]);
 
   const handleTableListItemClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
-      const teacherToEdit = teachers.find(
+      const teacherToEdit = teachers!.find(
         (x) => x._id === event.currentTarget.dataset!.id
       );
       setEdit(true);
@@ -53,8 +52,6 @@ export const TeachersPage: React.FunctionComponent = () => {
     },
     [setOpenModal, teachers]
   );
-
-  useEffect(loadData, [loadData]);
 
   const handleGradeChange = useCallback(({ value }: { value: any }) => {
     setSelectedGrade(value);
@@ -97,6 +94,7 @@ export const TeachersPage: React.FunctionComponent = () => {
     <>
       <div className="teachers-page">
         <DynamicSelect
+          disabled={isLoading}
           label={"Grade"}
           name="Grade"
           value={selectedGrade}
@@ -104,6 +102,7 @@ export const TeachersPage: React.FunctionComponent = () => {
           arrayOfOptions={gradeOptions}
         />
         <button
+          disabled={isLoading}
           className="add-teacher-button"
           onClick={() => setOpenModal(true)}
         >
@@ -123,7 +122,8 @@ export const TeachersPage: React.FunctionComponent = () => {
           </Modal>
         )}
         <div className="table-list-page">
-          <TeachersContext.Provider value={teachers}>
+          {isLoading && <Spinner />}
+          {teachers && (
             <TableList
               onClick={handleTableListItemClick}
               key={nameof<Teacher>("_id")}
@@ -132,7 +132,7 @@ export const TeachersPage: React.FunctionComponent = () => {
               filterSource={nameof<Teacher>("grade")}
               filterValue={selectedGrade}
             />
-          </TeachersContext.Provider>
+          )}
         </div>
       </div>
     </>

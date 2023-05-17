@@ -1,6 +1,6 @@
-import CourseSubject from '../enums/CourseSubject';
-import { Teacher } from './Teacher';
-import Student from './Student';
+import CourseSubject from "../enums/CourseSubject";
+import { Teacher } from "./Teacher";
+import Student from "./Student";
 
 export interface Course {
   _id?: string | number;
@@ -10,3 +10,5 @@ export interface Course {
   subject: CourseSubject;
   students: Student[];
 }
+
+export type CourseQuery = Omit<Course, "teacher"> & { teacher: string };
