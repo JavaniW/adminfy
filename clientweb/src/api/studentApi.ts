@@ -16,7 +16,7 @@ export function getStudentById(id : number) {
 }
 
 export function saveStudent(student : Student) {
-    return fetch(BASE_URL + (student._id || ""), {
+    return fetch(BASE_URL + "/" + (student._id || ""), {
         method: student._id ? "PUT" : "POST",
         headers: {"content-type": "application/json"},
         body: JSON.stringify(student)

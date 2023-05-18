@@ -1,13 +1,13 @@
-import './styles/App.css';
+import "./styles/App.css";
 
-import React from 'react';
-import { Route, Routes } from 'react-router';
+import React from "react";
+import { Route, Routes } from "react-router";
 
-import { CoursesPage } from './components/layout/CoursesPage';
-import Dashboard from './components/layout/Dashboard';
-import { TeachersPage } from './components/layout/TeachersPage';
-import { MainNav } from './components/layout/MainNav';
-import { StudentsPage } from './components/layout/StudentsPage';
+import { CoursesPage } from "./components/layout/CoursesPage";
+import Dashboard from "./components/layout/Dashboard";
+import { TeachersPage } from "./components/layout/TeachersPage";
+import { MainNav } from "./components/layout/MainNav";
+import { StudentsPage } from "./components/layout/StudentsPage";
 
 function App() {
   return (

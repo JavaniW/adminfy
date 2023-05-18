@@ -1,98 +1,142 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-import CourseApi from '../../api/courseApi';
-import CourseSubject, { CourseSubjects } from '../../enums/CourseSubject';
-import { Course } from '../../models/Course';
-import { Teacher } from '../../models/Teacher';
-import { TextInput } from '../common/TextInput';
-import TeacherApi from '../../api/teacherApi';
-import { DynamicSelect, option } from '../common/DynamicSelect';
+import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
+import { Course, CourseQuery } from "../../models/Course";
+import { Teacher } from "../../models/Teacher";
+import { useSaveCourseMutation } from "../../redux/apiSlice";
+import { DynamicSelect, option } from "../common/DynamicSelect";
+import { Spinner } from "../common/Spinner";
+import { TextInput } from "../common/TextInput";
 
-interface AddEditFormProps {
-    onAfterSubmit : () => any;
+interface Props {
+  onAfterSubmit: () => any;
+  course?: Course;
+  edit: boolean;
+  teachers: Teacher[];
 }
 
-export type CourseDto = Omit<Course, "teacher"> & { teacher: string}
-
-export function AddEditCourseForm(props: AddEditFormProps) { 
-    const [course, setCourse] = useState<CourseDto>(
-        {
-            number: "",
-            name: "",
-            teacher: "",
-            subject: "" as CourseSubject,
-            students: []
+export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
+  const [course, setCourse] = useState<CourseQuery>(
+    props.edit
+      ? ({
+          ...props.course!,
+          teacher: props.course!.teacher._id,
+        } as CourseQuery)
+      : {
+          _id: "",
+          number: "",
+          name: "",
+          teacher: "",
+          subject: "" as CourseSubject,
+          students: [],
         }
-    );
+  );
 
-    const [_teacherOptions, setTeacherOptions] = useState<Teacher[]>([]);
+  useEffect(() => {
+    console.log(`Starting course:`);
+    console.log(course);
+  }, []);
 
-    useEffect(() => {
-        TeacherApi.getTeachers()
-            .then(res => {
-                setTeacherOptions(res);
-            })
-    }, [])
+  const [saveCourse, { isLoading }] = useSaveCourseMutation();
 
-    function handleSelectChange ({name, value} : {name: string, value: any}) {
-        setCourse({...course, [name]: value});
-    };
+  const handleSelectChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: any;
+  }) => {
+    setCourse({ ...course, [name]: value });
+  };
 
-    function handleChange (event : ChangeEvent<any>) {
-        setCourse({...course, [event.target.name]: event.target.value});
-    };
+  const handleChange = (event: ChangeEvent<any>) => {
+    setCourse({ ...course, [event.target.name]: event.target.value });
+  };
 
-    function handleSubmit(event : SyntheticEvent) {
-        event.preventDefault();
-        console.log(course);
-        CourseApi.saveCourse(course)
-            .then((addedCourse : Course) => {
-                console.log(addedCourse);
-                toast("successfully added", {
-                    position: "top-right",
-                    autoClose: 3000
-                });
-                props.onAfterSubmit();
-            })
-            .catch(console.error);
-    }
+  const handleSubmit = (event: SyntheticEvent) => {
+    event.preventDefault();
+    console.log(`Final course:`);
+    console.log(course);
+    saveCourse(course)
+      .unwrap()
+      .then(() => {
+        toast("successfully added", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        props.onAfterSubmit();
+      })
+      .catch(console.error);
+  };
 
-    const teacherOptionsReal : option[] = [
-        {
-            label: "",
-            value: {}
-        },
-        ..._teacherOptions
-        .filter(x => x.subject === course.subject)
-        .map(x => (
-            {
-                label: x.firstName + " " + x.lastName,
-                value: x._id
-            } as option
-        ))
-    ];
+  const teacherOptionsReal: option[] = [
+    {
+      label: "",
+      value: {},
+    },
+    ...props.teachers
+      .filter((x) => x.subject === course.subject)
+      .map(
+        (x) =>
+          ({
+            label: x.firstName + " " + x.lastName,
+            value: x._id,
+          } as option)
+      ),
+  ];
 
-    const courseSubjectOptions : option[] = [
-        {
-            label: "",
-            value: ""
-        },
-        ...CourseSubjects
-        .map(x => (
-            {
-                label: x,
-                value: x
-            } as option
-        ))
-    ]
+  const courseSubjectOptions: option[] = [
+    {
+      label: "",
+      value: "",
+    },
+    ...CourseSubjects.map(
+      (x) =>
+        ({
+          label: x,
+          value: x,
+        } as option)
+    ),
+  ];
 
-    return (
-        <form onSubmit={handleSubmit} id="add-edit-course-form" className="add-edit-form course-form">
-            <TextInput label='Number:' handleChange={handleChange} value={course.number} name='number' required={true}/>
-            <TextInput label='Name:' handleChange={handleChange} value={course.name} name='name' required={true}/>
-            <DynamicSelect label="Subject" name='subject' onSelectChange={handleSelectChange} arrayOfOptions={courseSubjectOptions} value={course.subject}/>
-            <DynamicSelect label="Teacher" name='teacher' onSelectChange={handleSelectChange} arrayOfOptions={teacherOptionsReal} value={course.teacher}/>
-        </form>
-    )
-}
+  if (isLoading) return <Spinner />;
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      id="add-edit-course-form"
+      className="add-edit-form course-form"
+    >
+      <TextInput
+        label="Number:"
+        handleChange={handleChange}
+        value={course.number}
+        name="number"
+        required={true}
+      />
+      <TextInput
+        label="Name:"
+        handleChange={handleChange}
+        value={course.name}
+        name="name"
+        required={true}
+      />
+      <DynamicSelect
+        label="Subject"
+        name="subject"
+        onSelectChange={handleSelectChange}
+        arrayOfOptions={courseSubjectOptions}
+        value={course.subject}
+      />
+      <DynamicSelect
+        label="Teacher"
+        name="teacher"
+        onSelectChange={handleSelectChange}
+        arrayOfOptions={teacherOptionsReal}
+        value={course.teacher}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+};

@@ -1,33 +1,28 @@
-import '../../styles/MainNav.css';
+import "../../styles/MainNav.css";
 
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet } from "react-router-dom";
 
-import { Dropdown } from '../common/Dropdown';
+import { Dropdown } from "../common/Dropdown";
 
-interface MainNavProps {
+interface Props {
   navItemOptions: string[];
 }
 
 const isMobile: boolean = true;
 
-export function MainNav(props: MainNavProps) {
-
-  const dropdownIcon = <img
-          className="adminfy-main-nav-hamburger-icon"
-          src={`/icons8-menu-24.png`}
-          alt="hamburger menu"
-  />;
+export const MainNav: React.FunctionComponent<Props> = (props) => {
+  const dropdownIcon = (
+    <img
+      className="adminfy-main-nav-hamburger-icon"
+      src={`/icons8-menu-24.png`}
+      alt="hamburger menu"
+    />
+  );
 
   const menu = [
-    <Link to={"/teacher"}>
-      Teacher
-    </Link>,
-    <Link to={"/courses"}>
-      Courses
-    </Link>,
-    <Link to={"/students"}>
-      Students
-    </Link>
+    <Link to={"/teacher"}>Teacher</Link>,
+    <Link to={"/courses"}>Courses</Link>,
+    <Link to={"/students"}>Students</Link>,
   ];
 
   return (
@@ -62,4 +57,4 @@ export function MainNav(props: MainNavProps) {
       </main>
     </>
   );
-}
+};

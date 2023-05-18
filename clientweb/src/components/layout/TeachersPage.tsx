@@ -1,106 +1,131 @@
-import '../../styles/TeachersPage.css';
+import "../../styles/TeachersPage.css";
 
-import { useCallback, useEffect, useState } from 'react';
+import { SyntheticEvent, useCallback, useState } from "react";
 
-import TeacherApi from '../../api/teacherApi';
-import { GradeLevels, GradeLevelType } from '../../enums/GradeLevel';
-import ModelType from '../../enums/ModelType';
-import { nameof } from '../../extensions';
-import { Teacher } from '../../models/Teacher';
-import { AddEditModal } from '../common/AddEditModal';
-import { AddEditTeacherForm } from './AddEditTeacherForm';
-import { Header, TableList } from '../common/TableList';
-import { TeachersContext } from '../../Context';
-import { DynamicSelect, option } from '../common/DynamicSelect';
+import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
+import { nameof } from "../../extensions";
+import { useModalHooks } from "../../hooks/customHooks";
+import { Teacher } from "../../models/Teacher";
+import { useGetTeachersQuery } from "../../redux/apiSlice";
+import { DynamicSelect, option } from "../common/DynamicSelect";
+import Modal from "../common/Modal";
+import { Spinner } from "../common/Spinner";
+import { Header, TableList } from "../common/TableList";
+import { AddEditTeacherForm } from "./AddEditTeacherForm";
 
-export function TeachersPage() {
-  const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">("All");
+export const TeachersPage: React.FunctionComponent = () => {
+  const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
+    "All"
+  );
   const [showGrade, setShowGrade] = useState<boolean>(true);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [openModal, setOpenModal, closeModal] = useModalHooks();
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
+  const [edit, setEdit] = useState<boolean>(false);
+  const { data: teachers, isLoading } = useGetTeachersQuery();
 
-  const loadData = useCallback(() => {
-    TeacherApi.getTeachers()
-      .then(results => {
-        const _teachers = results.map((x : Teacher )=> x as Teacher);
-        setTeachers(_teachers);
-      });
+  const handleAfterCloseModal = useCallback(() => {
+    setSelectedTeacher(undefined);
+    setEdit(false);
   }, []);
 
-  const handleOpenModal = useCallback(() => {
-      setOpenModal(true);
-    }, [setOpenModal]);
-
-  const handleCloseModal = useCallback(() => {
-      setOpenModal(false);
-    }, [setOpenModal]);
-
   const handleAfterSubmit = useCallback(() => {
-    setOpenModal(false);
-    loadData();
-  }, [loadData]);
+    closeModal();
+  }, [closeModal]);
 
+  const handleTableListItemClick = useCallback(
+    (event: SyntheticEvent<HTMLTableElement>) => {
+      const teacherToEdit = teachers!.find(
+        (x) => x._id === event.currentTarget.dataset!.id
+      );
+      setEdit(true);
+      setSelectedTeacher(teacherToEdit);
+      setOpenModal(true);
+    },
+    [setOpenModal, teachers]
+  );
 
-  useEffect(loadData, [loadData]);
-
-  const handleSelectChange = useCallback(({name, value} : {name: string, value: any}) => {
-    // debugger;
+  const handleGradeChange = useCallback(({ value }: { value: any }) => {
     setSelectedGrade(value);
     setShowGrade(value === "All");
-  }, [])
-
-  const addTeacherButton = <button className="add-teacher-button"><p>New Teacher</p></button>;
+  }, []);
 
   const headers: Header<Teacher>[] = [
     {
       label: "",
-      referenceData: (x : Teacher) => <img src={x.image} alt={"Teacher"} />
+      referenceData: (x: Teacher) => <img src={x.image} alt={"Teacher"} />,
     },
     {
       label: "First Name",
-      referenceData: (x : Teacher) => x.firstName
+      referenceData: (x: Teacher) => x.firstName,
     },
     {
       label: "Last Name",
-      referenceData: (x : Teacher) => x.lastName
+      referenceData: (x: Teacher) => x.lastName,
     },
     {
       label: "Subject",
-      referenceData: (x : Teacher) => x.subject
+      referenceData: (x: Teacher) => x.subject,
     },
     {
       label: "Grade",
-      referenceData: (x : Teacher) => x.grade,
-      show: () => showGrade
-    }
-  ]
+      referenceData: (x: Teacher) => x.grade,
+      show: () => showGrade,
+    },
+  ];
 
-  const gradeOptions : option[] = [
+  const gradeOptions: option[] = [
     {
       label: "All",
       value: "All",
     },
-    ...GradeLevels.map(x => ({label: x, value: x}))
+    ...GradeLevels.map((x) => ({ label: x, value: x })),
   ];
 
   return (
     <>
-    <div className="teachers-page">
-      <DynamicSelect label={"Grade"} name='Grade' value={selectedGrade} onSelectChange={handleSelectChange} arrayOfOptions={gradeOptions} />
-          <AddEditModal openModal={handleOpenModal} closeModal={handleCloseModal} open={openModal} form={ModelType.Teacher} trigger={addTeacherButton}>
-            <AddEditTeacherForm onAfterSubmit={handleAfterSubmit} />
-          </AddEditModal>
+      <div className="teachers-page">
+        <DynamicSelect
+          disabled={isLoading}
+          label={"Grade"}
+          name="Grade"
+          value={selectedGrade}
+          onSelectChange={handleGradeChange}
+          arrayOfOptions={gradeOptions}
+        />
+        <button
+          disabled={isLoading}
+          className="add-teacher-button"
+          onClick={() => setOpenModal(true)}
+        >
+          <p>Add Teacher +</p>
+        </button>
+        {openModal && (
+          <Modal
+            requestClose={closeModal}
+            header="Add Teacher"
+            onAfterClose={handleAfterCloseModal}
+          >
+            <AddEditTeacherForm
+              onAfterSubmit={handleAfterSubmit}
+              teacher={selectedTeacher}
+              edit={edit}
+            />
+          </Modal>
+        )}
         <div className="table-list-page">
-          <TeachersContext.Provider value={teachers} >
+          {isLoading && <Spinner />}
+          {teachers && (
             <TableList
+              onClick={handleTableListItemClick}
+              key={nameof<Teacher>("_id")}
               data={teachers}
               headers={headers}
               filterSource={nameof<Teacher>("grade")}
               filterValue={selectedGrade}
-              />
-          </TeachersContext.Provider>
+            />
+          )}
         </div>
-    </div>
-              </>
+      </div>
+    </>
   );
-}
+};

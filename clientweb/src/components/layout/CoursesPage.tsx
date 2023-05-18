@@ -1,150 +1,134 @@
-import '../../styles/CoursesPage.css';
 import "../../styles/AddEditModal.css";
+import "../../styles/CoursesPage.css";
 
-import { useCallback, useEffect, useState } from 'react';
+import { SyntheticEvent, useCallback, useState } from "react";
 
-import CourseApi from '../../api/courseApi';
-import ModelType from '../../enums/ModelType';
-import { nameof } from '../../extensions';
-import { Course } from '../../models/Course';
-import { AddEditCourseForm } from './AddEditCourseForm';
-import { AddEditModal } from '../common/AddEditModal';
-import { Header, TableList } from '../common/TableList';
-import { DynamicSelect, option } from '../common/DynamicSelect';
-import { CourseSubjects } from '../../enums/CourseSubject';
+import { CourseSubjects } from "../../enums/CourseSubject";
+import { nameof } from "../../extensions";
+import { useModalHooks } from "../../hooks/customHooks";
+import { Course } from "../../models/Course";
+import { useGetCoursesQuery, useGetTeachersQuery } from "../../redux/apiSlice";
+import { DynamicSelect, option } from "../common/DynamicSelect";
+import Modal from "../common/Modal";
+import { Spinner } from "../common/Spinner";
+import { Header, TableList } from "../common/TableList";
+import { AddEditCourseForm } from "./AddEditCourseForm";
 
-export function CoursesPage() {
+export const CoursesPage: React.FunctionComponent = () => {
   const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
     "All"
   );
   const [showSubject, setShowSubject] = useState<boolean>(true);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [openModal, setOpenModal, closeModal] = useModalHooks();
+  const [selectedCourse, setSelectedCourse] = useState<Course>();
+  const [edit, setEdit] = useState<boolean>(false);
+  const { data: courses, isLoading: isLoadingCourses } = useGetCoursesQuery();
+  const { data: teachers, isLoading: isLoadingTeachers } =
+    useGetTeachersQuery();
 
-  const addCourseButton = <button className="add-course-button"><p>New Course</p></button>;
-
-  function handleSelectChange({value} : {value: string}) {
+  const handleSelectChange = ({ value }: { value: string }) => {
     setSelectedSubject(value as keyof Course | "All");
     setShowSubject(value === "All");
-  }
-
-  function handleOpenModal() {
-    setOpenModal(true);
   };
 
-  const handleCloseModal = useCallback(() => {
+  const handleAfterCloseModal = useCallback(() => {
+    setSelectedCourse(undefined);
+    setEdit(false);
+  }, []);
+
+  const handleAfterSubmit = () => {
     setOpenModal(false);
-  }, [setOpenModal]);
+  };
 
-function handleAfterSubmit() {
-  setOpenModal(false);
-  loadData();
-}
-
-const loadData = useCallback(() => {
-  CourseApi.getCourses()
-    .then(results => {
-      const _courses = results.map((x : Course )=> x as Course);
-      setCourses(_courses);
-    });
-}, []);
-
-// const teacher : Teacher = {
-//   image: "",
-//   firstName: "James",
-//   lastName: "Gunn",
-//   grade: GradeLevel.Nine,
-//   subject: CourseSubject.English
-// }
-
-useEffect(loadData, [loadData]);
-
-  // const _courses: Course[] = [
-  //   {
-  //     number: 1234,
-  //     name: "Intro to Science",
-  //     subject: CourseSubject.Science,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "Intro to Math",
-  //     subject: CourseSubject.Math,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "Intro to English",
-  //     subject: CourseSubject.English,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "Calc I",
-  //     subject: CourseSubject.Math,
-  //     teacher: teacher,
-  //     students: [],
-  //   },
-  //   {
-  //     number: 1234,
-  //     name: "English I",
-  //     subject: CourseSubject.English,
-  //     teacher: teacher,
-  //     students: [],
-  //   }
-  // ];
+  const handleListItemClick = useCallback(
+    (event: SyntheticEvent<HTMLTableElement>) => {
+      const studentToEdit = courses!.find(
+        (x) => x._id === event.currentTarget.dataset!.id
+      );
+      setEdit(true);
+      setSelectedCourse(studentToEdit);
+      setOpenModal(true);
+    },
+    [setOpenModal, courses]
+  );
 
   const headers: Header<Course>[] = [
     {
       label: "Course Number",
-      referenceData: (x : Course) => x.number,
+      referenceData: (x: Course) => x.number,
     },
     {
       label: "Subject",
-      referenceData: (x : Course) => x.subject,
-      show: () => showSubject
+      referenceData: (x: Course) => x.subject,
+      show: () => showSubject,
     },
     {
       label: "Teacher",
-      referenceData: (x : Course) => `${x.teacher.firstName} ${x.teacher.lastName}`,
+      referenceData: (x: Course) =>
+        `${x.teacher.firstName} ${x.teacher.lastName}`,
     },
     {
       label: "Students Enrolled",
-      referenceData: (x : Course) => x.students ? x.students.length : 0,
-    }
+      referenceData: (x: Course) => (x.students ? x.students.length : 0),
+    },
   ];
 
   const options: option[] = [
     {
       label: "All",
-      value: "All"
+      value: "All",
     },
-    ...CourseSubjects.map(x => ({label: x, value: x}))
+    ...CourseSubjects.map((x) => ({ label: x, value: x })),
   ];
 
   return (
     <div className="courses-page">
-        <DynamicSelect name='Subject' value={selectedSubject} arrayOfOptions={options} label={"Subject"} onSelectChange={handleSelectChange} />
-        <AddEditModal 
-          openModal={handleOpenModal} 
-          closeModal={handleCloseModal} 
-          form={ModelType.Course} 
-          trigger={addCourseButton} 
-          open={openModal}
+      <DynamicSelect
+        disabled={isLoadingCourses}
+        name="Subject"
+        value={selectedSubject}
+        arrayOfOptions={options}
+        label={"Subject"}
+        onSelectChange={handleSelectChange}
+      />
+      <button
+        disabled={isLoadingCourses}
+        className="add-course-button"
+        onClick={() => setOpenModal(true)}
+      >
+        <p>New Course</p>
+      </button>
+      {openModal && (
+        <Modal
+          header="Add Course"
+          requestClose={closeModal}
+          onAfterClose={handleAfterCloseModal}
         >
-          <AddEditCourseForm onAfterSubmit={handleAfterSubmit}/>
-        </AddEditModal>
-        <div className="table-list-page">
+          {isLoadingTeachers ? (
+            <Spinner />
+          ) : (
+            <AddEditCourseForm
+              teachers={teachers!}
+              edit={edit}
+              course={selectedCourse}
+              onAfterSubmit={handleAfterSubmit}
+            />
+          )}
+        </Modal>
+      )}
+      <div className="table-list-page">
+        {isLoadingCourses && <Spinner />}
+        {courses && (
           <TableList
+            onClick={handleListItemClick}
+            key={nameof<Course>("_id")}
             data={courses}
             headers={headers}
             filterSource={nameof<Course>("subject")}
             filterValue={selectedSubject}
           />
-       </div>
+        )}
+      </div>
     </div>
   );
-}
+};
