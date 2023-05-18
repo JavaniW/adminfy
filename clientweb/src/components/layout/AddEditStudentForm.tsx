@@ -1,11 +1,13 @@
 import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
-import StudentApi from "../../api/studentApi";
+import { toast } from "react-toastify";
+import GradeLevel, { GradeLevels } from "../../enums/GradeLevel";
+import Student from "../../models/Student";
+import { useSaveStudentMutation } from "../../redux/apiSlice";
+import { DateInput } from "../common/DateInput";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import { TextInput } from "../common/TextInput";
-import Student from "../../models/Student";
-import GradeLevel, { GradeLevels } from "../../enums/GradeLevel";
-import { toast } from "react-toastify";
-import { DateInput } from "../common/DateInput";
+import { Spinner } from "../common/Spinner";
+
 
 interface Props {
   onAfterSubmit: () => void;
@@ -13,20 +15,25 @@ interface Props {
   edit: boolean;
 }
 
-export const AddEditStudentForm : React.FunctionComponent<Props> = (props) => {
-  const _student = props.edit
-    ? props.student!
-    : {
-        firstName: "",
-        lastName: "",
-        dateOfBirth: "",
-        gradeLevel: "" as GradeLevel,
-      };
-  const [student, setStudent] = useState<Student>(_student);
+export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
+  const [student, setStudent] = useState<Student>(
+    props.edit
+      ? props.student!
+      : {
+          _id: "",
+          firstName: "",
+          lastName: "",
+          dateOfBirth: "",
+          gradeLevel: "" as GradeLevel,
+        }
+  );
+
+  const [saveStudent, { isLoading }] = useSaveStudentMutation();
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    StudentApi.saveStudent(student)
+    saveStudent(student)
+      .unwrap()
       .then(() => {
         toast("successfully added", {
           position: "top-right",
@@ -35,19 +42,25 @@ export const AddEditStudentForm : React.FunctionComponent<Props> = (props) => {
         props.onAfterSubmit();
       })
       .catch(console.error);
-  }
+  };
 
-  const handleSelectChange = ({ name, value }: { name: string; value: any }) => {
+  const handleSelectChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: any;
+  }) => {
     setStudent({ ...student, [name]: value });
-  }
+  };
 
   const handleChange = (event: ChangeEvent<any>) => {
     setStudent({ ...student, [event.target.name]: event.target.value });
-  }
+  };
 
   useEffect(() => {
     console.log("rendered");
-  })
+  });
 
   const gradeLevelOptions: option[] = [
     {
@@ -56,6 +69,8 @@ export const AddEditStudentForm : React.FunctionComponent<Props> = (props) => {
     },
     ...GradeLevels.map((x) => ({ label: x, value: x })),
   ];
+
+  if (isLoading) return <Spinner />;
 
   return (
     <form
@@ -93,4 +108,4 @@ export const AddEditStudentForm : React.FunctionComponent<Props> = (props) => {
       <button type="submit">Submit</button>
     </form>
   );
-}
+};

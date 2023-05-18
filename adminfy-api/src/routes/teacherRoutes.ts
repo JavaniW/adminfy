@@ -18,6 +18,13 @@ router.get(`/teachers/:id`, (request, response) => {
   Teacher.findById(request.params.id)
     .then(
       (res) => {
+        if (!res) {
+          response
+            .status(404)
+            .send(
+              `Invalid id: ${request.params.id}\n No teacher found with id.`
+            );
+        }
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },

@@ -21,14 +21,7 @@ export const TeachersPage: React.FunctionComponent = () => {
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
   const [edit, setEdit] = useState<boolean>(false);
-  const {
-    data: teachers,
-    isLoading,
-    // isFetching,
-    // isSuccess,
-    // isError,
-    // error,
-  } = useGetTeachersQuery();
+  const { data: teachers, isLoading } = useGetTeachersQuery();
 
   const handleAfterCloseModal = useCallback(() => {
     setSelectedTeacher(undefined);
@@ -37,8 +30,6 @@ export const TeachersPage: React.FunctionComponent = () => {
 
   const handleAfterSubmit = useCallback(() => {
     closeModal();
-    // loadData();
-    // addEditForm!.current.reset();
   }, [closeModal]);
 
   const handleTableListItemClick = useCallback(

@@ -3,6 +3,11 @@
   margin-bottom: 1vh;
   width: 100%;
   overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.table-list-page::-webkit-scrollbar {
+  display: none;
 }
 
 .table-list-item {
@@ -28,8 +33,6 @@
 .table-list-item-header {
   background-color: var(--primary-color);
 }
-
-
 
 .table-list-item-header tr th:last-child {
   border-top-right-radius: 10px;

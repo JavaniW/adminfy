@@ -19,9 +19,15 @@ router.get(`/courses`, (_request, response) => {
 router.get(`/courses/:id`, (request, response) => {
   Course.findById(request.params.id)
     .populate("teacher")
-    .populate("teacher")
     .then(
       (res) => {
+        if (!res) {
+          response
+            .status(404)
+            .send(
+              `Invalid id: ${request.params.id}\n No course found with id.`
+            );
+        }
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
@@ -61,7 +67,7 @@ router.put(`/courses/:id`, (request, response) => {
     { _id: data._id },
     {
       courseNumber: data.courseNumber,
-      teacher: data.teacher._id,
+      teacher: data.teacher,
       subject: data.subject,
     },
     { new: true }

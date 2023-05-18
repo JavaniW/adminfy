@@ -1,13 +1,12 @@
 import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import CourseApi from "../../api/courseApi";
-import TeacherApi from "../../api/teacherApi";
 import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
-import { getFullName } from "../../helpers";
 import { Course, CourseQuery } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
+import { useSaveCourseMutation } from "../../redux/apiSlice";
 import { DynamicSelect, option } from "../common/DynamicSelect";
+import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
 
 interface Props {
@@ -18,29 +17,28 @@ interface Props {
 }
 
 export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
-  const _course = props.edit
-    ? ({
-        ...props.course!,
-        teacher: getFullName(props.course!.teacher, "firstName", "lastName"),
-      } as CourseQuery)
-    : {
-        number: "",
-        name: "",
-        teacher: "",
-        subject: "" as CourseSubject,
-        students: [],
-      };
+  const [course, setCourse] = useState<CourseQuery>(
+    props.edit
+      ? ({
+          ...props.course!,
+          teacher: props.course!.teacher._id,
+        } as CourseQuery)
+      : {
+          _id: "",
+          number: "",
+          name: "",
+          teacher: "",
+          subject: "" as CourseSubject,
+          students: [],
+        }
+  );
 
-  const [course, setCourse] = useState<CourseQuery>(_course);
+  useEffect(() => {
+    console.log(`Starting course:`);
+    console.log(course);
+  }, []);
 
-  const [_teacherOptions, setTeacherOptions] = useState<Teacher[]>([]);
-
-
-  // useEffect(() => {
-  //   TeacherApi.getTeachers().then((res) => {
-  //     setTeacherOptions(res);
-  //   });
-  // }, [course, props.course]);
+  const [saveCourse, { isLoading }] = useSaveCourseMutation();
 
   const handleSelectChange = ({
     name,
@@ -58,7 +56,10 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    CourseApi.saveCourse(course)
+    console.log(`Final course:`);
+    console.log(course);
+    saveCourse(course)
+      .unwrap()
       .then(() => {
         toast("successfully added", {
           position: "top-right",
@@ -99,10 +100,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     ),
   ];
 
-  // useEffect(() => {
-  //   console.log(props.course);
-  //   console.log(props.edit);
-  // }, []);
+  if (isLoading) return <Spinner />;
 
   return (
     <form
@@ -138,6 +136,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         arrayOfOptions={teacherOptionsReal}
         value={course.teacher}
       />
+      <button type="submit">Submit</button>
     </form>
   );
 };

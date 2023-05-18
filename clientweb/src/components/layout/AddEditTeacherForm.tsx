@@ -1,14 +1,15 @@
 import "../../styles/AddEditModal.css";
 
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { toast } from "react-toastify";
 
-import TeacherApi from "../../api/teacherApi";
 import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
 import GradeLevel, { GradeLevels } from "../../enums/GradeLevel";
 import { Teacher } from "../../models/Teacher";
+import { useSaveTeacherMutation } from "../../redux/apiSlice";
 import { DynamicSelect } from "../common/DynamicSelect";
 import { TextInput } from "../common/TextInput";
+import { Spinner } from "../common/Spinner";
 
 interface Props {
   onAfterSubmit: () => any;
@@ -16,48 +17,52 @@ interface Props {
   edit: boolean;
 }
 
-export const AddEditTeacherForm : React.FunctionComponent<Props> = (props) =>{
-  const _teacher = props.edit
-    ? props.teacher!
-    : ({
-        _id: "",
-        firstName: "",
-        lastName: "",
-        subject: CourseSubject.English as CourseSubject,
-        grade: GradeLevel.Nine as GradeLevel,
-      } as Teacher);
-
-  const [teacher, setTeacher] = useState<Teacher>(_teacher);
+export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
+  const [saveTeacher, { isLoading }] = useSaveTeacherMutation();
+  const [teacher, setTeacher] = useState<Teacher>(
+    props.edit
+      ? props.teacher!
+      : ({
+          _id: "",
+          firstName: "",
+          lastName: "",
+          subject: CourseSubject.English as CourseSubject,
+          grade: GradeLevel.Nine as GradeLevel,
+        } as Teacher)
+  );
 
   const handleLabelChange = (event: ChangeEvent<any>) => {
     setTeacher({ ...teacher, [event.target.name]: event.target.value });
-  }
+  };
 
-  const handleSelectChange = ({ name, value }: { name: string; value: any }) => {
+  const handleSelectChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: any;
+  }) => {
     setTeacher({ ...teacher, [name]: value });
-  }
+  };
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    TeacherApi.saveTeacher(teacher)
+    saveTeacher(teacher)
+      .unwrap()
       .then(
-        (addedTeacher: Teacher) => {
+        () => {
           toast("successfully added", {
             position: "top-right",
             autoClose: 3000,
           });
           props.onAfterSubmit();
         },
-        () => {
-          console.log("Rejected");
-        }
+        () => console.log("Rejected")
       )
       .catch(console.error);
-  }
+  };
 
-  useEffect(() => {
-    console.log("rendered");
-  });
+  if (isLoading) return <Spinner />;
 
   return (
     <form
@@ -96,4 +101,4 @@ export const AddEditTeacherForm : React.FunctionComponent<Props> = (props) =>{
       <button type="submit">Submit</button>
     </form>
   );
-}
+};

@@ -18,6 +18,13 @@ router.get(`/students/:id`, (request, response) => {
   Student.findById(request.params.id)
     .then(
       (res) => {
+        if (!res) {
+          response
+            .status(404)
+            .send(
+              `Invalid id: ${request.params.id}\n No student found with id.`
+            );
+        }
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
@@ -46,27 +53,6 @@ router.post(`/students`, (request, response) => {
         console.log(err);
         response.send(err);
       }
-    )
-    .catch(console.error);
-});
-
-router.post(`/students/:id/courses/:id`, (request, response) => {
-  const data = request.body;
-  const newStudent = new Student({
-    firstName: data.firstName,
-    lastName: data.lastName,
-    dateOfBirth: data.dateOfBirth,
-    gradeLevel: data.gradeLevel,
-  });
-
-  newStudent
-    .save()
-    .then(
-      (res) => {
-        response.setHeader("content-type", "application/json");
-        response.send(res.toJSON());
-      },
-      (err) => response.send(err)
     )
     .catch(console.error);
 });
