@@ -1,19 +1,33 @@
-.table-list-page {
-  height: calc(90vh - 1px);
+.table-list-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.table-list-menu button {
+  margin-left: auto;
+}
+
+.table-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   margin-bottom: 1vh;
+  height: 600px;
   width: 100%;
   overflow-y: scroll;
   scrollbar-width: none;
 }
 
-.table-list-page::-webkit-scrollbar {
+.table-list::-webkit-scrollbar {
   display: none;
 }
 
 .table-list-item {
   table-layout: fixed;
   text-align: center;
-  margin-bottom: 10px;
   width: 100%;
   border-radius: 20px;
   border-collapse: collapse;

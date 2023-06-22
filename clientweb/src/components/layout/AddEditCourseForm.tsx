@@ -33,11 +33,6 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         }
   );
 
-  useEffect(() => {
-    console.log(`Starting course:`);
-    console.log(course);
-  }, []);
-
   const [saveCourse, { isLoading }] = useSaveCourseMutation();
 
   const handleSelectChange = ({
@@ -100,6 +95,13 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     ),
   ];
 
+  // const studentOptions : option[] = [
+  //   {
+
+  //   },
+
+  // ]
+
   if (isLoading) return <Spinner />;
 
   return (
@@ -135,6 +137,14 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         onSelectChange={handleSelectChange}
         arrayOfOptions={teacherOptionsReal}
         value={course.teacher}
+      />
+      <DynamicSelect
+        label="Students"
+        name="students"
+        onSelectChange={handleSelectChange}
+        arrayOfOptions={teacherOptionsReal}
+        value={course.students}
+        multiple={true}
       />
       <button type="submit">Submit</button>
     </form>

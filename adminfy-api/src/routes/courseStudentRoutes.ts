@@ -13,7 +13,10 @@ router.get(`/courses/:courseid/students`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => {
+        response.status(400);
+        response.send(err);
+      }
     )
     .catch(console.error);
 });
@@ -30,24 +33,34 @@ router.get(`/courses/:courseid/students/:studentid`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => {
+        response.status(400);
+        response.send(err);
+      }
     )
     .catch(console.error);
 });
 
-router.post(`/courses/:courseid/students/:studentid`, (request, response) => {
-  const newCourseStudent = new CourseStudent({
-    course: request.params.courseid,
-    student: request.params.studentid,
-  });
-  newCourseStudent
-    .save()
+router.post(`/courses/:courseid/students`, (request, response) => {
+  const students: string[] = request.body;
+
+  CourseStudent.create(
+    students.map((studentId) => ({
+      course: request.params.courseid,
+      student: studentId,
+    }))
+  )
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
-        response.send(res.toJSON());
+        response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => {
+        response.status(400);
+        response.send(err);
+      }
     )
     .catch(console.error);
 });
+
+export default router;

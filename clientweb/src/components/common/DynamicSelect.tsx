@@ -18,6 +18,7 @@ interface Props {
   onSelectChange: (value: any) => any;
   arrayOfOptions: option[];
   value: any;
+  multiple?: boolean;
 }
 
 export const DynamicSelect: React.FunctionComponent<Props> & {
@@ -40,6 +41,7 @@ export const DynamicSelect: React.FunctionComponent<Props> & {
         value={props.value}
         onChange={handleChange}
         name={props.name}
+        multiple={!!props.multiple}
       >
         {props.arrayOfOptions.map((x, idx) => (
           <DynamicSelect.Option key={idx} value={x.value}>
@@ -52,13 +54,14 @@ export const DynamicSelect: React.FunctionComponent<Props> & {
   return (
     <div className="label-select">
       <label>
-        <p>{props.label}</p>
+        <p>{props.label + ":"}</p>
         <select
           disabled={!!props.disabled}
           id={props.id}
           value={props.value}
           onChange={handleChange}
           name={props.name}
+          multiple={!!props.multiple}
         >
           {props.arrayOfOptions.map((x, idx) => (
             <DynamicSelect.Option key={idx} value={x.value}>

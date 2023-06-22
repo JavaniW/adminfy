@@ -1,10 +1,8 @@
 .label-date-input {
-    display: inline-block;
-    margin-bottom: 10px;
-    margin-right: 50px;
+  display: inline-block;
 }
 
 .label-date-input p {
-    display: inline-block;
-    margin-right: 10px;
+  display: inline-block;
+  margin-right: 4px;
 }

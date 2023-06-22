@@ -1,5 +1,3 @@
-import "../../styles/TeachersPage.css";
-
 import { SyntheticEvent, useCallback, useState } from "react";
 
 import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
@@ -12,6 +10,8 @@ import Modal from "../common/Modal";
 import { Spinner } from "../common/Spinner";
 import { Header, TableList } from "../common/TableList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
+import { AddModelButton } from "../common/AddModelButton";
+import { TableListMenu } from "../common/TableListMenu";
 
 export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
@@ -83,7 +83,7 @@ export const TeachersPage: React.FunctionComponent = () => {
 
   return (
     <>
-      <div className="teachers-page">
+      <TableListMenu>
         <DynamicSelect
           disabled={isLoading}
           label={"Grade"}
@@ -92,39 +92,39 @@ export const TeachersPage: React.FunctionComponent = () => {
           onSelectChange={handleGradeChange}
           arrayOfOptions={gradeOptions}
         />
-        <button
+        <AddModelButton
           disabled={isLoading}
-          className="add-teacher-button"
+          model="teacher"
           onClick={() => setOpenModal(true)}
         >
           <p>Add Teacher +</p>
-        </button>
-        {openModal && (
-          <Modal
-            requestClose={closeModal}
-            header="Add Teacher"
-            onAfterClose={handleAfterCloseModal}
-          >
-            <AddEditTeacherForm
-              onAfterSubmit={handleAfterSubmit}
-              teacher={selectedTeacher}
-              edit={edit}
-            />
-          </Modal>
+        </AddModelButton>
+      </TableListMenu>
+      {openModal && (
+        <Modal
+          requestClose={closeModal}
+          header="Add Teacher"
+          onAfterClose={handleAfterCloseModal}
+        >
+          <AddEditTeacherForm
+            onAfterSubmit={handleAfterSubmit}
+            teacher={selectedTeacher}
+            edit={edit}
+          />
+        </Modal>
+      )}
+      <div className="table-list">
+        {isLoading && <Spinner />}
+        {teachers && (
+          <TableList
+            onClick={handleTableListItemClick}
+            key={nameof<Teacher>("_id")}
+            data={teachers}
+            headers={headers}
+            filterSource={nameof<Teacher>("grade")}
+            filterValue={selectedGrade}
+          />
         )}
-        <div className="table-list-page">
-          {isLoading && <Spinner />}
-          {teachers && (
-            <TableList
-              onClick={handleTableListItemClick}
-              key={nameof<Teacher>("_id")}
-              data={teachers}
-              headers={headers}
-              filterSource={nameof<Teacher>("grade")}
-              filterValue={selectedGrade}
-            />
-          )}
-        </div>
       </div>
     </>
   );

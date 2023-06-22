@@ -13,6 +13,8 @@ import Modal from "../common/Modal";
 import { Spinner } from "../common/Spinner";
 import { Header, TableList } from "../common/TableList";
 import { AddEditStudentForm } from "./AddEditStudentForm";
+import { TableListMenu } from "../common/TableListMenu";
+import { AddModelButton } from "../common/AddModelButton";
 
 export const StudentsPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
@@ -90,22 +92,24 @@ export const StudentsPage: React.FunctionComponent = () => {
   );
 
   return (
-    <div className="students-page">
-      <DynamicSelect
-        disabled={isLoading}
-        value={selectedGrade}
-        name="Grade Level"
-        label={"Grade Level"}
-        onSelectChange={handleSelectChange}
-        arrayOfOptions={studentGradeOptions}
-      />
-      <button
-        disabled={isLoading}
-        className="add-student-button"
-        onClick={() => setOpenModal(true)}
-      >
-        <p>New Student</p>
-      </button>
+    <>
+      <TableListMenu>
+        <DynamicSelect
+          disabled={isLoading}
+          value={selectedGrade}
+          name="Grade Level"
+          label={"Grade Level"}
+          onSelectChange={handleSelectChange}
+          arrayOfOptions={studentGradeOptions}
+        />
+        <AddModelButton
+          disabled={isLoading}
+          model="student"
+          onClick={() => setOpenModal(true)}
+        >
+          <p>New Student</p>
+        </AddModelButton>
+      </TableListMenu>
       {openModal && (
         <Modal
           header={"Add Student"}
@@ -119,7 +123,7 @@ export const StudentsPage: React.FunctionComponent = () => {
           />
         </Modal>
       )}
-      <div className="table-list-page">
+      <div className="table-list">
         {isLoading && <Spinner />}
         {students && (
           <TableList
@@ -133,6 +137,6 @@ export const StudentsPage: React.FunctionComponent = () => {
           />
         )}
       </div>
-    </div>
+    </>
   );
 };

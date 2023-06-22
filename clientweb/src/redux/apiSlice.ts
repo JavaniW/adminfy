@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import Student from "../models/Student";
 import { Teacher } from "../models/Teacher";
 import { Course, CourseQuery } from "../models/Course";
+import CourseStudent from "../models/CourseStudent";
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -89,13 +90,15 @@ export const apiSlice = createApi({
       query: (params) =>
         `/courses/${params.courseId}/students/${params.studentId}`,
     }),
-    saveCourseStudent: builder.mutation<
-      Student,
-      { courseId: string; studentId: string }
+    saveCourseStudents: builder.mutation<
+      CourseStudent[],
+      { courseId: string; students: string[] }
     >({
       query: (params) => ({
-        url: `/courses/${params.courseId}/students/${params.studentId}`,
+        url: `/courses/${params.courseId}/students`,
         method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(params.students),
       }),
     }),
   }),
@@ -109,4 +112,5 @@ export const {
   useSaveTeacherMutation,
   useGetStudentsQuery,
   useSaveStudentMutation,
+  useSaveCourseStudentsMutation,
 } = apiSlice;

@@ -1,9 +1,4 @@
 :root {
-  --og-primary-color: rgb(250, 255, 148);
-  --og-secondary-color: hsla(0, 0%, 71%, 0.426);
-  --og-tertiary-color: bisque;
-  --og-quaternary-color: rgb(255, 244, 196);
-  --og-app-background-color: rgb(218, 233, 228);
   --primary-color: var(--test-color1);
   --secondary-color: hsla(0, 0%, 71%, 0.426);
   --tertiary-color: bisque;
@@ -51,7 +46,7 @@ td {
 
 .main {
   margin-top: 9vh;
-  padding: 1vmax;
+  padding: 16px;
   /* display: flex;
   flex-direction: column;
   height: 100%;

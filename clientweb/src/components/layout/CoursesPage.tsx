@@ -1,5 +1,4 @@
 import "../../styles/AddEditModal.css";
-import "../../styles/CoursesPage.css";
 
 import { SyntheticEvent, useCallback, useState } from "react";
 
@@ -13,6 +12,8 @@ import Modal from "../common/Modal";
 import { Spinner } from "../common/Spinner";
 import { Header, TableList } from "../common/TableList";
 import { AddEditCourseForm } from "./AddEditCourseForm";
+import { AddModelButton } from "../common/AddModelButton";
+import { TableListMenu } from "../common/TableListMenu";
 
 export const CoursesPage: React.FunctionComponent = () => {
   const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
@@ -82,22 +83,24 @@ export const CoursesPage: React.FunctionComponent = () => {
   ];
 
   return (
-    <div className="courses-page">
-      <DynamicSelect
-        disabled={isLoadingCourses}
-        name="Subject"
-        value={selectedSubject}
-        arrayOfOptions={options}
-        label={"Subject"}
-        onSelectChange={handleSelectChange}
-      />
-      <button
-        disabled={isLoadingCourses}
-        className="add-course-button"
-        onClick={() => setOpenModal(true)}
-      >
-        <p>New Course</p>
-      </button>
+    <>
+      <TableListMenu>
+        <DynamicSelect
+          disabled={isLoadingCourses}
+          name="Subject"
+          value={selectedSubject}
+          arrayOfOptions={options}
+          label={"Subject"}
+          onSelectChange={handleSelectChange}
+        />
+        <AddModelButton
+          disabled={isLoadingCourses}
+          model="course"
+          onClick={() => setOpenModal(true)}
+        >
+          <p>New Course</p>
+        </AddModelButton>
+      </TableListMenu>
       {openModal && (
         <Modal
           header="Add Course"
@@ -116,7 +119,7 @@ export const CoursesPage: React.FunctionComponent = () => {
           )}
         </Modal>
       )}
-      <div className="table-list-page">
+      <div className="table-list">
         {isLoadingCourses && <Spinner />}
         {courses && (
           <TableList
@@ -129,6 +132,6 @@ export const CoursesPage: React.FunctionComponent = () => {
           />
         )}
       </div>
-    </div>
+    </>
   );
 };
