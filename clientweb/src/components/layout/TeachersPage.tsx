@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useState } from "react";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
 import { nameof } from "../../extensions";
@@ -12,6 +12,9 @@ import { Header, TableList } from "../common/TableList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
 import { AddModelButton } from "../common/AddModelButton";
 import { TableListMenu } from "../common/TableListMenu";
+import { paginate } from "../../helpers";
+import PrevNextButtons from "../common/PrevNextButtons";
+import { Pagination } from "../../models/Misc";
 
 export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
@@ -21,7 +24,19 @@ export const TeachersPage: React.FunctionComponent = () => {
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
   const [edit, setEdit] = useState<boolean>(false);
-  const { data: teachers, isLoading } = useGetTeachersQuery();
+  const [pagination, setPagination] = useState<Pagination<Teacher>>({
+    data: [],
+    hasPrevOrNext: { prevDisabled: false, nextDisabled: false },
+  });
+  const [page, setPage] = useState<number>(0);
+
+  const { data: teachers, isLoading, isSuccess } = useGetTeachersQuery();
+
+  useEffect(() => {
+    if (isSuccess) {
+      setPagination(paginate(teachers, page));
+    }
+  }, [isSuccess, page, teachers]);
 
   const handleAfterCloseModal = useCallback(() => {
     setSelectedTeacher(undefined);
@@ -119,13 +134,19 @@ export const TeachersPage: React.FunctionComponent = () => {
           <TableList
             onClick={handleTableListItemClick}
             key={nameof<Teacher>("_id")}
-            data={teachers}
+            data={pagination!.data}
             headers={headers}
             filterSource={nameof<Teacher>("grade")}
             filterValue={selectedGrade}
           />
         )}
       </div>
+      <PrevNextButtons
+        page={page}
+        onPrev={() => setPage(page - 1)}
+        onNext={() => setPage(page + 1)}
+        disabled={pagination.hasPrevOrNext}
+      />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import "../../styles/TableList.css";
 
-import { SyntheticEvent, useCallback, useState } from "react";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
 import { nameof } from "../../extensions";
@@ -15,6 +15,9 @@ import { Header, TableList } from "../common/TableList";
 import { AddEditStudentForm } from "./AddEditStudentForm";
 import { TableListMenu } from "../common/TableListMenu";
 import { AddModelButton } from "../common/AddModelButton";
+import { paginate } from "../../helpers";
+import PrevNextButtons from "../common/PrevNextButtons";
+import { Pagination } from "../../models/Misc";
 
 export const StudentsPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
@@ -24,7 +27,18 @@ export const StudentsPage: React.FunctionComponent = () => {
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedStudent, setSelectedStudent] = useState<Student>();
   const [edit, setEdit] = useState<boolean>(false);
-  const { data: students, isLoading } = useGetStudentsQuery();
+  const [page, setPage] = useState<number>(0);
+  const [pagination, setPagination] = useState<Pagination<Student>>({
+    data: [],
+    hasPrevOrNext: { prevDisabled: false, nextDisabled: false },
+  });
+  const { data: students, isLoading, isSuccess } = useGetStudentsQuery();
+
+  useEffect(() => {
+    if (isSuccess) {
+      setPagination(paginate(students, page));
+    }
+  }, [isSuccess, page, students]);
 
   const handleSelectChange = ({ value }: { value: string }) => {
     setSelectedGrade(value as GradeLevelType | "All");
@@ -129,7 +143,7 @@ export const StudentsPage: React.FunctionComponent = () => {
           <TableList
             onClick={handleListItemClick}
             key={nameof<Student>("_id")}
-            data={students}
+            data={pagination.data}
             headers={headers}
             filterSource={nameof<Student>("gradeLevel")}
             filterValue={selectedGrade}
@@ -137,6 +151,12 @@ export const StudentsPage: React.FunctionComponent = () => {
           />
         )}
       </div>
+      <PrevNextButtons
+        page={page}
+        onPrev={() => setPage(page - 1)}
+        onNext={() => setPage(page + 1)}
+        disabled={pagination.hasPrevOrNext}
+      />
     </>
   );
 };

@@ -1,0 +1,10 @@
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 1vh;
+  height: 550px;
+  width: 100%;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}

@@ -11,4 +11,8 @@ export interface Course {
   students: Student[];
 }
 
-export type CourseQuery = Omit<Course, "teacher"> & { teacher: string };
+export type CourseQuery = Omit<Course, "teacher" | "students" | "subject"> & {
+  teacher: string;
+  students: string[];
+  subject: CourseSubject | undefined;
+};

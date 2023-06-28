@@ -1,37 +1,48 @@
 import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import CourseSubject, { CourseSubjects } from "../../enums/CourseSubject";
+import CourseSubject, {
+  CourseSubject1,
+  CourseSubjectType,
+  CourseSubjects,
+  CourseSubjects1,
+} from "../../enums/CourseSubject";
 import { Course, CourseQuery } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
 import { useSaveCourseMutation } from "../../redux/apiSlice";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
+import Student from "../../models/Student";
+import { DynamicSelect as DS } from "../common/DynamicSelect copy";
+import { ActionMeta, SingleValue } from "react-select";
 
 interface Props {
   onAfterSubmit: () => any;
-  course?: Course;
+  course: Course;
   edit: boolean;
   teachers: Teacher[];
+  students: Student[];
 }
 
 export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
   const [course, setCourse] = useState<CourseQuery>(
     props.edit
       ? ({
-          ...props.course!,
-          teacher: props.course!.teacher._id,
+          ...props.course,
+          teacher: props.course.teacher._id,
+          students: props.course.students?.map((x) => x._id),
         } as CourseQuery)
       : {
           _id: "",
           number: "",
           name: "",
           teacher: "",
-          subject: "" as CourseSubject,
+          subject: undefined,
           students: [],
         }
   );
+  const [students, setStudents] = useState<string[] | string>([]);
 
   const [saveCourse, { isLoading }] = useSaveCourseMutation();
 
@@ -46,14 +57,38 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
   };
 
   const handleChange = (event: ChangeEvent<any>) => {
+    // debugger;
     setCourse({ ...course, [event.target.name]: event.target.value });
+  };
+
+  type SubjectOption = { value: string; label: CourseSubject1 };
+
+  const handleSelectChange1 = (option: any, actionMeta: any) => {
+    setCourse({ ...course, [actionMeta.name]: option?.value ?? undefined });
+  };
+
+  useEffect(() => {
+    console.log(students);
+  }, [students]);
+
+  const handleStudentChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: string[] | string;
+  }) => {
+    // console.log(value);
+    // debugger;
+    setStudents(value);
   };
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     console.log(`Final course:`);
     console.log(course);
-    saveCourse(course)
+    const _students = [students].flat();
+    saveCourse({ ...course, students: _students })
       .unwrap()
       .then(() => {
         toast("successfully added", {
@@ -81,6 +116,20 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       ),
   ];
 
+  const studentOptions: option[] = [
+    {
+      label: "",
+      value: "",
+    },
+    ...props.students.map(
+      (x) =>
+        ({
+          label: x.firstName + " " + x.lastName,
+          value: x._id,
+        } as option)
+    ),
+  ];
+
   const courseSubjectOptions: option[] = [
     {
       label: "",
@@ -95,12 +144,10 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     ),
   ];
 
-  // const studentOptions : option[] = [
-  //   {
-
-  //   },
-
-  // ]
+  const options = CourseSubjects.map((x) => ({
+    label: x,
+    value: x,
+  }));
 
   if (isLoading) return <Spinner />;
 
@@ -124,28 +171,34 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         name="name"
         required={true}
       />
-      <DynamicSelect
+      <DS<{ label: string; value: string }>
         label="Subject"
         name="subject"
-        onSelectChange={handleSelectChange}
-        arrayOfOptions={courseSubjectOptions}
-        value={course.subject}
+        onChange={handleSelectChange1}
+        getOptionLabel={(x) => x.label}
+        getOptionValue={(x) => x.value}
+        options={options}
+        value={{
+          label: course.subject?.toString() ?? "",
+          value: course.subject ?? "",
+        }}
       />
-      <DynamicSelect
+      {/* <DS
         label="Teacher"
-        name="teacher"
-        onSelectChange={handleSelectChange}
-        arrayOfOptions={teacherOptionsReal}
+        onChange={handleSelectChange}
+        options={teacherOptionsReal}
         value={course.teacher}
-      />
-      <DynamicSelect
+      /> */}
+      {/* <DS
         label="Students"
-        name="students"
-        onSelectChange={handleSelectChange}
-        arrayOfOptions={teacherOptionsReal}
-        value={course.students}
+        onChange={(e) => {
+          // debugger;
+          handleStudentChange(e);
+        }}
+        options={studentOptions}
+        value={students}
         multiple={true}
-      />
+      /> */}
       <button type="submit">Submit</button>
     </form>
   );

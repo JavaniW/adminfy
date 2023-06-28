@@ -8,7 +8,6 @@ import { DynamicSelect, option } from "../common/DynamicSelect";
 import { TextInput } from "../common/TextInput";
 import { Spinner } from "../common/Spinner";
 
-
 interface Props {
   onAfterSubmit: () => void;
   student?: Student;
@@ -57,10 +56,6 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
   const handleChange = (event: ChangeEvent<any>) => {
     setStudent({ ...student, [event.target.name]: event.target.value });
   };
-
-  useEffect(() => {
-    console.log("rendered");
-  });
 
   const gradeLevelOptions: option[] = [
     {

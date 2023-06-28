@@ -45,3 +45,16 @@ export function useLoadingState(
 
   return [loading, startLoading, doneLoading, setLoading];
 }
+
+export function usePagination<T>(data?: T[] | undefined, limit?: number) {
+  const [_limit, setLimit] = useState<number>(limit ?? 8);
+  const [page, setPage] = useState<number>(0);
+  const [paginatedData, setPaginatedData] = useState<T[]>([]);
+
+  const first_element_idx = 0 + page * _limit;
+
+  if (!data) return [[] as T[], setLimit, setPage, page];
+
+  setPaginatedData(data.slice(0 + page * _limit, first_element_idx + _limit));
+  return [paginatedData, setPaginatedData, setLimit, setPage, page];
+}

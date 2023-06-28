@@ -1,4 +1,7 @@
 import "../../styles/Dashboard.css";
+import { TeacherCard } from "../common/TeacherCard";
+import { CourseCard } from "../common/CourseCard";
+import { StudentCard } from "../common/StudentCard";
 
 export const Dashboard: React.FunctionComponent = () => {
   return (
@@ -15,6 +18,23 @@ export const Dashboard: React.FunctionComponent = () => {
         semper nisl ullamcorper a. Aliquam eleifend varius lacinia. Curabitur
         vitae ipsum in risus efficitur commodo.
       </p>
+      <TeacherCard
+        image="sjwsw"
+        header="Person Long Name"
+        teacherSubject="History"
+        teacherGrade="11"
+      />
+      <CourseCard
+        header="Intro to Science"
+        courseNumber="1321"
+        courseSubject="Science"
+        courseTeacher="Rich Timmy"
+      />
+      <StudentCard
+        header="Josh William"
+        studentBirthDay="03/05/2002"
+        studentGrade="11"
+      />
     </div>
   );
 };

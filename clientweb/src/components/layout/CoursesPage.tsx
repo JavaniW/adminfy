@@ -1,39 +1,64 @@
 import "../../styles/AddEditModal.css";
 
-import { SyntheticEvent, useCallback, useState } from "react";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
-import { CourseSubjects } from "../../enums/CourseSubject";
-import { nameof } from "../../extensions";
+import { ActionMeta } from "react-select";
+import { CourseSubject1, CourseSubjects } from "../../enums/CourseSubject";
+import { paginate } from "../../helpers";
 import { useModalHooks } from "../../hooks/customHooks";
 import { Course } from "../../models/Course";
-import { useGetCoursesQuery, useGetTeachersQuery } from "../../redux/apiSlice";
-import { DynamicSelect, option } from "../common/DynamicSelect";
-import Modal from "../common/Modal";
-import { Spinner } from "../common/Spinner";
-import { Header, TableList } from "../common/TableList";
-import { AddEditCourseForm } from "./AddEditCourseForm";
+import { Pagination } from "../../models/Misc";
+import {
+  useGetCoursesQuery,
+  useGetStudentsQuery,
+  useGetTeachersQuery,
+} from "../../redux/apiSlice";
 import { AddModelButton } from "../common/AddModelButton";
+import { CourseCardList } from "../common/CourseCardList";
+import { DynamicSelect as DS } from "../common/DynamicSelect copy";
+import Modal from "../common/Modal";
+import PrevNextButtons from "../common/PrevNextButtons";
+import { Spinner } from "../common/Spinner";
 import { TableListMenu } from "../common/TableListMenu";
+import { AddEditCourseForm } from "./AddEditCourseForm";
 
 export const CoursesPage: React.FunctionComponent = () => {
-  const [selectedSubject, setSelectedSubject] = useState<keyof Course | "All">(
-    "All"
-  );
-  const [showSubject, setShowSubject] = useState<boolean>(true);
+  const [selectedSubject, setSelectedSubject] = useState<SubjectOption>();
   const [openModal, setOpenModal, closeModal] = useModalHooks();
-  const [selectedCourse, setSelectedCourse] = useState<Course>();
+  const [selectedCourse, setSelectedCourse] = useState<Course>({} as Course);
   const [edit, setEdit] = useState<boolean>(false);
-  const { data: courses, isLoading: isLoadingCourses } = useGetCoursesQuery();
+  const [pagination, setPagination] = useState<Pagination<Course>>({
+    data: [],
+    hasPrevOrNext: { prevDisabled: false, nextDisabled: false },
+  });
+  const [page, setPage] = useState<number>(0);
+  const {
+    data: courses,
+    isLoading: isLoadingCourses,
+    isSuccess,
+  } = useGetCoursesQuery();
   const { data: teachers, isLoading: isLoadingTeachers } =
     useGetTeachersQuery();
+  const { data: students, isLoading: isLoadingStudents } =
+    useGetStudentsQuery();
 
-  const handleSelectChange = ({ value }: { value: string }) => {
-    setSelectedSubject(value as keyof Course | "All");
-    setShowSubject(value === "All");
+  type SubjectOption = { value: string; label: CourseSubject1 };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setPagination(paginate(courses, page));
+    }
+  }, [courses, isSuccess, page]);
+
+  const handleSelectChange = (
+    option: SubjectOption | null,
+    _actionMeta: ActionMeta<SubjectOption>
+  ) => {
+    setSelectedSubject(option ?? undefined);
   };
 
   const handleAfterCloseModal = useCallback(() => {
-    setSelectedCourse(undefined);
+    setSelectedCourse({} as Course);
     setEdit(false);
   }, []);
 
@@ -41,57 +66,30 @@ export const CoursesPage: React.FunctionComponent = () => {
     setOpenModal(false);
   };
 
-  const handleListItemClick = useCallback(
+  const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
       const studentToEdit = courses!.find(
         (x) => x._id === event.currentTarget.dataset!.id
       );
       setEdit(true);
-      setSelectedCourse(studentToEdit);
+      setSelectedCourse(studentToEdit ?? ({} as Course));
       setOpenModal(true);
     },
     [setOpenModal, courses]
   );
 
-  const headers: Header<Course>[] = [
-    {
-      label: "Course Number",
-      referenceData: (x: Course) => x.number,
-    },
-    {
-      label: "Subject",
-      referenceData: (x: Course) => x.subject,
-      show: () => showSubject,
-    },
-    {
-      label: "Teacher",
-      referenceData: (x: Course) =>
-        `${x.teacher.firstName} ${x.teacher.lastName}`,
-    },
-    {
-      label: "Students Enrolled",
-      referenceData: (x: Course) => (x.students ? x.students.length : 0),
-    },
-  ];
-
-  const options: option[] = [
-    {
-      label: "All",
-      value: "All",
-    },
-    ...CourseSubjects.map((x) => ({ label: x, value: x })),
+  const options: SubjectOption[] = [
+    ...CourseSubjects.map((x) => ({ value: x, label: x })),
   ];
 
   return (
     <>
       <TableListMenu>
-        <DynamicSelect
-          disabled={isLoadingCourses}
-          name="Subject"
-          value={selectedSubject}
-          arrayOfOptions={options}
+        <DS<SubjectOption>
           label={"Subject"}
-          onSelectChange={handleSelectChange}
+          options={options}
+          value={selectedSubject}
+          onChange={handleSelectChange}
         />
         <AddModelButton
           disabled={isLoadingCourses}
@@ -107,7 +105,7 @@ export const CoursesPage: React.FunctionComponent = () => {
           requestClose={closeModal}
           onAfterClose={handleAfterCloseModal}
         >
-          {isLoadingTeachers ? (
+          {isLoadingTeachers || isLoadingStudents ? (
             <Spinner />
           ) : (
             <AddEditCourseForm
@@ -115,23 +113,27 @@ export const CoursesPage: React.FunctionComponent = () => {
               edit={edit}
               course={selectedCourse}
               onAfterSubmit={handleAfterSubmit}
+              students={students!}
             />
           )}
         </Modal>
       )}
-      <div className="table-list">
-        {isLoadingCourses && <Spinner />}
-        {courses && (
-          <TableList
-            onClick={handleListItemClick}
-            key={nameof<Course>("_id")}
-            data={courses}
-            headers={headers}
-            filterSource={nameof<Course>("subject")}
-            filterValue={selectedSubject}
-          />
-        )}
-      </div>
+      {isLoadingCourses && <Spinner />}
+      {courses && (
+        <CourseCardList
+          data={courses}
+          filter={(x: Course) =>
+            selectedSubject ? x.subject === selectedSubject?.value : true
+          }
+          onClick={handleCardClick}
+        />
+      )}
+      <PrevNextButtons
+        page={page}
+        onPrev={() => setPage(page - 1)}
+        onNext={() => setPage(page + 1)}
+        disabled={pagination.hasPrevOrNext}
+      />
     </>
   );
 };

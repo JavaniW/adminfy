@@ -1,5 +1,9 @@
-.label-select {
+.select {
   display: inline-block;
+}
+
+.label-select {
+  display: flex;
   /* margin-bottom: 10px;
     margin-right: 50px; */
 }

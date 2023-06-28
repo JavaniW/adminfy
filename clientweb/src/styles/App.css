@@ -10,6 +10,7 @@
   --test-color3: #7fdbff;
   --test-color3: #3d9970;
   --test-color3: #111111;
+  --main-border-radius: 5px;
 }
 
 * {

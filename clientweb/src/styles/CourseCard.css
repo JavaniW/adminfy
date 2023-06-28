@@ -1,0 +1,27 @@
+.course-card {
+  width: 100%;
+  height: 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background-color: #ccc;
+  justify-items: center;
+  align-items: center;
+  border-radius: var(--main-border-radius);
+}
+.course-card--header {
+  display: flex;
+  align-items: center;
+  grid-column: 1 / -1;
+}
+.course-card--course-subject {
+  grid-column: 1 / -1;
+}
+.course-card--course-teacher {
+  grid-column: span 2;
+  /* justify-self: start; */
+}
+
+.course-card--course-student-count {
+  grid-column: 3;
+}
