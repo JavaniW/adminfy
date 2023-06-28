@@ -1,13 +1,11 @@
-import CourseSubject, {
-  CourseSubject1,
-  CourseSubjectType,
-} from "../../enums/CourseSubject";
+import { CourseSubject1 } from "../../enums/CourseSubject";
 import "../../styles/TeacherCard.css";
 
 interface Props {
   id?: string;
   key?: number;
   image?: string;
+  onClick?: any;
   header: string;
   teacherSubject: CourseSubject1;
   teacherGrade: string;
@@ -15,13 +13,18 @@ interface Props {
 
 export const TeacherCard: React.FunctionComponent<Props> = (props) => {
   return (
-    <div key={props.key} id={props.id} className="teacher-card">
+    <div
+      onClick={props.onClick}
+      key={props.key}
+      data-id={props.id}
+      className="card teacher-card"
+    >
       {props.image && (
         <div className="teacher-card--img--container">
           <img className="card-img" src={props.image} alt="pic" />
         </div>
       )}
-      <span className="teacher-card--header">
+      <span className="card--header teacher-card--header">
         <h3>{props.header}</h3>
       </span>
       <span className="teacher-card--teacher-subject">

@@ -3,6 +3,7 @@ import "../../styles/StudentCard.css";
 interface Props {
   id?: string;
   key?: number;
+  onClick?: any;
   header: string;
   studentBirthDay: string;
   studentGrade: string;
@@ -10,8 +11,13 @@ interface Props {
 
 export const StudentCard: React.FunctionComponent<Props> = (props) => {
   return (
-    <div key={props.key} id={props.id} className="student-card">
-      <span className="student-card--header">
+    <div
+      onClick={props.onClick}
+      key={props.key}
+      data-id={props.id}
+      className="card student-card"
+    >
+      <span className="card--header student-card--header">
         <h3>{props.header}</h3>
       </span>
       <span className="student-card--student-birthday">

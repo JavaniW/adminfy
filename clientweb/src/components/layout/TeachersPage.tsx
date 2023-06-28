@@ -1,26 +1,24 @@
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
-import { nameof } from "../../extensions";
+import { paginate } from "../../helpers";
 import { useModalHooks } from "../../hooks/customHooks";
+import { Pagination } from "../../models/Misc";
 import { Teacher } from "../../models/Teacher";
 import { useGetTeachersQuery } from "../../redux/apiSlice";
+import { AddModelButton } from "../common/AddModelButton";
 import { DynamicSelect, option } from "../common/DynamicSelect";
 import Modal from "../common/Modal";
-import { Spinner } from "../common/Spinner";
-import { Header, TableList } from "../common/TableList";
-import { AddEditTeacherForm } from "./AddEditTeacherForm";
-import { AddModelButton } from "../common/AddModelButton";
-import { TableListMenu } from "../common/TableListMenu";
-import { paginate } from "../../helpers";
 import PrevNextButtons from "../common/PrevNextButtons";
-import { Pagination } from "../../models/Misc";
+import { Spinner } from "../common/Spinner";
+import { TableListMenu } from "../common/TableListMenu";
+import { TeacherCardList } from "../common/TeacherCardList";
+import { AddEditTeacherForm } from "./AddEditTeacherForm";
 
 export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
     "All"
   );
-  const [showGrade, setShowGrade] = useState<boolean>(true);
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
   const [edit, setEdit] = useState<boolean>(false);
@@ -47,7 +45,7 @@ export const TeachersPage: React.FunctionComponent = () => {
     closeModal();
   }, [closeModal]);
 
-  const handleTableListItemClick = useCallback(
+  const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
       const teacherToEdit = teachers!.find(
         (x) => x._id === event.currentTarget.dataset!.id
@@ -61,32 +59,7 @@ export const TeachersPage: React.FunctionComponent = () => {
 
   const handleGradeChange = useCallback(({ value }: { value: any }) => {
     setSelectedGrade(value);
-    setShowGrade(value === "All");
   }, []);
-
-  const headers: Header<Teacher>[] = [
-    {
-      label: "",
-      referenceData: (x: Teacher) => <img src={x.image} alt={"Teacher"} />,
-    },
-    {
-      label: "First Name",
-      referenceData: (x: Teacher) => x.firstName,
-    },
-    {
-      label: "Last Name",
-      referenceData: (x: Teacher) => x.lastName,
-    },
-    {
-      label: "Subject",
-      referenceData: (x: Teacher) => x.subject,
-    },
-    {
-      label: "Grade",
-      referenceData: (x: Teacher) => x.grade,
-      show: () => showGrade,
-    },
-  ];
 
   const gradeOptions: option[] = [
     {
@@ -128,19 +101,16 @@ export const TeachersPage: React.FunctionComponent = () => {
           />
         </Modal>
       )}
-      <div className="table-list">
-        {isLoading && <Spinner />}
-        {teachers && (
-          <TableList
-            onClick={handleTableListItemClick}
-            key={nameof<Teacher>("_id")}
-            data={pagination!.data}
-            headers={headers}
-            filterSource={nameof<Teacher>("grade")}
-            filterValue={selectedGrade}
-          />
-        )}
-      </div>
+      {isLoading && <Spinner />}
+      {teachers && (
+        <TeacherCardList
+          data={teachers}
+          onClick={handleCardClick}
+          filter={(x: Teacher) =>
+            selectedGrade === "All" ? true : selectedGrade === x.grade
+          }
+        />
+      )}
       <PrevNextButtons
         page={page}
         onPrev={() => setPage(page - 1)}
