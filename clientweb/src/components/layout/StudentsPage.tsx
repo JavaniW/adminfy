@@ -33,9 +33,12 @@ export const StudentsPage: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setPagination(paginate(students, page));
+      const filteredStudents = students.filter((x: Student) =>
+        selectedGrade === "All" ? true : selectedGrade === x.gradeLevel
+      );
+      setPagination(paginate(filteredStudents, page));
     }
-  }, [isSuccess, page, students]);
+  }, [isSuccess, page, selectedGrade, students]);
 
   const handleSelectChange = ({ value }: { value: string }) => {
     setSelectedGrade(value as GradeLevelType | "All");
@@ -102,18 +105,10 @@ export const StudentsPage: React.FunctionComponent = () => {
           />
         </Modal>
       )}
-      <div className="table-list">
-        {isLoading && <Spinner />}
-        {students && (
-          <StudentCardList
-            data={students}
-            onClick={handleCardClick}
-            filter={(x: Student) =>
-              selectedGrade === "All" ? true : selectedGrade === x.gradeLevel
-            }
-          />
-        )}
-      </div>
+      {isLoading && <Spinner />}
+      {students && (
+        <StudentCardList data={pagination.data} onClick={handleCardClick} />
+      )}
       <PrevNextButtons
         page={page}
         onPrev={() => setPage(page - 1)}

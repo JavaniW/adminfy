@@ -11,12 +11,12 @@ export function getFullName<T extends Object, K extends keyof T>(
 export function paginate<T>(
   data: T[],
   page: number,
-  limit: number = 7
+  limit: number = 6
 ): Pagination<T> {
   const firstElementIdx = 0 + page * limit;
 
   const hasPrev = firstElementIdx > 0;
-  const hasNext = firstElementIdx + limit < data.length - 1;
+  const hasNext = firstElementIdx + limit <= data.length - 1;
 
   return firstElementIdx > data.length - 1
     ? {

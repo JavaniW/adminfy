@@ -32,9 +32,12 @@ export const TeachersPage: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setPagination(paginate(teachers, page));
+      const filteredTeachers = teachers.filter((x: Teacher) =>
+        selectedGrade === "All" ? true : selectedGrade === x.grade
+      );
+      setPagination(paginate(filteredTeachers, page));
     }
-  }, [isSuccess, page, teachers]);
+  }, [isSuccess, page, selectedGrade, teachers]);
 
   const handleAfterCloseModal = useCallback(() => {
     setSelectedTeacher(undefined);
@@ -103,13 +106,7 @@ export const TeachersPage: React.FunctionComponent = () => {
       )}
       {isLoading && <Spinner />}
       {teachers && (
-        <TeacherCardList
-          data={teachers}
-          onClick={handleCardClick}
-          filter={(x: Teacher) =>
-            selectedGrade === "All" ? true : selectedGrade === x.grade
-          }
-        />
+        <TeacherCardList data={pagination.data} onClick={handleCardClick} />
       )}
       <PrevNextButtons
         page={page}

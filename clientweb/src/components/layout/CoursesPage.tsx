@@ -46,9 +46,12 @@ export const CoursesPage: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setPagination(paginate(courses, page));
+      const fileredCourses = courses?.filter((x: Course) =>
+        selectedSubject ? x.subject === selectedSubject?.value : true
+      );
+      setPagination(paginate(fileredCourses, page));
     }
-  }, [courses, isSuccess, page]);
+  }, [courses, isSuccess, page, selectedSubject]);
 
   const handleSelectChange = (
     option: SubjectOption | null,
@@ -120,13 +123,7 @@ export const CoursesPage: React.FunctionComponent = () => {
       )}
       {isLoadingCourses && <Spinner />}
       {courses && (
-        <CourseCardList
-          data={courses}
-          filter={(x: Course) =>
-            selectedSubject ? x.subject === selectedSubject?.value : true
-          }
-          onClick={handleCardClick}
-        />
+        <CourseCardList data={pagination.data} onClick={handleCardClick} />
       )}
       <PrevNextButtons
         page={page}

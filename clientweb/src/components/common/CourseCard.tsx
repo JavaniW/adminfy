@@ -2,7 +2,7 @@ import "../../styles/CourseCard.css";
 
 interface Props {
   id?: string;
-  key?: number;
+  _key?: number;
   onClick?: any;
   header: string;
   courseNumber: string | number;
@@ -14,7 +14,7 @@ interface Props {
 export const CourseCard: React.FunctionComponent<Props> = (props) => {
   return (
     <div
-      key={props.key}
+      key={props._key}
       data-id={props.id}
       className="card course-card"
       onClick={props.onClick}

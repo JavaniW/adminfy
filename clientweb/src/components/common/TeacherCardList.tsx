@@ -5,13 +5,10 @@ import "../../styles/CardList.css";
 
 interface Props {
   data: Teacher[];
-  filter?: (x: any) => boolean;
   onClick?: any;
 }
 
 export const TeacherCardList: React.FunctionComponent<Props> = (props) => {
-  const _data = props.filter ? props.data.filter(props.filter) : props.data;
-
   const renderCard = (teacher: Teacher, key: number) => (
     <TeacherCard
       onClick={props.onClick}
@@ -24,6 +21,8 @@ export const TeacherCardList: React.FunctionComponent<Props> = (props) => {
   );
 
   return (
-    <div className="card-list teachers-card-list">{_data.map(renderCard)}</div>
+    <div className="card-list teachers-card-list">
+      {props.data.map(renderCard)}
+    </div>
   );
 };
