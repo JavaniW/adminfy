@@ -1,20 +1,23 @@
 import { SyntheticEvent } from "react";
-import "../../styles/TextLabel.css";
+import "../../styles/TextInput.css";
 
 interface Props {
   label: string;
-  handleChange: (e: SyntheticEvent) => void;
+  onChange: (e: SyntheticEvent) => void;
   value: any;
   name: string;
   required: boolean;
+  placeholder?: string;
 }
 
 export const TextInput: React.FunctionComponent<Props> = (props) => {
   return (
     <label className="text-label">
-      <p>{props.label}</p>
+      {props.label}
       <input
-        onChange={props.handleChange}
+        placeholder={props.placeholder}
+        className="text-input"
+        onChange={props.onChange}
         value={props.value}
         type="text"
         name={props.name}

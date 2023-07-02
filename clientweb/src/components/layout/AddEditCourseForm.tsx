@@ -1,21 +1,15 @@
-import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, SyntheticEvent, useState } from "react";
 import { toast } from "react-toastify";
 
-import CourseSubject, {
-  CourseSubject1,
-  CourseSubjectType,
-  CourseSubjects,
-  CourseSubjects1,
-} from "../../enums/CourseSubject";
+import { CourseSubjectOptions } from "../../enums/CourseSubject";
+import { getFullName, getOptionValue, getOptionValues } from "../../helpers";
 import { Course, CourseQuery } from "../../models/Course";
+import Student from "../../models/Student";
 import { Teacher } from "../../models/Teacher";
 import { useSaveCourseMutation } from "../../redux/apiSlice";
-import { DynamicSelect, option } from "../common/DynamicSelect";
+import { DynamicSelect } from "../common/DynamicSelect";
 import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
-import Student from "../../models/Student";
-import { DynamicSelect as DS } from "../common/DynamicSelect copy";
-import { ActionMeta, SingleValue } from "react-select";
 
 interface Props {
   onAfterSubmit: () => any;
@@ -42,53 +36,18 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
           students: [],
         }
   );
-  const [students, setStudents] = useState<string[] | string>([]);
 
   const [saveCourse, { isLoading }] = useSaveCourseMutation();
 
-  const handleSelectChange = ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: any;
-  }) => {
-    setCourse({ ...course, [name]: value });
-  };
-
-  const handleChange = (event: ChangeEvent<any>) => {
-    // debugger;
+  const handleTextInputChange = (event: ChangeEvent<any>) => {
     setCourse({ ...course, [event.target.name]: event.target.value });
-  };
-
-  type SubjectOption = { value: string; label: CourseSubject1 };
-
-  const handleSelectChange1 = (option: any, actionMeta: any) => {
-    setCourse({ ...course, [actionMeta.name]: option?.value ?? undefined });
-  };
-
-  useEffect(() => {
-    console.log(students);
-  }, [students]);
-
-  const handleStudentChange = ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: string[] | string;
-  }) => {
-    // console.log(value);
-    // debugger;
-    setStudents(value);
   };
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     console.log(`Final course:`);
     console.log(course);
-    const _students = [students].flat();
-    saveCourse({ ...course, students: _students })
+    saveCourse(course)
       .unwrap()
       .then(() => {
         toast("successfully added", {
@@ -100,53 +59,13 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       .catch(console.error);
   };
 
-  const teacherOptionsReal: option[] = [
-    {
-      label: "",
-      value: {},
-    },
-    ...props.teachers
-      .filter((x) => x.subject === course.subject)
-      .map(
-        (x) =>
-          ({
-            label: x.firstName + " " + x.lastName,
-            value: x._id,
-          } as option)
-      ),
-  ];
-
-  const studentOptions: option[] = [
-    {
-      label: "",
-      value: "",
-    },
-    ...props.students.map(
-      (x) =>
-        ({
-          label: x.firstName + " " + x.lastName,
-          value: x._id,
-        } as option)
-    ),
-  ];
-
-  const courseSubjectOptions: option[] = [
-    {
-      label: "",
-      value: "",
-    },
-    ...CourseSubjects.map(
-      (x) =>
-        ({
-          label: x,
-          value: x,
-        } as option)
-    ),
-  ];
-
-  const options = CourseSubjects.map((x) => ({
-    label: x,
-    value: x,
+  const teacherOptions = props.teachers.map((x) => ({
+    value: x._id!.toString(),
+    label: getFullName(x, "firstName", "lastName"),
+  }));
+  const studentOptions = props.students.map((x) => ({
+    value: x._id!.toString(),
+    label: getFullName(x, "firstName", "lastName"),
   }));
 
   if (isLoading) return <Spinner />;
@@ -158,47 +77,50 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       className="add-edit-form course-form"
     >
       <TextInput
-        label="Number:"
-        handleChange={handleChange}
+        label="Number"
+        placeholder="Number"
+        onChange={handleTextInputChange}
         value={course.number}
         name="number"
         required={true}
       />
       <TextInput
-        label="Name:"
-        handleChange={handleChange}
+        placeholder="Name"
+        label="Name"
+        onChange={handleTextInputChange}
         value={course.name}
         name="name"
         required={true}
       />
-      <DS<{ label: string; value: string }>
+      <DynamicSelect
+        isClearable={false}
         label="Subject"
-        name="subject"
-        onChange={handleSelectChange1}
-        getOptionLabel={(x) => x.label}
-        getOptionValue={(x) => x.value}
-        options={options}
-        value={{
-          label: course.subject?.toString() ?? "",
-          value: course.subject ?? "",
+        placeholder="Subject"
+        onChange={(newVal) => setCourse({ ...course, subject: newVal!.value })}
+        options={CourseSubjectOptions}
+        value={getOptionValue(CourseSubjectOptions, course.subject)}
+      />
+      <DynamicSelect
+        placeholder="Teacher"
+        label="Teacher"
+        isClearable={false}
+        options={teacherOptions}
+        value={getOptionValue(teacherOptions, course.teacher)}
+        onChange={(newVal) =>
+          setCourse({ ...course, teacher: newVal!.value.toString() })
+        }
+      />
+      <DynamicSelect
+        isMulti={true}
+        placeholder="Students"
+        label="Students"
+        isClearable={false}
+        options={studentOptions}
+        value={getOptionValues(studentOptions, course.students)}
+        onChange={(newVal) => {
+          setCourse({ ...course, students: newVal!.map((x) => x.value) });
         }}
       />
-      {/* <DS
-        label="Teacher"
-        onChange={handleSelectChange}
-        options={teacherOptionsReal}
-        value={course.teacher}
-      /> */}
-      {/* <DS
-        label="Students"
-        onChange={(e) => {
-          // debugger;
-          handleStudentChange(e);
-        }}
-        options={studentOptions}
-        value={students}
-        multiple={true}
-      /> */}
       <button type="submit">Submit</button>
     </form>
   );

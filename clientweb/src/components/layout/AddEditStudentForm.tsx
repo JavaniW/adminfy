@@ -1,12 +1,13 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { toast } from "react-toastify";
-import GradeLevel, { GradeLevels } from "../../enums/GradeLevel";
+import GradeLevel, { GradeLevelOptions } from "../../enums/GradeLevel";
+import { getOptionValue } from "../../helpers";
 import Student from "../../models/Student";
 import { useSaveStudentMutation } from "../../redux/apiSlice";
 import { DateInput } from "../common/DateInput";
-import { DynamicSelect, option } from "../common/DynamicSelect";
-import { TextInput } from "../common/TextInput";
+import { DynamicSelect } from "../common/DynamicSelect";
 import { Spinner } from "../common/Spinner";
+import { TextInput } from "../common/TextInput";
 
 interface Props {
   onAfterSubmit: () => void;
@@ -43,27 +44,9 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
       .catch(console.error);
   };
 
-  const handleSelectChange = ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: any;
-  }) => {
-    setStudent({ ...student, [name]: value });
-  };
-
   const handleChange = (event: ChangeEvent<any>) => {
     setStudent({ ...student, [event.target.name]: event.target.value });
   };
-
-  const gradeLevelOptions: option[] = [
-    {
-      label: "",
-      value: "",
-    },
-    ...GradeLevels.map((x) => ({ label: x, value: x })),
-  ];
 
   if (isLoading) return <Spinner />;
 
@@ -74,31 +57,36 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
       className="add-edit-form course-form"
     >
       <TextInput
-        label="First Name:"
-        handleChange={handleChange}
+        placeholder="First Name"
+        label="First Name"
+        onChange={handleChange}
         value={student.firstName}
         name="firstName"
         required={true}
       />
       <TextInput
-        label="Last Name:"
-        handleChange={handleChange}
+        placeholder="Last Name"
+        label="Last Name"
+        onChange={handleChange}
         value={student.lastName}
         name="lastName"
         required={true}
       />
       <DateInput
+        placeholder="Birth Date"
         label="Birth Date:"
         name="dateOfBirth"
         value={student.dateOfBirth}
         handleChange={handleChange}
       />
       <DynamicSelect
+        placeholder="Grade"
         label="Grade Level"
-        name="gradeLevel"
-        onSelectChange={handleSelectChange}
-        arrayOfOptions={gradeLevelOptions}
-        value={student.gradeLevel}
+        onChange={(newVal) =>
+          setStudent({ ...student, gradeLevel: newVal!.value })
+        }
+        options={GradeLevelOptions}
+        value={getOptionValue(GradeLevelOptions, student.gradeLevel)}
       />
       <button type="submit">Submit</button>
     </form>

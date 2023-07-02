@@ -3,7 +3,10 @@ import "../../styles/AddEditModal.css";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { ActionMeta } from "react-select";
-import { CourseSubject1, CourseSubjects } from "../../enums/CourseSubject";
+import {
+  CourseSubjectOption,
+  CourseSubjectOptions,
+} from "../../enums/CourseSubject";
 import { paginate } from "../../helpers";
 import { useModalHooks } from "../../hooks/customHooks";
 import { Course } from "../../models/Course";
@@ -14,16 +17,16 @@ import {
   useGetTeachersQuery,
 } from "../../redux/apiSlice";
 import { AddModelButton } from "../common/AddModelButton";
+import { CardListMenu } from "../common/CardListMenu";
 import { CourseCardList } from "../common/CourseCardList";
-import { DynamicSelect as DS } from "../common/DynamicSelect copy";
+import { DynamicSelect } from "../common/DynamicSelect";
 import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
-import { TableListMenu } from "../common/TableListMenu";
 import { AddEditCourseForm } from "./AddEditCourseForm";
 
 export const CoursesPage: React.FunctionComponent = () => {
-  const [selectedSubject, setSelectedSubject] = useState<SubjectOption>();
+  const [selectedSubject, setSelectedSubject] = useState<CourseSubjectOption>();
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedCourse, setSelectedCourse] = useState<Course>({} as Course);
   const [edit, setEdit] = useState<boolean>(false);
@@ -42,8 +45,6 @@ export const CoursesPage: React.FunctionComponent = () => {
   const { data: students, isLoading: isLoadingStudents } =
     useGetStudentsQuery();
 
-  type SubjectOption = { value: string; label: CourseSubject1 };
-
   useEffect(() => {
     if (isSuccess) {
       const fileredCourses = courses?.filter((x: Course) =>
@@ -54,8 +55,8 @@ export const CoursesPage: React.FunctionComponent = () => {
   }, [courses, isSuccess, page, selectedSubject]);
 
   const handleSelectChange = (
-    option: SubjectOption | null,
-    _actionMeta: ActionMeta<SubjectOption>
+    option: CourseSubjectOption | null,
+    _actionMeta: ActionMeta<CourseSubjectOption>
   ) => {
     setSelectedSubject(option ?? undefined);
   };
@@ -81,16 +82,13 @@ export const CoursesPage: React.FunctionComponent = () => {
     [setOpenModal, courses]
   );
 
-  const options: SubjectOption[] = [
-    ...CourseSubjects.map((x) => ({ value: x, label: x })),
-  ];
-
   return (
     <>
-      <TableListMenu>
-        <DS<SubjectOption>
+      <CardListMenu>
+        <DynamicSelect
+          isDisabled={isLoadingCourses}
           label={"Subject"}
-          options={options}
+          options={CourseSubjectOptions}
           value={selectedSubject}
           onChange={handleSelectChange}
         />
@@ -101,7 +99,7 @@ export const CoursesPage: React.FunctionComponent = () => {
         >
           <p>New Course</p>
         </AddModelButton>
-      </TableListMenu>
+      </CardListMenu>
       {openModal && (
         <Modal
           header="Add Course"

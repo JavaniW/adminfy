@@ -14,18 +14,18 @@ export const CourseSubjects = [
   CourseSubject.Science,
 ] as const;
 
+export const CourseSubjectOptions = Object.entries(CourseSubject).map(
+  ([_key, value]) => ({
+    label: value,
+    value,
+  })
+);
+
+export type CourseSubjectOption = { label: string; value: CourseSubject };
+
 export type CourseSubjectType = (typeof CourseSubjects)[number];
 
 export default CourseSubject;
-
-// export type CourseSubject = "Math" | "History" | "Social Studies" | "English" | "Science";
-export const CourseSubjects1 = [
-  CourseSubject[CourseSubject.Math],
-  CourseSubject.History.toString(),
-  CourseSubject.SocialStudies.toString(),
-  CourseSubject.English.toString(),
-  CourseSubject.Science.toString(),
-];
 
 export type CourseSubject1 = `${CourseSubject}`;
 

@@ -1,3 +1,5 @@
+import { Option } from "../models/Option";
+
 export enum GradeLevel {
   Nine = "9",
   Ten = "10",
@@ -11,6 +13,15 @@ export const GradeLevels = [
   GradeLevel.Eleven,
   GradeLevel.Twelve,
 ] as const;
+
+export const GradeLevelOptions = Object.entries(GradeLevel).map(
+  ([key, value]) => ({
+    label: key,
+    value,
+  })
+);
+
+export type GradeLevelOption = { label: string; value: GradeLevel };
 
 export type GradeLevelType = (typeof GradeLevels)[number];
 

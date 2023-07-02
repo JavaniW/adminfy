@@ -2,25 +2,24 @@ import "../../styles/TableList.css";
 
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
-import { GradeLevels, GradeLevelType } from "../../enums/GradeLevel";
+import { ActionMeta } from "react-select";
+import { GradeLevelOption, GradeLevelOptions } from "../../enums/GradeLevel";
 import { paginate } from "../../helpers";
 import { useModalHooks } from "../../hooks/customHooks";
 import { Pagination } from "../../models/Misc";
 import Student from "../../models/Student";
 import { useGetStudentsQuery } from "../../redux/apiSlice";
 import { AddModelButton } from "../common/AddModelButton";
-import { DynamicSelect, option } from "../common/DynamicSelect";
+import { CardListMenu } from "../common/CardListMenu";
+import { DynamicSelect } from "../common/DynamicSelect";
 import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { StudentCardList } from "../common/StudentCardList";
-import { TableListMenu } from "../common/TableListMenu";
 import { AddEditStudentForm } from "./AddEditStudentForm";
 
 export const StudentsPage: React.FunctionComponent = () => {
-  const [selectedGrade, setSelectedGrade] = useState<GradeLevelType | "All">(
-    "All"
-  );
+  const [selectedGrade, setSelectedGrade] = useState<GradeLevelOption>();
   const [openModal, setOpenModal, closeModal] = useModalHooks();
   const [selectedStudent, setSelectedStudent] = useState<Student>();
   const [edit, setEdit] = useState<boolean>(false);
@@ -34,14 +33,17 @@ export const StudentsPage: React.FunctionComponent = () => {
   useEffect(() => {
     if (isSuccess) {
       const filteredStudents = students.filter((x: Student) =>
-        selectedGrade === "All" ? true : selectedGrade === x.gradeLevel
+        selectedGrade ? selectedGrade.value === x.gradeLevel : true
       );
       setPagination(paginate(filteredStudents, page));
     }
   }, [isSuccess, page, selectedGrade, students]);
 
-  const handleSelectChange = ({ value }: { value: string }) => {
-    setSelectedGrade(value as GradeLevelType | "All");
+  const handleSelectChange = (
+    option: GradeLevelOption | null,
+    _actionMeta: ActionMeta<GradeLevelOption>
+  ) => {
+    setSelectedGrade(option ?? undefined);
   };
 
   const handleAfterCloseModal = useCallback(() => {
@@ -52,14 +54,6 @@ export const StudentsPage: React.FunctionComponent = () => {
   const handleAfterSubmit = useCallback(() => {
     closeModal();
   }, [closeModal]);
-
-  const studentGradeOptions: option[] = [
-    {
-      label: "All",
-      value: "All",
-    },
-    ...GradeLevels.map((x) => ({ label: x, value: x })),
-  ];
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
@@ -75,14 +69,16 @@ export const StudentsPage: React.FunctionComponent = () => {
 
   return (
     <>
-      <TableListMenu>
+      <CardListMenu>
         <DynamicSelect
-          disabled={isLoading}
+          // name="Grade"t7yyy`
+          placeholder="Grade"
+          isDisabled={isLoading}
+          label="Grade"
+          options={GradeLevelOptions}
           value={selectedGrade}
-          name="Grade Level"
-          label={"Grade Level"}
-          onSelectChange={handleSelectChange}
-          arrayOfOptions={studentGradeOptions}
+          getOptionLabel={(x) => x.value}
+          onChange={handleSelectChange}
         />
         <AddModelButton
           disabled={isLoading}
@@ -91,7 +87,7 @@ export const StudentsPage: React.FunctionComponent = () => {
         >
           <p>New Student</p>
         </AddModelButton>
-      </TableListMenu>
+      </CardListMenu>
       {openModal && (
         <Modal
           header={"Add Student"}

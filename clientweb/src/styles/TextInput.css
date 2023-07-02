@@ -1,8 +1,17 @@
-.date-input {
+.text-label input {
+  /* display: inline-block; */
+}
+
+.text-label p {
+  /* display: inline-block; */
+  /* margin-right: 4px; */
+}
+
+.text-input {
   cursor: default;
   display: block;
   padding: 2px 8px;
-  min-height: 38px;
+  min-height: 30px;
   transition: all 100ms;
   background-color: hsl(0, 0%, 100%);
   border-color: hsl(0, 0%, 80%);

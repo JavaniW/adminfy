@@ -1,5 +1,5 @@
-import CourseSubject from '../enums/CourseSubject';
-import GradeLevel from '../enums/GradeLevel';
+import CourseSubject from "../enums/CourseSubject";
+import GradeLevel from "../enums/GradeLevel";
 
 export interface Teacher {
   _id?: string | number;
@@ -9,3 +9,9 @@ export interface Teacher {
   subject: CourseSubject;
   grade: GradeLevel;
 }
+
+export type TeacherOption = {
+  _id: string | number;
+  firstName: string;
+  lastName: string;
+};
