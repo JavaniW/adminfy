@@ -1,5 +1,4 @@
-import { Children, PropsWithChildren } from "react";
-import "../../styles/AddModelButton.css";
+import { PropsWithChildren } from "react";
 
 interface Props {
   disabled: boolean;

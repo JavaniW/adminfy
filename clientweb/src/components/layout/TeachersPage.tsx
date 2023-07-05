@@ -1,3 +1,5 @@
+import "../../styles/Page.css";
+
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { ActionMeta } from "react-select";
@@ -65,14 +67,17 @@ export const TeachersPage: React.FunctionComponent = () => {
       _actionMeta: ActionMeta<GradeLevelOption>
     ) => {
       setSelectedGrade(option ?? undefined);
+      setPage(0);
     },
     []
   );
 
   return (
     <>
+      <h1 className="page-header teacher--page-header">Teachers</h1>
       <CardListMenu>
         <DynamicSelect
+          isClearable={true}
           isDisabled={isLoading}
           label="Grade"
           options={GradeLevelOptions}
@@ -106,6 +111,7 @@ export const TeachersPage: React.FunctionComponent = () => {
         <TeacherCardList data={pagination.data} onClick={handleCardClick} />
       )}
       <PrevNextButtons
+        show={isSuccess}
         page={page}
         onPrev={() => setPage(page - 1)}
         onNext={() => setPage(page + 1)}

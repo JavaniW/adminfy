@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import GradeLevel, { GradeLevelOptions } from "../../enums/GradeLevel";
 import { getOptionValue } from "../../helpers";
 import Student from "../../models/Student";
-import { useSaveStudentMutation } from "../../redux/apiSlice";
+import {
+  useDeleteStudentMutation,
+  useSaveStudentMutation,
+} from "../../redux/apiSlice";
 import { DateInput } from "../common/DateInput";
 import { DynamicSelect } from "../common/DynamicSelect";
 import { Spinner } from "../common/Spinner";
@@ -28,7 +31,8 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
         }
   );
 
-  const [saveStudent, { isLoading }] = useSaveStudentMutation();
+  const [saveStudent, { isLoading: isSaving }] = useSaveStudentMutation();
+  const [deleteStudent, { isLoading: isDeleting }] = useDeleteStudentMutation();
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -44,11 +48,23 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
       .catch(console.error);
   };
 
+  const handleDelete = (event: SyntheticEvent) => {
+    deleteStudent(student._id!.toString())
+      .then(() => {
+        toast("Student deleted", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        props.onAfterSubmit();
+      })
+      .catch(console.error);
+  };
+
   const handleChange = (event: ChangeEvent<any>) => {
     setStudent({ ...student, [event.target.name]: event.target.value });
   };
 
-  if (isLoading) return <Spinner />;
+  if (isSaving || isDeleting) return <Spinner />;
 
   return (
     <form
@@ -85,10 +101,16 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
         onChange={(newVal) =>
           setStudent({ ...student, gradeLevel: newVal!.value })
         }
+        getOptionLabel={(x) => x.value}
         options={GradeLevelOptions}
         value={getOptionValue(GradeLevelOptions, student.gradeLevel)}
       />
-      <button type="submit">Submit</button>
+      <div className="edit-form-buttons">
+        <button disabled={student._id ? false : true} onClick={handleDelete}>
+          Delete
+        </button>
+        <button type="submit">Submit</button>
+      </div>
     </form>
   );
 };

@@ -3,9 +3,9 @@
   height: 80px;
   display: grid;
   padding-left: 5px;
+  background-color: var(--secondary-color);
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  background-color: #ccc;
   justify-items: start;
   align-items: center;
   column-gap: 10px;

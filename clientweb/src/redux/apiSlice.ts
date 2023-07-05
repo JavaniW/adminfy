@@ -3,7 +3,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import Student from "../models/Student";
 import { Teacher } from "../models/Teacher";
 import { Course, CourseQuery } from "../models/Course";
-import CourseStudent from "../models/CourseStudent";
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -24,12 +23,25 @@ export const apiSlice = createApi({
     getCourse: builder.query<Course, string>({
       query: (id) => `/courses/${id}`,
     }),
+    getCourseStudents: builder.query<Student[], string>({
+      query: (courseId) => `/courses/${courseId}/students`,
+    }),
     saveCourse: builder.mutation<CourseQuery, CourseQuery>({
       query: (course) => ({
         url: `/courses/${course._id || ""}`,
         method: course._id ? "PUT" : "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(course),
+      }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Course", _id: "LIST" },
+        { type: "Course", _id: arg },
+      ],
+    }),
+    deleteCourse: builder.mutation<Course, string>({
+      query: (id) => ({
+        url: `/courses/${id}`,
+        method: "DELETE",
       }),
       invalidatesTags: (_result, _error, arg) => [
         { type: "Course", _id: "LIST" },
@@ -58,6 +70,16 @@ export const apiSlice = createApi({
         { type: "Student", _id: arg },
       ],
     }),
+    deleteStudent: builder.mutation<Student, string>({
+      query: (id) => ({
+        url: `/students/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Student", _id: "LIST" },
+        { type: "Student", _id: arg },
+      ],
+    }),
     getTeachers: builder.query<Teacher[], void>({
       query: () => `/teachers`,
       providesTags: (result = []) => [
@@ -80,26 +102,15 @@ export const apiSlice = createApi({
         { type: "Teacher", _id: arg },
       ],
     }),
-    getCourseStudents: builder.query<Student[], string>({
-      query: (courseId) => `/courses/${courseId}/students`,
-    }),
-    getCourseStudent: builder.query<
-      Student,
-      { courseId: string; studentId: string }
-    >({
-      query: (params) =>
-        `/courses/${params.courseId}/students/${params.studentId}`,
-    }),
-    saveCourseStudents: builder.mutation<
-      CourseStudent[],
-      { courseId: string; students: string[] }
-    >({
-      query: (params) => ({
-        url: `/courses/${params.courseId}/students`,
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(params.students),
+    deleteTeacher: builder.mutation<Teacher, string>({
+      query: (id) => ({
+        url: `/teachers/${id}`,
+        method: "DELETE",
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Teacher", _id: "LIST" },
+        { type: "Teacher", _id: arg },
+      ],
     }),
   }),
 });
@@ -108,9 +119,11 @@ export const apiSlice = createApi({
 export const {
   useGetCoursesQuery,
   useSaveCourseMutation,
+  useDeleteCourseMutation,
   useGetTeachersQuery,
   useSaveTeacherMutation,
+  useDeleteTeacherMutation,
   useGetStudentsQuery,
   useSaveStudentMutation,
-  useSaveCourseStudentsMutation,
+  useDeleteStudentMutation,
 } = apiSlice;

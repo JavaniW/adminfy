@@ -11,7 +11,6 @@ export interface Teacher {
 }
 
 export type TeacherOption = {
-  _id: string | number;
-  firstName: string;
-  lastName: string;
+  label: string;
+  value: string;
 };

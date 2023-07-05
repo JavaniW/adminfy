@@ -1,13 +1,17 @@
+import "../../styles/PrevNextButtons.css";
 interface Props {
   page: number;
   onPrev: () => void;
   onNext: () => void;
   disabled: { prevDisabled: boolean; nextDisabled: boolean };
+  show?: boolean;
 }
 
 export const PrevNextButtons: React.FunctionComponent<Props> = (props) => {
+  if (!props.show) return null;
+
   return (
-    <>
+    <div className="pagination-buttons">
       <button
         className="prev-paginated-page-button"
         onClick={props.onPrev}
@@ -22,7 +26,7 @@ export const PrevNextButtons: React.FunctionComponent<Props> = (props) => {
       >
         Next
       </button>
-    </>
+    </div>
   );
 };
 

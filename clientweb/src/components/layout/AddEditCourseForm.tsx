@@ -3,41 +3,39 @@ import { toast } from "react-toastify";
 
 import { CourseSubjectOptions } from "../../enums/CourseSubject";
 import { getFullName, getOptionValue, getOptionValues } from "../../helpers";
-import { Course, CourseQuery } from "../../models/Course";
-import Student from "../../models/Student";
-import { Teacher } from "../../models/Teacher";
-import { useSaveCourseMutation } from "../../redux/apiSlice";
+import { CourseQuery } from "../../models/Course";
+import { StudentOption } from "../../models/Student";
+import { TeacherOption } from "../../models/Teacher";
+import {
+  apiSlice,
+  useDeleteCourseMutation,
+  useSaveCourseMutation,
+} from "../../redux/apiSlice";
+import { useAppDispatch } from "../../redux/store";
+import { AsyncDynamicSelect } from "../common/AsyncDynamicSelect";
 import { DynamicSelect } from "../common/DynamicSelect";
 import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
 
 interface Props {
   onAfterSubmit: () => any;
-  course: Course;
+  course: CourseQuery;
   edit: boolean;
-  teachers: Teacher[];
-  students: Student[];
 }
 
 export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
-  const [course, setCourse] = useState<CourseQuery>(
-    props.edit
-      ? ({
-          ...props.course,
-          teacher: props.course.teacher._id,
-          students: props.course.students?.map((x) => x._id),
-        } as CourseQuery)
-      : {
-          _id: "",
-          number: "",
-          name: "",
-          teacher: "",
-          subject: undefined,
-          students: [],
-        }
-  );
+  const [course, setCourse] = useState<CourseQuery>(props.course);
+  const [teacherOptions, setTeacherOptions] = useState<TeacherOption[]>();
+  const [studentOptions, setStudentOptions] = useState<TeacherOption[]>();
+  const [isLoadingTeacherOptions, setIsLoadingTeacherOptions] =
+    useState<boolean>(true);
+  const [isLoadingStudentOptions, setIsLoadingStudentOptions] =
+    useState<boolean>(true);
 
-  const [saveCourse, { isLoading }] = useSaveCourseMutation();
+  const [saveCourse, { isLoading: isSaving }] = useSaveCourseMutation();
+  const [deleteStudent, { isLoading: isDeleting }] = useDeleteCourseMutation();
+
+  const dispatch = useAppDispatch();
 
   const handleTextInputChange = (event: ChangeEvent<any>) => {
     setCourse({ ...course, [event.target.name]: event.target.value });
@@ -45,11 +43,9 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    console.log(`Final course:`);
-    console.log(course);
     saveCourse(course)
       .unwrap()
-      .then(() => {
+      .then((_payload) => {
         toast("successfully added", {
           position: "top-right",
           autoClose: 3000,
@@ -59,16 +55,55 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       .catch(console.error);
   };
 
-  const teacherOptions = props.teachers.map((x) => ({
-    value: x._id!.toString(),
-    label: getFullName(x, "firstName", "lastName"),
-  }));
-  const studentOptions = props.students.map((x) => ({
-    value: x._id!.toString(),
-    label: getFullName(x, "firstName", "lastName"),
-  }));
+  const handleDelete = (event: SyntheticEvent) => {
+    deleteStudent(course._id!.toString())
+      .then(() => {
+        toast("Course deleted", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        props.onAfterSubmit();
+      })
+      .catch(console.error);
+  };
 
-  if (isLoading) return <Spinner />;
+  const loadStudentOptions = (
+    _inputValue: string,
+    callback: (options: StudentOption[]) => void
+  ) => {
+    dispatch(apiSlice.endpoints.getStudents.initiate()).then((res) => {
+      setIsLoadingStudentOptions(false);
+      const options = res.data!.map(
+        (x) =>
+          ({
+            value: x._id,
+            label: getFullName(x, "firstName", "lastName"),
+          } as StudentOption)
+      );
+      setStudentOptions(options);
+      callback(options);
+    });
+  };
+
+  const loadTeacherOptions = (
+    _inputValue: string,
+    callback: (options: TeacherOption[]) => void
+  ) => {
+    dispatch(apiSlice.endpoints.getTeachers.initiate()).then((res) => {
+      setIsLoadingTeacherOptions(false);
+      const options = res.data!.map(
+        (x) =>
+          ({
+            value: x._id,
+            label: getFullName(x, "firstName", "lastName"),
+          } as TeacherOption)
+      );
+      setTeacherOptions(options);
+      callback(options);
+    });
+  };
+
+  if (isSaving || isDeleting) return <Spinner />;
 
   return (
     <form
@@ -100,28 +135,34 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         options={CourseSubjectOptions}
         value={getOptionValue(CourseSubjectOptions, course.subject)}
       />
-      <DynamicSelect
-        placeholder="Teacher"
+      <AsyncDynamicSelect
+        isLoading={isLoadingTeacherOptions}
         label="Teacher"
-        isClearable={false}
-        options={teacherOptions}
-        value={getOptionValue(teacherOptions, course.teacher)}
-        onChange={(newVal) =>
-          setCourse({ ...course, teacher: newVal!.value.toString() })
-        }
+        cacheOptions
+        defaultOptions
+        value={getOptionValue(teacherOptions!, course.teacher)}
+        loadOptions={loadTeacherOptions}
+        onChange={(newVal) => setCourse({ ...course, teacher: newVal!.value })}
       />
-      <DynamicSelect
-        isMulti={true}
-        placeholder="Students"
+      <AsyncDynamicSelect
+        isLoading={isLoadingStudentOptions}
+        isClearable={true}
         label="Students"
-        isClearable={false}
-        options={studentOptions}
-        value={getOptionValues(studentOptions, course.students)}
-        onChange={(newVal) => {
-          setCourse({ ...course, students: newVal!.map((x) => x.value) });
-        }}
+        cacheOptions
+        defaultOptions
+        isMulti={true}
+        loadOptions={loadStudentOptions}
+        onChange={(newVal) =>
+          setCourse({ ...course, students: newVal!.map((x) => x.value) })
+        }
+        value={getOptionValues(studentOptions!, course.students)}
       />
-      <button type="submit">Submit</button>
+      <div className="edit-form-buttons">
+        <button disabled={course._id ? false : true} onClick={handleDelete}>
+          Delete
+        </button>
+        <button type="submit">Submit</button>
+      </div>
     </form>
   );
 };

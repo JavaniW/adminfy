@@ -1,4 +1,5 @@
 import "../../styles/TableList.css";
+import "../../styles/Page.css";
 
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
@@ -44,6 +45,7 @@ export const StudentsPage: React.FunctionComponent = () => {
     _actionMeta: ActionMeta<GradeLevelOption>
   ) => {
     setSelectedGrade(option ?? undefined);
+    setPage(0);
   };
 
   const handleAfterCloseModal = useCallback(() => {
@@ -69,9 +71,10 @@ export const StudentsPage: React.FunctionComponent = () => {
 
   return (
     <>
+      <h1 className="page-header teacher--page-header">Students</h1>
       <CardListMenu>
         <DynamicSelect
-          // name="Grade"t7yyy`
+          isClearable={true}
           placeholder="Grade"
           isDisabled={isLoading}
           label="Grade"
@@ -106,6 +109,7 @@ export const StudentsPage: React.FunctionComponent = () => {
         <StudentCardList data={pagination.data} onClick={handleCardClick} />
       )}
       <PrevNextButtons
+        show={isSuccess}
         page={page}
         onPrev={() => setPage(page - 1)}
         onNext={() => setPage(page + 1)}

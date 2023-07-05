@@ -9,7 +9,7 @@ router.get(`/teachers`, (_request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });
@@ -48,7 +48,7 @@ router.post(`/teachers`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });
@@ -71,7 +71,19 @@ router.put(`/teachers/:id`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
+    )
+    .catch(console.error);
+});
+
+router.delete(`/teachers/:id`, (request, response) => {
+  Teacher.findByIdAndDelete(request.params.id)
+    .then(
+      (res) => {
+        response.setHeader("content-type", "application/json");
+        response.send(res.toJSON());
+      },
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });

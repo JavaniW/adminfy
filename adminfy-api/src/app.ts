@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import courseRouter from "./routes/coursesRoutes";
 import studentRouter from "./routes/studentsRoutes";
 import teacherrouter from "./routes/teacherRoutes";
-import courseStudentRouter from "./routes/courseStudentRoutes";
 import cors from "cors";
 
 const app = express();
@@ -28,4 +27,3 @@ app.use(cors());
 app.use(baseRoute, courseRouter);
 app.use(baseRoute, studentRouter);
 app.use(baseRoute, teacherrouter);
-app.use(baseRoute, courseStudentRouter);

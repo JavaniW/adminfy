@@ -7,7 +7,10 @@ import { CourseSubjectOptions } from "../../enums/CourseSubject";
 import { GradeLevelOptions } from "../../enums/GradeLevel";
 import { getOptionValue } from "../../helpers";
 import { Teacher } from "../../models/Teacher";
-import { useSaveTeacherMutation } from "../../redux/apiSlice";
+import {
+  useDeleteTeacherMutation,
+  useSaveTeacherMutation,
+} from "../../redux/apiSlice";
 import { DynamicSelect } from "../common/DynamicSelect";
 import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
@@ -19,7 +22,8 @@ interface Props {
 }
 
 export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
-  const [saveTeacher, { isLoading }] = useSaveTeacherMutation();
+  const [saveTeacher, { isLoading: isSaving }] = useSaveTeacherMutation();
+  const [deleteTeacher, { isLoading: isDeleting }] = useDeleteTeacherMutation();
   const [teacher, setTeacher] = useState<Teacher>(
     props.edit
       ? props.teacher!
@@ -53,7 +57,19 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
       .catch(console.error);
   };
 
-  if (isLoading) return <Spinner />;
+  const handleDelete = (event: SyntheticEvent) => {
+    deleteTeacher(teacher._id!.toString())
+      .then(() => {
+        toast("Course deleted", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        props.onAfterSubmit();
+      })
+      .catch(console.error);
+  };
+
+  if (isSaving || isDeleting) return <Spinner />;
 
   return (
     <form
@@ -93,9 +109,15 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         label="Grade"
         value={getOptionValue(GradeLevelOptions, teacher.grade)}
         options={GradeLevelOptions}
+        getOptionLabel={(x) => x.value}
         onChange={(newVal) => setTeacher({ ...teacher, grade: newVal!.value })}
       />
-      <button type="submit">Submit</button>
+      <div className="edit-form-buttons">
+        <button disabled={teacher._id ? false : true} onClick={handleDelete}>
+          Delete
+        </button>
+        <button type="submit">Submit</button>
+      </div>
     </form>
   );
 };

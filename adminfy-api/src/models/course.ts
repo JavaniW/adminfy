@@ -12,8 +12,16 @@ const courseSchema = new Schema(
       enum: Object.values(CourseSubject),
       required: true,
     },
+    students: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Student",
+      },
+    ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 const Course = mongoose.model(`Course`, courseSchema);

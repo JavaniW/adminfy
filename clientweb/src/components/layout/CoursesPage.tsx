@@ -1,4 +1,5 @@
 import "../../styles/AddEditModal.css";
+import "../../styles/Page.css";
 
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
@@ -9,13 +10,9 @@ import {
 } from "../../enums/CourseSubject";
 import { paginate } from "../../helpers";
 import { useModalHooks } from "../../hooks/customHooks";
-import { Course } from "../../models/Course";
+import { Course, CourseQuery } from "../../models/Course";
 import { Pagination } from "../../models/Misc";
-import {
-  useGetCoursesQuery,
-  useGetStudentsQuery,
-  useGetTeachersQuery,
-} from "../../redux/apiSlice";
+import { useGetCoursesQuery } from "../../redux/apiSlice";
 import { AddModelButton } from "../common/AddModelButton";
 import { CardListMenu } from "../common/CardListMenu";
 import { CourseCardList } from "../common/CourseCardList";
@@ -28,11 +25,13 @@ import { AddEditCourseForm } from "./AddEditCourseForm";
 export const CoursesPage: React.FunctionComponent = () => {
   const [selectedSubject, setSelectedSubject] = useState<CourseSubjectOption>();
   const [openModal, setOpenModal, closeModal] = useModalHooks();
-  const [selectedCourse, setSelectedCourse] = useState<Course>({} as Course);
+  const [selectedCourse, setSelectedCourse] = useState<CourseQuery>(
+    {} as CourseQuery
+  );
   const [edit, setEdit] = useState<boolean>(false);
   const [pagination, setPagination] = useState<Pagination<Course>>({
     data: [],
-    hasPrevOrNext: { prevDisabled: false, nextDisabled: false },
+    hasPrevOrNext: { prevDisabled: true, nextDisabled: true },
   });
   const [page, setPage] = useState<number>(0);
   const {
@@ -40,10 +39,16 @@ export const CoursesPage: React.FunctionComponent = () => {
     isLoading: isLoadingCourses,
     isSuccess,
   } = useGetCoursesQuery();
-  const { data: teachers, isLoading: isLoadingTeachers } =
-    useGetTeachersQuery();
-  const { data: students, isLoading: isLoadingStudents } =
-    useGetStudentsQuery();
+  const course = edit
+    ? selectedCourse
+    : {
+        _id: "",
+        number: "",
+        name: "",
+        teacher: "",
+        subject: undefined,
+        students: [],
+      };
 
   useEffect(() => {
     if (isSuccess) {
@@ -59,10 +64,11 @@ export const CoursesPage: React.FunctionComponent = () => {
     _actionMeta: ActionMeta<CourseSubjectOption>
   ) => {
     setSelectedSubject(option ?? undefined);
+    setPage(0);
   };
 
   const handleAfterCloseModal = useCallback(() => {
-    setSelectedCourse({} as Course);
+    setSelectedCourse({} as CourseQuery);
     setEdit(false);
   }, []);
 
@@ -72,11 +78,16 @@ export const CoursesPage: React.FunctionComponent = () => {
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
-      const studentToEdit = courses!.find(
+      let courseToEdit = courses!.find(
         (x) => x._id === event.currentTarget.dataset!.id
       );
+      const _courseToEdit = {
+        ...courseToEdit,
+        teacher: courseToEdit?.teacher._id?.toString(),
+        students: courseToEdit?.students.map((x) => x._id?.toString()),
+      } as CourseQuery;
       setEdit(true);
-      setSelectedCourse(studentToEdit ?? ({} as Course));
+      setSelectedCourse(_courseToEdit);
       setOpenModal(true);
     },
     [setOpenModal, courses]
@@ -84,8 +95,10 @@ export const CoursesPage: React.FunctionComponent = () => {
 
   return (
     <>
+      <h1 className="page-header teacher--page-header">Courses</h1>
       <CardListMenu>
         <DynamicSelect
+          isClearable={true}
           isDisabled={isLoadingCourses}
           label={"Subject"}
           options={CourseSubjectOptions}
@@ -106,17 +119,13 @@ export const CoursesPage: React.FunctionComponent = () => {
           requestClose={closeModal}
           onAfterClose={handleAfterCloseModal}
         >
-          {isLoadingTeachers || isLoadingStudents ? (
-            <Spinner />
-          ) : (
-            <AddEditCourseForm
-              teachers={teachers!}
-              edit={edit}
-              course={selectedCourse}
-              onAfterSubmit={handleAfterSubmit}
-              students={students!}
-            />
-          )}
+          <AddEditCourseForm
+            // teachers={teachers!}
+            edit={edit}
+            course={selectedCourse}
+            onAfterSubmit={handleAfterSubmit}
+            // students={students!}
+          />
         </Modal>
       )}
       {isLoadingCourses && <Spinner />}
@@ -124,6 +133,7 @@ export const CoursesPage: React.FunctionComponent = () => {
         <CourseCardList data={pagination.data} onClick={handleCardClick} />
       )}
       <PrevNextButtons
+        show={isSuccess}
         page={page}
         onPrev={() => setPage(page - 1)}
         onNext={() => setPage(page + 1)}

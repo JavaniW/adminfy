@@ -13,7 +13,7 @@
 
 .modal {
   position: relative;
-  background-color: var(--test-color1);
+  background-color: var(--secondary-color);
   /* top: 15%;
     left: 10%; */
   /* right: auto; */

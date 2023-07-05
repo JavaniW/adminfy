@@ -9,7 +9,10 @@ router.get(`/students`, (_request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => {
+        console.log(err);
+        response.status(400).send(err);
+      }
     )
     .catch(console.error);
 });
@@ -28,7 +31,7 @@ router.get(`/students/:id`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });
@@ -49,10 +52,7 @@ router.post(`/students`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
-      (err) => {
-        console.log(err);
-        response.send(err);
-      }
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });
@@ -74,7 +74,19 @@ router.put(`/students/:id`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
+    )
+    .catch(console.error);
+});
+
+router.delete(`/students/:id`, (request, response) => {
+  Student.findByIdAndDelete(request.params.id)
+    .then(
+      (res) => {
+        response.setHeader("content-type", "application/json");
+        response.send(res.toJSON());
+      },
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });

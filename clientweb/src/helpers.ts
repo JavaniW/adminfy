@@ -31,6 +31,7 @@ export function paginate<T>(
 }
 
 export const getOptionValue = <T extends Option>(options: T[], val: any) => {
+  if (!options) return undefined;
   return options.filter((o) => o.value === val);
 };
 
@@ -38,5 +39,22 @@ export const getOptionValues = <T extends Option>(
   options: T[],
   values: any[]
 ) => {
-  return options.filter((o) => values.includes(o.value));
+  if (!options) return undefined;
+  const _values = values
+    ? options.filter((o) => {
+        return values.includes(o.value);
+      })
+    : undefined;
+  return _values; //? options.filter((o) => values.includes(o.value)) : undefined;
 };
+
+export function difference(A: string[], B: string[]) {
+  const result = [];
+  for (const p of A) {
+    if (B.indexOf(p) === -1) {
+      result.push(p);
+    }
+  }
+
+  return result;
+}

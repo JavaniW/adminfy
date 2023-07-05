@@ -9,6 +9,10 @@ interface Props {
 }
 
 export const TeacherCardList: React.FunctionComponent<Props> = (props) => {
+  if (props.data.length < 1) {
+    return <h4>No teachers. Please add a teacher to see teachers.</h4>;
+  }
+
   const renderCard = (teacher: Teacher, key: number) => (
     <TeacherCard
       onClick={props.onClick}

@@ -1,17 +1,35 @@
 import express from "express";
 ``;
 import Course from "../models/course";
+
 const router = express.Router();
 
 router.get(`/courses`, (_request, response) => {
   Course.find()
     .populate("teacher")
+    .populate("students")
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
         response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => {
+        response.status(400).send(err);
+      }
+    )
+    .catch(console.error);
+});
+
+router.get(`/courses/:id/students`, (request, response) => {
+  Course.findById(request.params.id)
+    .populate("students")
+    .select("students")
+    .then(
+      (res) => {
+        response.setHeader("content-type", "application/json");
+        response.send(JSON.stringify(res));
+      },
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });
@@ -19,6 +37,7 @@ router.get(`/courses`, (_request, response) => {
 router.get(`/courses/:id`, (request, response) => {
   Course.findById(request.params.id)
     .populate("teacher")
+    .populate("students")
     .then(
       (res) => {
         if (!res) {
@@ -31,7 +50,7 @@ router.get(`/courses/:id`, (request, response) => {
         response.setHeader("content-type", "application/json");
         response.send(res.toJSON());
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });
@@ -43,19 +62,17 @@ router.post(`/courses`, (request, response) => {
     number: data.number,
     teacher: data.teacher,
     subject: data.subject,
+    students: data.students,
   });
   newCourse
     .save()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
-        response.send(res.toJSON());
+        response.send(JSON.stringify(res));
       },
       (err) => {
-        console.log("Error on backend");
-        console.log(data);
-        console.log(err);
-        response.send(err);
+        response.status(400).send(err);
       }
     )
     .catch(console.error);
@@ -66,18 +83,32 @@ router.put(`/courses/:id`, (request, response) => {
   Course.findOneAndUpdate(
     { _id: data._id },
     {
+      name: data.name,
       courseNumber: data.courseNumber,
       teacher: data.teacher,
       subject: data.subject,
+      students: data.students,
     },
     { new: true }
   )
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
-        response.send(res.toJSON());
+        response.send(JSON.stringify(res));
       },
-      (err) => response.send(err)
+      (err) => response.status(400).send(err)
+    )
+    .catch(console.error);
+});
+
+router.delete(`/courses/:id`, (request, response) => {
+  Course.findByIdAndDelete(request.params.id)
+    .then(
+      (res) => {
+        response.setHeader("content-type", "application/json");
+        response.send(JSON.stringify(res));
+      },
+      (err) => response.status(400).send(err)
     )
     .catch(console.error);
 });

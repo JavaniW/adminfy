@@ -3,6 +3,7 @@ import "../../styles/DynamicSelect.css";
 
 interface DynamicSelectProps {
   label?: string;
+  disabled?: boolean;
 }
 
 export function DynamicSelect<
@@ -11,19 +12,13 @@ export function DynamicSelect<
   Group extends GroupBase<Option> = GroupBase<Option>
 >(props: Props<Option, IsMulti, Group> & DynamicSelectProps) {
   if (!props.label)
-    return (
-      <Select
-        className="select"
-        {...props}
-        isClearable={props.isClearable ?? true}
-      />
-    );
+    return <Select isDisabled={props.disabled} className="select" {...props} />;
 
   return (
     <div className="label-select">
       <label className="label-select-label">
         {props.label}
-        <Select {...props} isClearable={props.isClearable ?? true} />
+        <Select isDisabled={props.disabled} {...props} />
       </label>
     </div>
   );

@@ -19,8 +19,20 @@ export const MainNav: React.FunctionComponent<Props> = (props) => {
     />
   );
 
+  const menuIcon = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="48"
+      height="48"
+      fill="#000000"
+      viewBox="0 0 256 256"
+    >
+      <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+    </svg>
+  );
+
   const menu = [
-    <Link to={"/teacher"}>Teacher</Link>,
+    <Link to={"/teacher"}>Teachers</Link>,
     <Link to={"/courses"}>Courses</Link>,
     <Link to={"/students"}>Students</Link>,
   ];
@@ -32,7 +44,7 @@ export const MainNav: React.FunctionComponent<Props> = (props) => {
           {!isMobile && (
             <>
               <Link className="adminfy-main-nav-item" to={"/"}>
-                Teacher
+                Teachers
               </Link>
               <Link className="adminfy-main-nav-item" to={"/"}>
                 Courses
@@ -48,7 +60,7 @@ export const MainNav: React.FunctionComponent<Props> = (props) => {
             </Link>
           </li>
           <li>
-            <Dropdown trigger={dropdownIcon} menu={menu} />
+            <Dropdown trigger={menuIcon} menu={menu} />
           </li>
         </ul>
       </nav>

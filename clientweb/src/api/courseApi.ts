@@ -19,7 +19,10 @@ export function saveCourse(course: CourseQuery) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify(course),
   })
-    .then(handleResponse)
+    .then((res) => {
+      console.log(res);
+      handleResponse(res).then(console.log);
+    })
     .catch(handleError);
 }
 

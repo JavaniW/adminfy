@@ -16,3 +16,8 @@ export type CourseQuery = Omit<Course, "teacher" | "students" | "subject"> & {
   students: string[];
   subject: CourseSubject | undefined;
 };
+
+export type CourseOption = {
+  value: string,
+  label: string
+};

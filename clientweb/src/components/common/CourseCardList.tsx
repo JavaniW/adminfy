@@ -1,7 +1,7 @@
 import { getFullName } from "../../helpers";
 import { Course } from "../../models/Course";
-import { CourseCard } from "./CourseCard";
 import "../../styles/CardList.css";
+import { CourseCard } from "./CourseCard";
 
 interface Props {
   data: Course[];
@@ -9,6 +9,10 @@ interface Props {
 }
 
 export const CourseCardList: React.FunctionComponent<Props> = (props) => {
+  if (props.data.length < 1) {
+    return <h4>No courses. Please add a course to see courses.</h4>;
+  }
+
   const renderCard = (course: Course, key: number) => (
     <CourseCard
       onClick={props.onClick}
