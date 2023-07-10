@@ -8,6 +8,7 @@ router.get(`/courses`, (_request, response) => {
   Course.find()
     .populate("teacher")
     .populate("students")
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
@@ -24,6 +25,7 @@ router.get(`/courses/:id/students`, (request, response) => {
   Course.findById(request.params.id)
     .populate("students")
     .select("students")
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
@@ -38,6 +40,7 @@ router.get(`/courses/:id`, (request, response) => {
   Course.findById(request.params.id)
     .populate("teacher")
     .populate("students")
+    .exec()
     .then(
       (res) => {
         if (!res) {
@@ -91,6 +94,7 @@ router.put(`/courses/:id`, (request, response) => {
     },
     { new: true }
   )
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");

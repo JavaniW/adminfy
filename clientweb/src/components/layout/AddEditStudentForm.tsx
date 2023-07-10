@@ -38,26 +38,30 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
     event.preventDefault();
     saveStudent(student)
       .unwrap()
-      .then(() => {
-        toast("successfully added", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        props.onAfterSubmit();
-      })
-      .catch(console.error);
+      .then(
+        () => {
+          toast.success("successfully added");
+        },
+        (err) => {
+          toast.error(`${err.data}`);
+        }
+      )
+      .catch(console.error)
+      .finally(() => props.onAfterSubmit());
   };
 
   const handleDelete = (event: SyntheticEvent) => {
     deleteStudent(student._id!.toString())
-      .then(() => {
-        toast("Student deleted", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        props.onAfterSubmit();
-      })
-      .catch(console.error);
+      .then(
+        () => {
+          toast.success("Student deleted");
+        },
+        (err) => {
+          toast.error(`${err.data}`);
+        }
+      )
+      .catch(console.error)
+      .finally(() => props.onAfterSubmit());
   };
 
   const handleChange = (event: ChangeEvent<any>) => {
@@ -106,7 +110,11 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
         value={getOptionValue(GradeLevelOptions, student.gradeLevel)}
       />
       <div className="edit-form-buttons">
-        <button disabled={student._id ? false : true} onClick={handleDelete}>
+        <button
+          type="button"
+          disabled={student._id ? false : true}
+          onClick={handleDelete}
+        >
           Delete
         </button>
         <button type="submit">Submit</button>

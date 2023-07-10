@@ -1,7 +1,9 @@
 import "../../styles/AddEditModal.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { CourseSubjectOptions } from "../../enums/CourseSubject";
 import { GradeLevelOptions } from "../../enums/GradeLevel";
@@ -46,27 +48,31 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
       .unwrap()
       .then(
         () => {
-          toast("successfully added", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          props.onAfterSubmit();
+          toast.success("Successfully added");
         },
-        () => console.log("Rejected")
+        (err) => {
+          toast.error(`${err.data}`);
+        }
       )
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => props.onAfterSubmit());
   };
 
   const handleDelete = (event: SyntheticEvent) => {
     deleteTeacher(teacher._id!.toString())
-      .then(() => {
-        toast("Course deleted", {
-          position: "top-right",
-          autoClose: 3000,
-        });
+      .unwrap()
+      .then(
+        () => {
+          toast.success("Teacher deleted");
+        },
+        (err) => {
+          toast.error(`${err.data}`);
+        }
+      )
+      .catch(console.error)
+      .finally(() => {
         props.onAfterSubmit();
-      })
-      .catch(console.error);
+      });
   };
 
   if (isSaving || isDeleting) return <Spinner />;
@@ -94,6 +100,7 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         name="lastName"
       />
       <DynamicSelect
+        required
         placeholder="Subject"
         isClearable={false}
         label="Subject"
@@ -104,6 +111,7 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         }
       />
       <DynamicSelect
+        required
         placeholder="Grade"
         isClearable={false}
         label="Grade"
@@ -113,7 +121,11 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         onChange={(newVal) => setTeacher({ ...teacher, grade: newVal!.value })}
       />
       <div className="edit-form-buttons">
-        <button disabled={teacher._id ? false : true} onClick={handleDelete}>
+        <button
+          type="button"
+          disabled={teacher._id ? false : true}
+          onClick={handleDelete}
+        >
           Delete
         </button>
         <button type="submit">Submit</button>

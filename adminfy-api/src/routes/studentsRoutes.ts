@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get(`/students`, (_request, response) => {
   Student.find()
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
@@ -19,6 +20,7 @@ router.get(`/students`, (_request, response) => {
 
 router.get(`/students/:id`, (request, response) => {
   Student.findById(request.params.id)
+    .exec()
     .then(
       (res) => {
         if (!res) {
@@ -69,6 +71,7 @@ router.put(`/students/:id`, (request, response) => {
     },
     { new: true }
   )
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
@@ -81,6 +84,7 @@ router.put(`/students/:id`, (request, response) => {
 
 router.delete(`/students/:id`, (request, response) => {
   Student.findByIdAndDelete(request.params.id)
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");

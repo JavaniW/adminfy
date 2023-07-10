@@ -3,6 +3,7 @@ import "../../styles/Page.css";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { ActionMeta } from "react-select";
+import "react-toastify/dist/ReactToastify.css";
 import { GradeLevelOption, GradeLevelOptions } from "../../enums/GradeLevel";
 import { paginate } from "../../helpers";
 import { useModalHooks } from "../../hooks/customHooks";
@@ -11,12 +12,12 @@ import { Teacher } from "../../models/Teacher";
 import { useGetTeachersQuery } from "../../redux/apiSlice";
 import { AddModelButton } from "../common/AddModelButton";
 import { CardListMenu } from "../common/CardListMenu";
+import { DynamicSelect } from "../common/DynamicSelect";
 import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { TeacherCardList } from "../common/TeacherCardList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
-import { DynamicSelect } from "../common/DynamicSelect";
 
 export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelOption>();
@@ -45,9 +46,9 @@ export const TeachersPage: React.FunctionComponent = () => {
     setEdit(false);
   }, []);
 
-  const handleAfterSubmit = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+  // const closeModal = useCallback(() => {
+  //   closeModal();
+  // }, [closeModal]);
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
@@ -100,7 +101,7 @@ export const TeachersPage: React.FunctionComponent = () => {
           onAfterClose={handleAfterCloseModal}
         >
           <AddEditTeacherForm
-            onAfterSubmit={handleAfterSubmit}
+            onAfterSubmit={closeModal}
             teacher={selectedTeacher}
             edit={edit}
           />

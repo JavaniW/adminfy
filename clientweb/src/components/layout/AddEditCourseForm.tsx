@@ -1,5 +1,6 @@
 import React, { ChangeEvent, SyntheticEvent, useState } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { CourseSubjectOptions } from "../../enums/CourseSubject";
 import { getFullName, getOptionValue, getOptionValues } from "../../helpers";
@@ -45,62 +46,82 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     event.preventDefault();
     saveCourse(course)
       .unwrap()
-      .then((_payload) => {
-        toast("successfully added", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        props.onAfterSubmit();
-      })
-      .catch(console.error);
+      .then(
+        () => {
+          toast.success("successfully added");
+        },
+        (err) => {
+          toast.error(`${err.data}`);
+        }
+      )
+      .catch(console.error)
+      .finally(() => props.onAfterSubmit());
   };
 
   const handleDelete = (event: SyntheticEvent) => {
     deleteStudent(course._id!.toString())
-      .then(() => {
-        toast("Course deleted", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        props.onAfterSubmit();
-      })
-      .catch(console.error);
+      .unwrap()
+      .then(
+        () => {
+          toast.success("Course deleted");
+          props.onAfterSubmit();
+        },
+        (err) => {
+          toast.error(`${err}`);
+        }
+      )
+      .catch(console.error)
+      .finally(() => props.onAfterSubmit());
   };
 
   const loadStudentOptions = (
     _inputValue: string,
     callback: (options: StudentOption[]) => void
   ) => {
-    dispatch(apiSlice.endpoints.getStudents.initiate()).then((res) => {
-      setIsLoadingStudentOptions(false);
-      const options = res.data!.map(
-        (x) =>
-          ({
-            value: x._id,
-            label: getFullName(x, "firstName", "lastName"),
-          } as StudentOption)
+    dispatch(apiSlice.endpoints.getStudents.initiate())
+      .unwrap()
+      .then(
+        (res) => {
+          setIsLoadingStudentOptions(false);
+          const options = res.map(
+            (x) =>
+              ({
+                value: x._id,
+                label: getFullName(x, "firstName", "lastName"),
+              } as StudentOption)
+          );
+          setStudentOptions(options);
+          callback(options);
+        },
+        (err) => {
+          console.log("Error");
+        }
       );
-      setStudentOptions(options);
-      callback(options);
-    });
   };
 
   const loadTeacherOptions = (
     _inputValue: string,
     callback: (options: TeacherOption[]) => void
   ) => {
-    dispatch(apiSlice.endpoints.getTeachers.initiate()).then((res) => {
-      setIsLoadingTeacherOptions(false);
-      const options = res.data!.map(
-        (x) =>
-          ({
-            value: x._id,
-            label: getFullName(x, "firstName", "lastName"),
-          } as TeacherOption)
+    dispatch(apiSlice.endpoints.getTeachers.initiate())
+      .unwrap()
+      .then(
+        (res) => {
+          setIsLoadingTeacherOptions(false);
+          const options = res.map(
+            (x) =>
+              ({
+                value: x._id,
+                label: getFullName(x, "firstName", "lastName"),
+              } as TeacherOption)
+          );
+          setTeacherOptions(options);
+          callback(options);
+        },
+        (err) => {
+          console.log("Error");
+        }
       );
-      setTeacherOptions(options);
-      callback(options);
-    });
   };
 
   if (isSaving || isDeleting) return <Spinner />;
@@ -128,6 +149,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         required={true}
       />
       <DynamicSelect
+        required
         isClearable={false}
         label="Subject"
         placeholder="Subject"
@@ -136,12 +158,14 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         value={getOptionValue(CourseSubjectOptions, course.subject)}
       />
       <AsyncDynamicSelect
+        required
         isLoading={isLoadingTeacherOptions}
         label="Teacher"
         cacheOptions
         defaultOptions
         value={getOptionValue(teacherOptions!, course.teacher)}
         loadOptions={loadTeacherOptions}
+        // filterOption={(op, in) => teacherOptions}
         onChange={(newVal) => setCourse({ ...course, teacher: newVal!.value })}
       />
       <AsyncDynamicSelect
@@ -158,7 +182,11 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         value={getOptionValues(studentOptions!, course.students)}
       />
       <div className="edit-form-buttons">
-        <button disabled={course._id ? false : true} onClick={handleDelete}>
+        <button
+          type="button"
+          disabled={course._id ? false : true}
+          onClick={handleDelete}
+        >
           Delete
         </button>
         <button type="submit">Submit</button>

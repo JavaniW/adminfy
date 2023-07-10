@@ -1,9 +1,12 @@
 import express from "express";
 import Teacher from "../models/teacher";
+import Course from "../models/course";
+// import Course fro
 const router = express.Router();
 
 router.get(`/teachers`, (_request, response) => {
   Teacher.find()
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
@@ -16,6 +19,7 @@ router.get(`/teachers`, (_request, response) => {
 
 router.get(`/teachers/:id`, (request, response) => {
   Teacher.findById(request.params.id)
+    .exec()
     .then(
       (res) => {
         if (!res) {
@@ -66,6 +70,7 @@ router.put(`/teachers/:id`, (request, response) => {
     },
     { new: true }
   )
+    .exec()
     .then(
       (res) => {
         response.setHeader("content-type", "application/json");
@@ -77,11 +82,24 @@ router.put(`/teachers/:id`, (request, response) => {
 });
 
 router.delete(`/teachers/:id`, (request, response) => {
-  Teacher.findByIdAndDelete(request.params.id)
+  Course.exists({ teacher: request.params.id })
+    .exec()
     .then(
       (res) => {
-        response.setHeader("content-type", "application/json");
-        response.send(res.toJSON());
+        if (res) {
+          return response
+            .status(400)
+            .send("Cannot remove teacher that is assigned to a course.");
+        }
+        Teacher.findByIdAndDelete(request.params.id)
+          .exec()
+          .then(
+            (res) => {
+              response.setHeader("content-type", "application/json");
+              response.send(res.toJSON());
+            },
+            (err) => response.status(400).send(err)
+          );
       },
       (err) => response.status(400).send(err)
     )

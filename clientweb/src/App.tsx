@@ -1,4 +1,5 @@
 import "./styles/App.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import React from "react";
 import { Route, Routes } from "react-router";
@@ -8,6 +9,7 @@ import Dashboard from "./components/layout/Dashboard";
 import { TeachersPage } from "./components/layout/TeachersPage";
 import { MainNav } from "./components/layout/MainNav";
 import { StudentsPage } from "./components/layout/StudentsPage";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -20,6 +22,18 @@ function App() {
           <Route path="students" element={<StudentsPage />} />
         </Route>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={1500}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
