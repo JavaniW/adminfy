@@ -1,0 +1,14 @@
+/* .nav {
+  display: flex;
+} */
+
+.nav {
+  display: flex;
+  position: relative;
+  right: 2.5vw;
+  list-style: none;
+  width: 100%;
+  justify-content: flex-end;
+  gap: 10vw;
+  align-items: center;
+}

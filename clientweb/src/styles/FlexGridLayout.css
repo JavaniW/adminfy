@@ -1,0 +1,13 @@
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: end;
+  /* gap: 1.6rem; */
+  column-gap: 2.5vw;
+}
+
+@media screen and (min-width: 600px) {
+  .main-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -3,29 +3,22 @@
   position: fixed;
   top: 0%;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   max-height: 8vh;
-  min-height: 70px;
+  min-height: 7rem;
   width: 100%;
   background-color: var(--secondary-color);
   border-top: 2px solid var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
   margin-bottom: 20px;
   z-index: 99;
-}
-
-.adminfy-main-nav-list {
-  display: flex;
-  list-style: none;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
+  padding: 1.5rem;
 }
 
 .adminfy-main-nav-hamburger-icon {
   position: relative;
   right: 2.5vw;
-  min-width: 55px;
+  min-width: 5.5rem;
   height: auto;
 }
 

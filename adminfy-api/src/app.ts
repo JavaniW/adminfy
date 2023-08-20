@@ -8,8 +8,8 @@ import cors from "cors";
 const app = express();
 const port = 8080; // default port to listen
 const baseRoute = "/api";
-const mongoDbUri =
-  "mongodb+srv://adminfyuser:$Lilwood12@cluster0.vonxhzd.mongodb.net/adminfy?retryWrites=true&w=majority";
+const mongoDbUri = `mongodb+srv://public-access:Nhu99ht6Jqa4IDNO@cluster0.vonxhzd.mongodb.net/adminfy?retryWrites=true&w=majority`;
+console.log(mongoDbUri);
 mongoose
   .connect(mongoDbUri)
   .then((_result) => console.log("connected to db"))

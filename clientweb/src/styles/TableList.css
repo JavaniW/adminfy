@@ -2,8 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 .table-list-menu button {
@@ -13,9 +13,9 @@
 .table-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.6rem;
   margin-bottom: 1vh;
-  height: 550px;
+  height: 55rem;
   width: 100%;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -35,8 +35,8 @@
 
 .table-list-item:hover {
   cursor: pointer;
-  /* margin: 2px; */
-  /* border: 2px solid #1a9bfe65; */
+  /* margin: 0.2rem; */
+  /* border: 0.2rem solid #1a9bfe65; */
   /* transform: scale(1.25, 1.25); */
 }
 

@@ -4,11 +4,11 @@
 
 .label-select {
   display: flex;
-  /* margin-bottom: 10px;
-    margin-right: 50px; */
+  /* margin-bottom: 1rem;
+    margin-right: 5rem; */
 }
 
 .label-select p {
   display: inline-block;
-  margin-right: 4px;
+  margin-right: 0.4rem;
 }

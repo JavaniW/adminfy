@@ -6,7 +6,7 @@ import { ActionMeta } from "react-select";
 import "react-toastify/dist/ReactToastify.css";
 import { GradeLevelOption, GradeLevelOptions } from "../../enums/GradeLevel";
 import { paginate } from "../../helpers";
-import { useModalHooks } from "../../hooks/customHooks";
+import { useModalHooks, useScreenSize } from "../../hooks/customHooks";
 import { Pagination } from "../../models/Misc";
 import { Teacher } from "../../models/Teacher";
 import { useGetTeachersQuery } from "../../redux/apiSlice";
@@ -18,6 +18,10 @@ import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { TeacherCardList } from "../common/TeacherCardList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
+import FlexGridLayout from "../common/FlexGridLayout";
+import AdminfyModelList from "../common/AdminfyModelList";
+import { AddEditPanel } from "../common/AddEditPanel";
+import { ScreenSize } from "../../enums/ScreenSize";
 
 export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelOption>();
@@ -29,8 +33,8 @@ export const TeachersPage: React.FunctionComponent = () => {
     hasPrevOrNext: { prevDisabled: false, nextDisabled: false },
   });
   const [page, setPage] = useState<number>(0);
-
   const { data: teachers, isLoading, isSuccess } = useGetTeachersQuery();
+  const screenSize: ScreenSize = useScreenSize();
 
   useEffect(() => {
     if (isSuccess) {
@@ -73,51 +77,68 @@ export const TeachersPage: React.FunctionComponent = () => {
     []
   );
 
+  const isMobile = screenSize < ScreenSize.Small;
+
   return (
     <>
       <h1 className="page-header teacher--page-header">Teachers</h1>
-      <CardListMenu>
-        <DynamicSelect
-          isClearable={true}
-          isDisabled={isLoading}
-          label="Grade"
-          options={GradeLevelOptions}
-          getOptionLabel={(x) => x.value}
-          value={selectedGrade}
-          onChange={handleGradeChange}
-        />
-        <AddModelButton
-          disabled={isLoading}
-          model="teacher"
-          onClick={() => setOpenModal(true)}
-        >
-          <p>Add Teacher +</p>
-        </AddModelButton>
-      </CardListMenu>
-      {openModal && (
-        <Modal
-          requestClose={closeModal}
-          header="Add Teacher"
-          onAfterClose={handleAfterCloseModal}
-        >
-          <AddEditTeacherForm
-            onAfterSubmit={closeModal}
-            teacher={selectedTeacher}
-            edit={edit}
+      <FlexGridLayout>
+        <AdminfyModelList>
+          <CardListMenu>
+            <DynamicSelect
+              isClearable={true}
+              isDisabled={isLoading}
+              label="Grade"
+              options={GradeLevelOptions}
+              getOptionLabel={(x) => x.value}
+              value={selectedGrade}
+              onChange={handleGradeChange}
+            />
+            {isMobile && (
+              <AddModelButton
+                disabled={isLoading}
+                model="teacher"
+                onClick={() => setOpenModal(true)}
+              >
+                <p>Add Teacher +</p>
+              </AddModelButton>
+            )}
+          </CardListMenu>
+          {openModal && (
+            <Modal
+              requestClose={closeModal}
+              header="Add Teacher"
+              onAfterClose={handleAfterCloseModal}
+            >
+              <AddEditTeacherForm
+                onAfterSubmit={closeModal}
+                teacher={selectedTeacher}
+                edit={edit}
+              />
+            </Modal>
+          )}
+          {isLoading && <Spinner />}
+          {teachers && (
+            <TeacherCardList data={pagination.data} onClick={handleCardClick} />
+          )}
+          <PrevNextButtons
+            show={isSuccess}
+            page={page}
+            onPrev={() => setPage(page - 1)}
+            onNext={() => setPage(page + 1)}
+            disabled={pagination.hasPrevOrNext}
           />
-        </Modal>
-      )}
-      {isLoading && <Spinner />}
-      {teachers && (
-        <TeacherCardList data={pagination.data} onClick={handleCardClick} />
-      )}
-      <PrevNextButtons
-        show={isSuccess}
-        page={page}
-        onPrev={() => setPage(page - 1)}
-        onNext={() => setPage(page + 1)}
-        disabled={pagination.hasPrevOrNext}
-      />
+        </AdminfyModelList>
+        {!isMobile && (
+          <AddEditPanel header={edit ? "Edit Teacher" : "Add Teacher"}>
+            <AddEditTeacherForm
+              onAfterSubmit={closeModal}
+              teacher={selectedTeacher}
+              edit={edit}
+            />
+          </AddEditPanel>
+        )}
+      </FlexGridLayout>
     </>
   );
 };

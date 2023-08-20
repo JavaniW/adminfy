@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ScreenSize } from "../enums/ScreenSize";
 
 export function useOutsideClick(callback: any) {
   const ref: any = useRef();
@@ -57,4 +58,22 @@ export function usePagination<T>(data?: T[] | undefined, limit?: number) {
 
   setPaginatedData(data.slice(0 + page * _limit, first_element_idx + _limit));
   return [paginatedData, setPaginatedData, setLimit, setPage, page];
+}
+
+export function useScreenSize(): ScreenSize {
+  const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
+  const handleWindowResize = () => setScreenWidth(window.innerWidth);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => window.removeEventListener("resize", handleWindowResize);
+  }, []);
+
+  if (screenWidth >= 600) return ScreenSize.Small;
+  if (screenWidth >= 900) return ScreenSize.Medium;
+  if (screenWidth >= 1200) return ScreenSize.Large;
+  if (screenWidth >= 1536) return ScreenSize.ExtraLarge;
+  return ScreenSize.ExtraSmall;
 }

@@ -1,12 +1,12 @@
 .date-input {
   cursor: default;
   display: block;
-  padding: 2px 8px;
-  min-height: 38px;
+  padding: 0.2rem 0.8rem;
+  min-height: 3.8rem;
   transition: all 100ms;
   background-color: hsl(0, 0%, 100%);
   border-color: hsl(0, 0%, 80%);
-  border-radius: 4px;
+  border-radius: var(--main-border-radius);
   border-style: solid;
   border-width: 1px;
   box-sizing: border-box;

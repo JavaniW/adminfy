@@ -1,16 +1,20 @@
-import "../../styles/MainNav.css";
+import "../../styles/AdminfyNav.css";
 
 import { Link, Outlet } from "react-router-dom";
 
 import { Dropdown } from "../common/Dropdown";
+import { useScreenSize } from "../../hooks/customHooks";
+import { ScreenSize } from "../../enums/ScreenSize";
+import { Nav } from "../common/Nav";
 
 interface Props {
   navItemOptions: string[];
 }
 
-const isMobile: boolean = true;
+export const AdminfyNav: React.FunctionComponent<Props> = (props) => {
+  const screenSize: ScreenSize = useScreenSize();
+  const isMobile: boolean = screenSize < ScreenSize.Small;
 
-export const MainNav: React.FunctionComponent<Props> = (props) => {
   const dropdownIcon = (
     <img
       className="adminfy-main-nav-hamburger-icon"
@@ -40,29 +44,17 @@ export const MainNav: React.FunctionComponent<Props> = (props) => {
   return (
     <>
       <nav className="adminfy-main-nav">
-        <ul className="adminfy-main-nav-list">
-          {!isMobile && (
-            <>
-              <Link className="adminfy-main-nav-item" to={"/"}>
-                Teachers
-              </Link>
-              <Link className="adminfy-main-nav-item" to={"/"}>
-                Courses
-              </Link>
-              <Link className="adminfy-main-nav-item" to={"/"}>
-                Settings
-              </Link>
-            </>
-          )}
-          <li>
-            <Link className="adminfy-main-nav-logo" to={"/"}>
-              <h1>ADMINFY</h1>
-            </Link>
-          </li>
-          <li>
-            <Dropdown trigger={menuIcon} menu={menu} />
-          </li>
-        </ul>
+        <Link className="adminfy-main-nav-logo" to={"/"}>
+          <h1>ADMINFY</h1>
+        </Link>
+        {!isMobile && <Nav />}
+        {isMobile && (
+          <ul>
+            <li>
+              <Dropdown trigger={menuIcon} menu={menu} />
+            </li>
+          </ul>
+        )}
       </nav>
       <main className="main">
         <Outlet />
