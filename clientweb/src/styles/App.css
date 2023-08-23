@@ -38,10 +38,6 @@ body {
   overflow: hidden;
 }
 
-h1 {
-  font-size: 1.6rem;
-}
-
 th {
   padding: 0.2rem 0.2rem 0.2rem 0.2rem;
   font-weight: normal;
@@ -65,15 +61,16 @@ button:disabled {
 }
 
 .main {
-  margin-top: 9vh;
+  /* margin-top: 9vh; */
   padding: 10px 8vw;
+  padding-top: 10.2rem;
   overflow: scroll;
 }
 
 @media screen and (min-width: 600px) {
-  .main {
+  /* .main {
     padding: 10px 10vw;
-  }
+  } */
 }
 @media screen and (min-width: 900px) {
 }

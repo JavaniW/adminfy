@@ -8,8 +8,8 @@
   min-height: 7rem;
   width: 100%;
   background-color: var(--secondary-color);
-  border-top: 2px solid var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
+  /* border-top: 2px solid var(--primary-color); */
+  border-bottom: 0.2rem solid var(--primary-color);
   margin-bottom: 20px;
   z-index: 99;
   padding: 1.5rem;

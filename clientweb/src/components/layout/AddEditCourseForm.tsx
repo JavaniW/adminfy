@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SyntheticEvent, useState } from "react";
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -20,12 +20,20 @@ import { TextInput } from "../common/TextInput";
 
 interface Props {
   onAfterSubmit: () => any;
-  course: CourseQuery;
+  course?: CourseQuery;
   edit: boolean;
 }
 
 export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
-  const [course, setCourse] = useState<CourseQuery>(props.course);
+  const initialCourse = props.course ?? {
+    _id: "",
+    number: "",
+    name: "",
+    teacher: "",
+    subject: undefined,
+    students: [],
+  };
+  const [course, setCourse] = useState<CourseQuery>(initialCourse);
   const [teacherOptions, setTeacherOptions] = useState<TeacherOption[]>();
   const [studentOptions, setStudentOptions] = useState<TeacherOption[]>();
   const [isLoadingTeacherOptions, setIsLoadingTeacherOptions] =
@@ -37,6 +45,19 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
   const [deleteStudent, { isLoading: isDeleting }] = useDeleteCourseMutation();
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    setCourse(
+      props.course ?? {
+        _id: "",
+        number: "",
+        name: "",
+        teacher: "",
+        subject: undefined,
+        students: [],
+      }
+    );
+  }, [props.course]);
 
   const handleTextInputChange = (event: ChangeEvent<any>) => {
     setCourse({ ...course, [event.target.name]: event.target.value });

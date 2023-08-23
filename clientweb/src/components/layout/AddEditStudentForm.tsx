@@ -1,4 +1,4 @@
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import GradeLevel, { GradeLevelOptions } from "../../enums/GradeLevel";
 import { getOptionValue } from "../../helpers";
@@ -19,20 +19,29 @@ interface Props {
 }
 
 export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
-  const [student, setStudent] = useState<Student>(
-    props.edit
-      ? props.student!
-      : {
-          _id: "",
-          firstName: "",
-          lastName: "",
-          dateOfBirth: "",
-          gradeLevel: "" as GradeLevel,
-        }
-  );
+  const initialStudent = props.student ?? {
+    _id: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gradeLevel: "" as GradeLevel,
+  };
+  const [student, setStudent] = useState<Student>(initialStudent);
 
   const [saveStudent, { isLoading: isSaving }] = useSaveStudentMutation();
   const [deleteStudent, { isLoading: isDeleting }] = useDeleteStudentMutation();
+
+  useEffect(() => {
+    setStudent(
+      props.student ?? {
+        _id: "",
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        gradeLevel: "" as GradeLevel,
+      }
+    );
+  }, [props.student]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();

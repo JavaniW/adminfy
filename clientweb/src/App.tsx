@@ -17,7 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AdminfyNav navItemOptions={[]} />}>
           <Route index element={<Dashboard />} />
-          <Route path="teacher" element={<TeachersPage />} />
+          <Route path="teachers" element={<TeachersPage />} />
           <Route path="courses" element={<CoursesPage />} />
           <Route path="students" element={<StudentsPage />} />
         </Route>

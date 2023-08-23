@@ -1,7 +1,7 @@
 import "../../styles/AddEditModal.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,21 +24,31 @@ interface Props {
 }
 
 export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
+  const initialTeacher = props.edit
+    ? props.teacher!
+    : ({
+        _id: "",
+        firstName: "",
+        lastName: "",
+        // subject: undefined,
+        // grade: GradeLevel.Nine as GradeLevel,
+      } as Teacher);
   const [saveTeacher, { isLoading: isSaving }] = useSaveTeacherMutation();
   const [deleteTeacher, { isLoading: isDeleting }] = useDeleteTeacherMutation();
-  const [teacher, setTeacher] = useState<Teacher>(
-    props.edit
-      ? props.teacher!
-      : ({
+  const [teacher, setTeacher] = useState<Teacher>(initialTeacher);
+
+  useEffect(() => {
+    setTeacher(
+      props.teacher ??
+        ({
           _id: "",
           firstName: "",
           lastName: "",
-          // subject: undefined,
-          // grade: GradeLevel.Nine as GradeLevel,
         } as Teacher)
-  );
+    );
+  }, [props.teacher]);
 
-  const handleTextInpuChange = (event: ChangeEvent<any>) => {
+  const handleTextInputChange = (event: ChangeEvent<any>) => {
     setTeacher({ ...teacher, [event.target.name]: event.target.value });
   };
 
@@ -75,6 +85,8 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
       });
   };
 
+  // useEffect(() => console.log(props.edit));
+
   if (isSaving || isDeleting) return <Spinner />;
 
   return (
@@ -87,7 +99,7 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         placeholder="First Name"
         required={true}
         label="First Name"
-        onChange={handleTextInpuChange}
+        onChange={handleTextInputChange}
         value={teacher.firstName}
         name="firstName"
       />
@@ -95,7 +107,7 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         placeholder="Last Name"
         required={true}
         label="Last Name"
-        onChange={handleTextInpuChange}
+        onChange={handleTextInputChange}
         value={teacher.lastName}
         name="lastName"
       />

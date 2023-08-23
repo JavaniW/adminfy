@@ -3,23 +3,28 @@ import "../../styles/Modal.css";
 
 interface Props {
   requestClose: () => void;
-  onAfterClose: (...params: any) => any;
+  onAfterClose?: Function;
   header: string;
+  isMobile: boolean;
 }
 
 export const Modal: React.FunctionComponent<PropsWithChildren<Props>> = (
   props
 ) => {
   const { onAfterClose } = props;
+
   useEffect(() => {
-    return () => onAfterClose();
+    return () => {
+      if (onAfterClose) onAfterClose();
+    };
   }, [onAfterClose]);
+
+  if (!props.isMobile) return null;
 
   return (
     <div className="modal-container" onClick={props.requestClose}>
       <div className={`modal`} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h1 className="modal-header-label">{props.header}</h1>
           <img
             className="close-modal-icon"
             src="./close.png"

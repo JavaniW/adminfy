@@ -9,11 +9,11 @@ import {
   CourseSubjectOptions,
 } from "../../enums/CourseSubject";
 import { paginate } from "../../helpers";
-import { useModalHooks } from "../../hooks/customHooks";
+import { useModalHooks, useScreenSize } from "../../hooks/customHooks";
 import { Course, CourseQuery } from "../../models/Course";
 import { Pagination } from "../../models/Misc";
 import { useGetCoursesQuery } from "../../redux/apiSlice";
-import { AddModelButton } from "../common/AddModelButton";
+import { AddEntityButton } from "../common/AddEntityButton";
 import { CardListMenu } from "../common/CardListMenu";
 import { CourseCardList } from "../common/CourseCardList";
 import { DynamicSelect } from "../common/DynamicSelect";
@@ -21,13 +21,15 @@ import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { AddEditCourseForm } from "./AddEditCourseForm";
+import FlexGridLayout from "../common/FlexGridLayout";
+import AdminfyModelList from "../common/AdminfyEntityList";
+import { ScreenSize } from "../../enums/ScreenSize";
+import { AddEditPanel } from "../common/AddEditPanel";
 
 export const CoursesPage: React.FunctionComponent = () => {
   const [selectedSubject, setSelectedSubject] = useState<CourseSubjectOption>();
   const [openModal, setOpenModal, closeModal] = useModalHooks();
-  const [selectedCourse, setSelectedCourse] = useState<CourseQuery>(
-    {} as CourseQuery
-  );
+  const [selectedCourse, setSelectedCourse] = useState<CourseQuery>();
   const [edit, setEdit] = useState<boolean>(false);
   const [pagination, setPagination] = useState<Pagination<Course>>({
     data: [],
@@ -39,16 +41,8 @@ export const CoursesPage: React.FunctionComponent = () => {
     isLoading: isLoadingCourses,
     isSuccess,
   } = useGetCoursesQuery();
-  const course = edit
-    ? selectedCourse
-    : {
-        _id: "",
-        number: "",
-        name: "",
-        teacher: "",
-        subject: undefined,
-        students: [],
-      };
+
+  const screenSize: ScreenSize = useScreenSize();
 
   useEffect(() => {
     if (isSuccess) {
@@ -68,9 +62,18 @@ export const CoursesPage: React.FunctionComponent = () => {
   };
 
   const handleAfterCloseModal = useCallback(() => {
-    setSelectedCourse({} as CourseQuery);
-    setEdit(false);
+    // setSelectedCourse({} as CourseQuery);
+    // setEdit(false);
   }, []);
+
+  const isMobile = screenSize < ScreenSize.Small;
+
+  const handleAddEntityButtonClick = useCallback(() => {
+    if (isMobile) setOpenModal(true);
+    else if (edit) closeModal();
+    setSelectedCourse(undefined);
+    setEdit(false);
+  }, [closeModal, edit, isMobile, setOpenModal]);
 
   const handleAfterSubmit = () => {
     setOpenModal(false);
@@ -78,6 +81,7 @@ export const CoursesPage: React.FunctionComponent = () => {
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
+      // debugger;
       let courseToEdit = courses!.find(
         (x) => x._id === event.currentTarget.dataset!.id
       );
@@ -96,49 +100,67 @@ export const CoursesPage: React.FunctionComponent = () => {
   return (
     <>
       <h1 className="page-header teacher--page-header">Courses</h1>
-      <CardListMenu>
-        <DynamicSelect
-          isClearable={true}
-          isDisabled={isLoadingCourses}
-          label={"Subject"}
-          options={CourseSubjectOptions}
-          value={selectedSubject}
-          onChange={handleSelectChange}
-        />
-        <AddModelButton
-          disabled={isLoadingCourses}
-          model="course"
-          onClick={() => setOpenModal(true)}
-        >
-          <p>New Course</p>
-        </AddModelButton>
-      </CardListMenu>
-      {openModal && (
-        <Modal
-          header="Add Course"
-          requestClose={closeModal}
-          onAfterClose={handleAfterCloseModal}
-        >
-          <AddEditCourseForm
-            // teachers={teachers!}
-            edit={edit}
-            course={selectedCourse}
-            onAfterSubmit={handleAfterSubmit}
-            // students={students!}
+      <FlexGridLayout>
+        <AdminfyModelList>
+          <CardListMenu>
+            <DynamicSelect
+              isClearable={true}
+              isDisabled={isLoadingCourses}
+              label={"Subject"}
+              options={CourseSubjectOptions}
+              value={selectedSubject}
+              onChange={handleSelectChange}
+            />
+            {(isMobile || edit) && (
+              <AddEntityButton
+                disabled={isLoadingCourses}
+                model="course"
+                onClick={handleAddEntityButtonClick}
+              >
+                <p>{edit ? "Cancel" : "New Course"}</p>
+              </AddEntityButton>
+            )}
+          </CardListMenu>
+          {isMobile && openModal && (
+            <Modal
+              header={edit ? "Edit Course" : "Add Course"}
+              requestClose={closeModal}
+              onAfterClose={handleAfterCloseModal}
+              isMobile={isMobile}
+            >
+              <AddEditPanel header={edit ? "Edit Course" : "Add Course"}>
+                <AddEditCourseForm
+                  // teachers={teachers!}
+                  edit={edit}
+                  course={selectedCourse}
+                  onAfterSubmit={handleAfterSubmit}
+                  // students={students!}
+                />
+              </AddEditPanel>
+            </Modal>
+          )}
+          {isLoadingCourses && <Spinner />}
+          {courses && (
+            <CourseCardList data={pagination.data} onClick={handleCardClick} />
+          )}
+          <PrevNextButtons
+            show={isSuccess && courses.length > 0}
+            page={page}
+            onPrev={() => setPage(page - 1)}
+            onNext={() => setPage(page + 1)}
+            disabled={pagination.hasPrevOrNext}
           />
-        </Modal>
-      )}
-      {isLoadingCourses && <Spinner />}
-      {courses && (
-        <CourseCardList data={pagination.data} onClick={handleCardClick} />
-      )}
-      <PrevNextButtons
-        show={isSuccess}
-        page={page}
-        onPrev={() => setPage(page - 1)}
-        onNext={() => setPage(page + 1)}
-        disabled={pagination.hasPrevOrNext}
-      />
+        </AdminfyModelList>
+        {!isMobile && (
+          <AddEditPanel header={edit ? "Edit Course" : "Add Course"}>
+            <AddEditCourseForm
+              onAfterSubmit={closeModal}
+              course={selectedCourse}
+              edit={edit}
+            />
+          </AddEditPanel>
+        )}
+      </FlexGridLayout>
     </>
   );
 };

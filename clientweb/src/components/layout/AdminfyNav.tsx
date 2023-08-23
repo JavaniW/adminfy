@@ -36,7 +36,7 @@ export const AdminfyNav: React.FunctionComponent<Props> = (props) => {
   );
 
   const menu = [
-    <Link to={"/teacher"}>Teachers</Link>,
+    <Link to={"/teachers"}>Teachers</Link>,
     <Link to={"/courses"}>Courses</Link>,
     <Link to={"/students"}>Students</Link>,
   ];
