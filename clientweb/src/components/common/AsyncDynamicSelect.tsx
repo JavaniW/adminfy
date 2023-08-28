@@ -17,7 +17,7 @@ export function AsyncDynamicSelect<
     <div className="label-select">
       <label className="label-select-label">
         {props.label}
-        <AsyncSelect {...props} />
+        <AsyncSelect menuPlacement="auto" menuPosition="fixed" {...props} />
       </label>
     </div>
   );

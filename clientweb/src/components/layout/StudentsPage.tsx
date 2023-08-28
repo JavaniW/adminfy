@@ -1,27 +1,27 @@
-import "../../styles/TableList.css";
 import "../../styles/Page.css";
+import "../../styles/TableList.css";
 
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { ActionMeta } from "react-select";
 import { GradeLevelOption, GradeLevelOptions } from "../../enums/GradeLevel";
+import { ScreenSize } from "../../enums/ScreenSize";
 import { paginate } from "../../helpers";
 import { useModalHooks, useScreenSize } from "../../hooks/customHooks";
 import { Pagination } from "../../models/Misc";
 import Student from "../../models/Student";
 import { useGetStudentsQuery } from "../../redux/apiSlice";
+import { AddEditPanel } from "../common/AddEditPanel";
 import { AddEntityButton } from "../common/AddEntityButton";
+import AdminfyModelList from "../common/AdminfyEntityList";
 import { CardListMenu } from "../common/CardListMenu";
 import { DynamicSelect } from "../common/DynamicSelect";
+import FlexGridLayout from "../common/FlexGridLayout";
 import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { StudentCardList } from "../common/StudentCardList";
 import { AddEditStudentForm } from "./AddEditStudentForm";
-import FlexGridLayout from "../common/FlexGridLayout";
-import AdminfyModelList from "../common/AdminfyEntityList";
-import { ScreenSize } from "../../enums/ScreenSize";
-import { AddEditPanel } from "../common/AddEditPanel";
 
 export const StudentsPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelOption>();
@@ -35,8 +35,6 @@ export const StudentsPage: React.FunctionComponent = () => {
   });
   const { data: students, isLoading, isSuccess } = useGetStudentsQuery();
   const screenSize: ScreenSize = useScreenSize();
-
-  console.log(edit);
 
   useEffect(() => {
     if (isSuccess) {
@@ -54,15 +52,6 @@ export const StudentsPage: React.FunctionComponent = () => {
     setSelectedGrade(option ?? undefined);
     setPage(0);
   };
-
-  const handleAfterCloseModal = useCallback(() => {
-    // setSelectedStudent(undefined);
-    // setEdit(false);
-  }, []);
-
-  const handleAfterSubmit = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
@@ -86,7 +75,7 @@ export const StudentsPage: React.FunctionComponent = () => {
 
   return (
     <>
-      <h1 className="page-header teacher--page-header">Students</h1>
+      <h3 className="page-header teacher--page-header">Students</h3>
       <FlexGridLayout>
         <AdminfyModelList>
           <CardListMenu>
@@ -106,7 +95,7 @@ export const StudentsPage: React.FunctionComponent = () => {
                 model="student"
                 onClick={handleAddEntityButtonClick}
               >
-                <p>{edit ? "Cancel" : "New Student"}</p>
+                <p>{!isMobile && edit ? "Cancel" : "New Student"}</p>
               </AddEntityButton>
             )}
           </CardListMenu>
@@ -114,15 +103,10 @@ export const StudentsPage: React.FunctionComponent = () => {
             <Modal
               header={"Add Student"}
               requestClose={closeModal}
-              onAfterClose={handleAfterCloseModal}
               isMobile={isMobile}
             >
               <AddEditPanel header={edit ? "Edit Student" : "Add Student"}>
-                <AddEditStudentForm
-                  student={selectedStudent}
-                  onAfterSubmit={handleAfterSubmit}
-                  edit={edit}
-                />
+                <AddEditStudentForm student={selectedStudent} edit={edit} />
               </AddEditPanel>
             </Modal>
           )}
@@ -140,11 +124,7 @@ export const StudentsPage: React.FunctionComponent = () => {
         </AdminfyModelList>
         {!isMobile && (
           <AddEditPanel header={edit ? "Edit Student" : "Add Student"}>
-            <AddEditStudentForm
-              onAfterSubmit={closeModal}
-              student={selectedStudent}
-              edit={edit}
-            />
+            <AddEditStudentForm student={selectedStudent} edit={edit} />
           </AddEditPanel>
         )}
       </FlexGridLayout>

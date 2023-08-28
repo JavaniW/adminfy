@@ -2,6 +2,8 @@
   display: grid;
   grid-template-columns: 1fr;
   justify-content: end;
+  align-items: start;
+  height: 100%;
   /* gap: 1.6rem; */
   column-gap: 2.5vw;
 }

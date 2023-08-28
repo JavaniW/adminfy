@@ -5,10 +5,10 @@ interface Props {
   _key?: number;
   onClick?: any;
   header: string;
-  courseNumber: string | number;
+  courseSymbol: string | number;
   courseSubject: string;
   courseTeacher: string;
-  courseStudentCount?: string;
+  courseStudentCount: number;
 }
 
 export const CourseCard: React.FunctionComponent<Props> = (props) => {
@@ -20,7 +20,7 @@ export const CourseCard: React.FunctionComponent<Props> = (props) => {
       onClick={props.onClick}
     >
       <span className="card--header course-card--header">
-        <h3>{props.header + ` (${props.courseNumber})`}</h3>
+        <h3>{props.header + ` (${props.courseSymbol})`}</h3>
       </span>
       <span className="course-card--course-subject">
         <p>Subject: {props.courseSubject}</p>
@@ -29,7 +29,9 @@ export const CourseCard: React.FunctionComponent<Props> = (props) => {
         <p>Teacher: {props.courseTeacher}</p>
       </span>
       <span className="course-card--course-student-count">
-        <p>{props.courseStudentCount ?? 0 + " Students"}</p>
+        <p>{`${props.courseStudentCount} ${
+          props.courseStudentCount !== 1 ? "Students" : "Student"
+        }`}</p>
       </span>
     </div>
   );

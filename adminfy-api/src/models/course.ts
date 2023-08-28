@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const courseSchema = new Schema(
   {
-    number: { type: Number, required: true, unique: true },
+    symbol: { type: String, required: true },
     name: { type: String, required: true },
     teacher: { type: mongoose.Types.ObjectId, ref: "Teacher", required: true },
     subject: {

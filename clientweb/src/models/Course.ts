@@ -4,7 +4,7 @@ import Student from "./Student";
 
 export interface Course {
   _id?: string | number;
-  number: string | number;
+  symbol: string;
   name: string;
   teacher: Teacher;
   subject: CourseSubject;
@@ -18,6 +18,6 @@ export type CourseQuery = Omit<Course, "teacher" | "students" | "subject"> & {
 };
 
 export type CourseOption = {
-  value: string,
-  label: string
+  value: string;
+  label: string;
 };

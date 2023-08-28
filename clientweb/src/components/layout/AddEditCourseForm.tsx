@@ -19,7 +19,6 @@ import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
 
 interface Props {
-  onAfterSubmit: () => any;
   course?: CourseQuery;
   edit: boolean;
 }
@@ -27,20 +26,22 @@ interface Props {
 export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
   const initialCourse = props.course ?? {
     _id: "",
-    number: "",
+    symbol: "",
     name: "",
     teacher: "",
     subject: undefined,
     students: [],
   };
+
+  console.log(initialCourse);
+  console.log(props.course);
   const [course, setCourse] = useState<CourseQuery>(initialCourse);
   const [teacherOptions, setTeacherOptions] = useState<TeacherOption[]>();
-  const [studentOptions, setStudentOptions] = useState<TeacherOption[]>();
+  const [studentOptions, setStudentOptions] = useState<StudentOption[]>();
   const [isLoadingTeacherOptions, setIsLoadingTeacherOptions] =
     useState<boolean>(true);
   const [isLoadingStudentOptions, setIsLoadingStudentOptions] =
     useState<boolean>(true);
-
   const [saveCourse, { isLoading: isSaving }] = useSaveCourseMutation();
   const [deleteStudent, { isLoading: isDeleting }] = useDeleteCourseMutation();
 
@@ -50,7 +51,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     setCourse(
       props.course ?? {
         _id: "",
-        number: "",
+        symbol: "",
         name: "",
         teacher: "",
         subject: undefined,
@@ -61,6 +62,19 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
 
   const handleTextInputChange = (event: ChangeEvent<any>) => {
     setCourse({ ...course, [event.target.name]: event.target.value });
+  };
+
+  const clearForm = () => {
+    setCourse(
+      props.course ?? {
+        _id: "",
+        symbol: "",
+        name: "",
+        teacher: "",
+        subject: undefined,
+        students: [],
+      }
+    );
   };
 
   const handleSubmit = (event: SyntheticEvent) => {
@@ -76,7 +90,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         }
       )
       .catch(console.error)
-      .finally(() => props.onAfterSubmit());
+      .finally(clearForm);
   };
 
   const handleDelete = (event: SyntheticEvent) => {
@@ -85,14 +99,13 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       .then(
         () => {
           toast.success("Course deleted");
-          props.onAfterSubmit();
         },
         (err) => {
           toast.error(`${err}`);
         }
       )
       .catch(console.error)
-      .finally(() => props.onAfterSubmit());
+      .finally(clearForm);
   };
 
   const loadStudentOptions = (
@@ -134,6 +147,7 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
               ({
                 value: x._id,
                 label: getFullName(x, "firstName", "lastName"),
+                subject: x.subject,
               } as TeacherOption)
           );
           setTeacherOptions(options);
@@ -154,11 +168,11 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
       className="add-edit-form course-form"
     >
       <TextInput
-        label="Number"
-        placeholder="Number"
+        label="Symbol"
+        placeholder="Symbol"
         onChange={handleTextInputChange}
-        value={course.number}
-        name="number"
+        value={course.symbol}
+        name="symbol"
         required={true}
       />
       <TextInput
@@ -185,8 +199,11 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
         cacheOptions
         defaultOptions
         value={getOptionValue(teacherOptions!, course.teacher)}
+        isDisabled={!course.subject}
         loadOptions={loadTeacherOptions}
-        // filterOption={(op, in) => teacherOptions}
+        filterOption={(option) =>
+          !course.subject ? true : option.data.subject === course.subject
+        }
         onChange={(newVal) => setCourse({ ...course, teacher: newVal!.value })}
       />
       <AsyncDynamicSelect

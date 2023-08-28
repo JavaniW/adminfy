@@ -13,4 +13,5 @@ export interface Teacher {
 export type TeacherOption = {
   label: string;
   value: string;
+  subject: CourseSubject;
 };

@@ -2,9 +2,9 @@ import "../../styles/AdminfyNav.css";
 
 import { Link, Outlet } from "react-router-dom";
 
-import { Dropdown } from "../common/Dropdown";
-import { useScreenSize } from "../../hooks/customHooks";
 import { ScreenSize } from "../../enums/ScreenSize";
+import { useScreenSize } from "../../hooks/customHooks";
+import { Dropdown } from "../common/Dropdown";
 import { Nav } from "../common/Nav";
 
 interface Props {
@@ -14,14 +14,6 @@ interface Props {
 export const AdminfyNav: React.FunctionComponent<Props> = (props) => {
   const screenSize: ScreenSize = useScreenSize();
   const isMobile: boolean = screenSize < ScreenSize.Small;
-
-  const dropdownIcon = (
-    <img
-      className="adminfy-main-nav-hamburger-icon"
-      src={`/icons8-menu-24.png`}
-      alt="hamburger menu"
-    />
-  );
 
   const menuIcon = (
     <svg
@@ -48,13 +40,7 @@ export const AdminfyNav: React.FunctionComponent<Props> = (props) => {
           <h1>ADMINFY</h1>
         </Link>
         {!isMobile && <Nav />}
-        {isMobile && (
-          <ul>
-            <li>
-              <Dropdown trigger={menuIcon} menu={menu} />
-            </li>
-          </ul>
-        )}
+        {isMobile && <Dropdown trigger={menuIcon} menu={menu} />}
       </nav>
       <main className="main">
         <Outlet />

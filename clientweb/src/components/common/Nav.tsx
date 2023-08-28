@@ -1,23 +1,19 @@
 import { PropsWithChildren } from "react";
-import { Link } from "react-router-dom";
 import "../../styles/Nav.css";
+import StyleLink from "./StyledLink";
 
-interface Props {}
-
-export const Nav: React.FunctionComponent<PropsWithChildren<Props>> = (
-  props
-) => {
+export const Nav: React.FunctionComponent<PropsWithChildren> = (props) => {
   return (
     <div className="nav">
-      <Link className="nav-item" to={"/teachers"}>
-        Teachers
-      </Link>
-      <Link className="nav-item" to={"/courses"}>
-        Courses
-      </Link>
-      <Link className="nav-item" to={"/students"}>
-        Students
-      </Link>
+      <StyleLink className="nav-item" to={"/teachers"}>
+        <h3>Teachers</h3>
+      </StyleLink>
+      <StyleLink className="nav-item" to={"/courses"}>
+        <h3>Courses</h3>
+      </StyleLink>
+      <StyleLink className="nav-item" to={"/students"}>
+        <h3>Students</h3>
+      </StyleLink>
     </div>
   );
 };

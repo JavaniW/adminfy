@@ -1,5 +1,5 @@
-import "../../styles/AddEditModal.css";
 import "react-toastify/dist/ReactToastify.css";
+import "../../styles/AddEditModal.css";
 
 import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -18,7 +18,6 @@ import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
 
 interface Props {
-  onAfterSubmit: () => any;
   teacher?: Teacher;
   edit: boolean;
 }
@@ -30,8 +29,6 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         _id: "",
         firstName: "",
         lastName: "",
-        // subject: undefined,
-        // grade: GradeLevel.Nine as GradeLevel,
       } as Teacher);
   const [saveTeacher, { isLoading: isSaving }] = useSaveTeacherMutation();
   const [deleteTeacher, { isLoading: isDeleting }] = useDeleteTeacherMutation();
@@ -47,6 +44,13 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         } as Teacher)
     );
   }, [props.teacher]);
+
+  const clearForm = () =>
+    setTeacher({
+      _id: "",
+      firstName: "",
+      lastName: "",
+    } as Teacher);
 
   const handleTextInputChange = (event: ChangeEvent<any>) => {
     setTeacher({ ...teacher, [event.target.name]: event.target.value });
@@ -65,7 +69,7 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         }
       )
       .catch(console.error)
-      .finally(() => props.onAfterSubmit());
+      .finally(clearForm);
   };
 
   const handleDelete = (event: SyntheticEvent) => {
@@ -80,9 +84,7 @@ export const AddEditTeacherForm: React.FunctionComponent<Props> = (props) => {
         }
       )
       .catch(console.error)
-      .finally(() => {
-        props.onAfterSubmit();
-      });
+      .finally(clearForm);
   };
 
   // useEffect(() => console.log(props.edit));

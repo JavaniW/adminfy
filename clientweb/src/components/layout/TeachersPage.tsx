@@ -1,33 +1,27 @@
 import "../../styles/Page.css";
 
-import {
-  ChangeEvent,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 import { ActionMeta } from "react-select";
 import "react-toastify/dist/ReactToastify.css";
 import { GradeLevelOption, GradeLevelOptions } from "../../enums/GradeLevel";
+import { ScreenSize } from "../../enums/ScreenSize";
 import { paginate } from "../../helpers";
 import { useModalHooks, useScreenSize } from "../../hooks/customHooks";
 import { Pagination } from "../../models/Misc";
 import { Teacher } from "../../models/Teacher";
 import { useGetTeachersQuery } from "../../redux/apiSlice";
+import { AddEditPanel } from "../common/AddEditPanel";
 import { AddEntityButton } from "../common/AddEntityButton";
+import AdminfyEntityList from "../common/AdminfyEntityList";
 import { CardListMenu } from "../common/CardListMenu";
 import { DynamicSelect } from "../common/DynamicSelect";
+import FlexGridLayout from "../common/FlexGridLayout";
 import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { TeacherCardList } from "../common/TeacherCardList";
 import { AddEditTeacherForm } from "./AddEditTeacherForm";
-import FlexGridLayout from "../common/FlexGridLayout";
-import AdminfyEntityList from "../common/AdminfyEntityList";
-import { AddEditPanel } from "../common/AddEditPanel";
-import { ScreenSize } from "../../enums/ScreenSize";
 
 export const TeachersPage: React.FunctionComponent = () => {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelOption>();
@@ -41,7 +35,6 @@ export const TeachersPage: React.FunctionComponent = () => {
   const [page, setPage] = useState<number>(0);
   const { data: teachers, isLoading, isSuccess } = useGetTeachersQuery();
   const screenSize: ScreenSize = useScreenSize();
-  const [name, setName] = useState("");
 
   useEffect(() => {
     if (isSuccess) {
@@ -52,10 +45,10 @@ export const TeachersPage: React.FunctionComponent = () => {
     }
   }, [isSuccess, page, selectedGrade, teachers]);
 
-  const handleAfterCloseModal = useCallback(() => {
-    // setSelectedTeacher(undefined);
-    setEdit(false);
-  }, []);
+  // const handleAfterCloseModal = useCallback(() => {
+  //   // setSelectedTeacher(undefined);
+  //   setEdit(false);
+  // }, []);
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
@@ -68,10 +61,6 @@ export const TeachersPage: React.FunctionComponent = () => {
     },
     [setOpenModal, teachers]
   );
-
-  const resetForm = useCallback(() => {
-    setSelectedTeacher(undefined);
-  }, []);
 
   const handleGradeChange = useCallback(
     (
@@ -92,13 +81,9 @@ export const TeachersPage: React.FunctionComponent = () => {
     setEdit(false);
   }, [closeModal, edit, isMobile, setOpenModal]);
 
-  const handleChange = (event: ChangeEvent<any>) => {
-    setName(event.target.value);
-  };
-
   return (
     <>
-      <h1 className="page-header teacher--page-header">Teachers</h1>
+      <h3 className="page-header teacher--page-header">Teachers</h3>
       <FlexGridLayout>
         <AdminfyEntityList>
           <CardListMenu>
@@ -118,7 +103,7 @@ export const TeachersPage: React.FunctionComponent = () => {
                 onClick={handleAddEntityButtonClick}
                 // label={}
               >
-                <p>{`${edit ? "Cancel" : "Add Teacher"}`}</p>
+                <p>{`${!isMobile && edit ? "Cancel" : "Add Teacher"}`}</p>
               </AddEntityButton>
             )}
           </CardListMenu>
@@ -126,15 +111,10 @@ export const TeachersPage: React.FunctionComponent = () => {
             <Modal
               requestClose={closeModal}
               header={edit ? "Edit Teacher" : "Add Teacher"}
-              onAfterClose={handleAfterCloseModal}
               isMobile={isMobile}
             >
               <AddEditPanel header={`Add Teacher`}>
-                <AddEditTeacherForm
-                  onAfterSubmit={closeModal}
-                  teacher={selectedTeacher}
-                  edit={edit}
-                />
+                <AddEditTeacherForm teacher={selectedTeacher} edit={edit} />
               </AddEditPanel>
             </Modal>
           )}
@@ -152,19 +132,10 @@ export const TeachersPage: React.FunctionComponent = () => {
         </AdminfyEntityList>
         {!isMobile && (
           <AddEditPanel header={edit ? "Edit Teacher" : "Add Teacher"}>
-            <AddEditTeacherForm
-              onAfterSubmit={() => {
-                resetForm();
-                closeModal();
-                setEdit(false);
-              }}
-              teacher={selectedTeacher}
-              edit={edit}
-            />
+            <AddEditTeacherForm teacher={selectedTeacher} edit={edit} />
           </AddEditPanel>
         )}
       </FlexGridLayout>
-      <input type="text" value={name} onChange={handleChange} />
     </>
   );
 };

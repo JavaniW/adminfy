@@ -13,7 +13,6 @@ import { Spinner } from "../common/Spinner";
 import { TextInput } from "../common/TextInput";
 
 interface Props {
-  onAfterSubmit: () => void;
   student?: Student;
   edit: boolean;
 }
@@ -56,7 +55,17 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
         }
       )
       .catch(console.error)
-      .finally(() => props.onAfterSubmit());
+      .finally(clearForm);
+  };
+
+  const clearForm = () => {
+    setStudent({
+      _id: "",
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      gradeLevel: "" as GradeLevel,
+    });
   };
 
   const handleDelete = (event: SyntheticEvent) => {
@@ -70,7 +79,7 @@ export const AddEditStudentForm: React.FunctionComponent<Props> = (props) => {
         }
       )
       .catch(console.error)
-      .finally(() => props.onAfterSubmit());
+      .finally(clearForm);
   };
 
   const handleChange = (event: ChangeEvent<any>) => {

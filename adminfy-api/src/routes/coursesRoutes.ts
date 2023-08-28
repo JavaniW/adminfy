@@ -62,7 +62,7 @@ router.post(`/courses`, (request, response) => {
   const data = request.body;
   const newCourse = new Course({
     name: data.name,
-    number: data.number,
+    symbol: data.symbol,
     teacher: data.teacher,
     subject: data.subject,
     students: data.students,

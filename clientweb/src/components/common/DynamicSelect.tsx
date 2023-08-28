@@ -18,7 +18,11 @@ export function DynamicSelect<
     <div className="label-select">
       <label className="label-select-label">
         {props.label}
-        <Select isDisabled={props.disabled} {...props} />
+        <Select
+          menuPosition="absolute"
+          isDisabled={props.disabled}
+          {...props}
+        />
       </label>
     </div>
   );

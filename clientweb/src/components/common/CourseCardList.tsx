@@ -19,9 +19,10 @@ export const CourseCardList: React.FunctionComponent<Props> = (props) => {
       id={course._id?.toString()}
       key={key}
       header={course.name}
-      courseNumber={course.number}
+      courseSymbol={course.symbol}
       courseSubject={course.subject}
       courseTeacher={getFullName(course.teacher, "firstName", "lastName")}
+      courseStudentCount={course.students.length}
     />
   );
 

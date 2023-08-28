@@ -8,23 +8,23 @@ import {
   CourseSubjectOption,
   CourseSubjectOptions,
 } from "../../enums/CourseSubject";
+import { ScreenSize } from "../../enums/ScreenSize";
 import { paginate } from "../../helpers";
 import { useModalHooks, useScreenSize } from "../../hooks/customHooks";
 import { Course, CourseQuery } from "../../models/Course";
 import { Pagination } from "../../models/Misc";
 import { useGetCoursesQuery } from "../../redux/apiSlice";
+import { AddEditPanel } from "../common/AddEditPanel";
 import { AddEntityButton } from "../common/AddEntityButton";
+import AdminfyModelList from "../common/AdminfyEntityList";
 import { CardListMenu } from "../common/CardListMenu";
 import { CourseCardList } from "../common/CourseCardList";
 import { DynamicSelect } from "../common/DynamicSelect";
+import FlexGridLayout from "../common/FlexGridLayout";
 import Modal from "../common/Modal";
 import PrevNextButtons from "../common/PrevNextButtons";
 import { Spinner } from "../common/Spinner";
 import { AddEditCourseForm } from "./AddEditCourseForm";
-import FlexGridLayout from "../common/FlexGridLayout";
-import AdminfyModelList from "../common/AdminfyEntityList";
-import { ScreenSize } from "../../enums/ScreenSize";
-import { AddEditPanel } from "../common/AddEditPanel";
 
 export const CoursesPage: React.FunctionComponent = () => {
   const [selectedSubject, setSelectedSubject] = useState<CourseSubjectOption>();
@@ -68,20 +68,20 @@ export const CoursesPage: React.FunctionComponent = () => {
 
   const isMobile = screenSize < ScreenSize.Small;
 
+  const resetForm = useCallback(() => {
+    setSelectedCourse(undefined);
+    console.log("Reset Form");
+  }, []);
+
   const handleAddEntityButtonClick = useCallback(() => {
     if (isMobile) setOpenModal(true);
     else if (edit) closeModal();
-    setSelectedCourse(undefined);
+    resetForm();
     setEdit(false);
-  }, [closeModal, edit, isMobile, setOpenModal]);
-
-  const handleAfterSubmit = () => {
-    setOpenModal(false);
-  };
+  }, [closeModal, edit, isMobile, resetForm, setOpenModal]);
 
   const handleCardClick = useCallback(
     (event: SyntheticEvent<HTMLTableElement>) => {
-      // debugger;
       let courseToEdit = courses!.find(
         (x) => x._id === event.currentTarget.dataset!.id
       );
@@ -99,7 +99,7 @@ export const CoursesPage: React.FunctionComponent = () => {
 
   return (
     <>
-      <h1 className="page-header teacher--page-header">Courses</h1>
+      <h3 className="page-header teacher--page-header">Courses</h3>
       <FlexGridLayout>
         <AdminfyModelList>
           <CardListMenu>
@@ -117,7 +117,7 @@ export const CoursesPage: React.FunctionComponent = () => {
                 model="course"
                 onClick={handleAddEntityButtonClick}
               >
-                <p>{edit ? "Cancel" : "New Course"}</p>
+                <p>{!isMobile && edit ? "Cancel" : "New Course"}</p>
               </AddEntityButton>
             )}
           </CardListMenu>
@@ -129,13 +129,7 @@ export const CoursesPage: React.FunctionComponent = () => {
               isMobile={isMobile}
             >
               <AddEditPanel header={edit ? "Edit Course" : "Add Course"}>
-                <AddEditCourseForm
-                  // teachers={teachers!}
-                  edit={edit}
-                  course={selectedCourse}
-                  onAfterSubmit={handleAfterSubmit}
-                  // students={students!}
-                />
+                <AddEditCourseForm edit={edit} course={selectedCourse} />
               </AddEditPanel>
             </Modal>
           )}
@@ -153,11 +147,7 @@ export const CoursesPage: React.FunctionComponent = () => {
         </AdminfyModelList>
         {!isMobile && (
           <AddEditPanel header={edit ? "Edit Course" : "Add Course"}>
-            <AddEditCourseForm
-              onAfterSubmit={closeModal}
-              course={selectedCourse}
-              edit={edit}
-            />
+            <AddEditCourseForm course={selectedCourse} edit={edit} />
           </AddEditPanel>
         )}
       </FlexGridLayout>
