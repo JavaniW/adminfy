@@ -4,12 +4,12 @@ import courseRouter from "./routes/coursesRoutes";
 import studentRouter from "./routes/studentsRoutes";
 import teacherrouter from "./routes/teacherRoutes";
 import cors from "cors";
+import "dotenv/config";
 
 const app = express();
 const port = 8080; // default port to listen
 const baseRoute = "/api";
-const mongoDbUri = `mongodb+srv://public-access:Nhu99ht6Jqa4IDNO@cluster0.vonxhzd.mongodb.net/adminfy?retryWrites=true&w=majority`;
-console.log(mongoDbUri);
+const mongoDbUri = process.env.DB_STRING;
 mongoose
   .connect(mongoDbUri)
   .then((_result) => console.log("connected to db"))

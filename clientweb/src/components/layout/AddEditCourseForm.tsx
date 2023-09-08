@@ -33,8 +33,6 @@ export const AddEditCourseForm: React.FunctionComponent<Props> = (props) => {
     students: [],
   };
 
-  console.log(initialCourse);
-  console.log(props.course);
   const [course, setCourse] = useState<CourseQuery>(initialCourse);
   const [teacherOptions, setTeacherOptions] = useState<TeacherOption[]>();
   const [studentOptions, setStudentOptions] = useState<StudentOption[]>();

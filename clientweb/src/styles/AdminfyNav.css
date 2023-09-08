@@ -29,8 +29,13 @@
 }
 
 .adminfy-main-nav-logo {
+  /* display: block; */
   position: relative;
   left: 2.5vw;
   text-decoration: none;
   color: black;
+}
+
+.adminfy-main-nav-logo:hover {
+  cursor: pointer;
 }

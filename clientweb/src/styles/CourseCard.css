@@ -1,6 +1,7 @@
 .course-card {
   width: 100%;
-  height: 8rem;
+  min-height: 8rem;
+  padding-left: 0.5rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);

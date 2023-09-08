@@ -6,6 +6,7 @@ import { ScreenSize } from "../../enums/ScreenSize";
 import { useScreenSize } from "../../hooks/customHooks";
 import { Dropdown } from "../common/Dropdown";
 import { Nav } from "../common/Nav";
+import { useState } from "react";
 
 interface Props {
   navItemOptions: string[];
@@ -14,6 +15,7 @@ interface Props {
 export const AdminfyNav: React.FunctionComponent<Props> = (props) => {
   const screenSize: ScreenSize = useScreenSize();
   const isMobile: boolean = screenSize < ScreenSize.Small;
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   const menuIcon = (
     <svg
@@ -36,11 +38,22 @@ export const AdminfyNav: React.FunctionComponent<Props> = (props) => {
   return (
     <>
       <nav className="adminfy-main-nav">
-        <Link className="adminfy-main-nav-logo" to={"/"}>
+        <Link
+          className="adminfy-main-nav-logo"
+          onClick={() => setMenuOpen(false)}
+          to={"/"}
+        >
           <h1>ADMINFY</h1>
         </Link>
         {!isMobile && <Nav />}
-        {isMobile && <Dropdown trigger={menuIcon} menu={menu} />}
+        {isMobile && (
+          <Dropdown
+            setOpen={setMenuOpen}
+            open={menuOpen}
+            trigger={menuIcon}
+            menu={menu}
+          />
+        )}
       </nav>
       <main className="main">
         <Outlet />

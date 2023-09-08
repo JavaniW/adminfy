@@ -1,17 +1,17 @@
 import "../../styles/Dropdown.css";
 
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement } from "react";
 
 interface Props {
   trigger: ReactElement;
   menu: any[];
+  setOpen: Function;
+  open: boolean;
 }
 
 export const Dropdown: React.FunctionComponent<Props> = (props) => {
-  const [open, setOpen] = useState<boolean>(false);
-
   function handleOpen() {
-    setOpen(!open);
+    props.setOpen(true);
   }
 
   return (
@@ -19,13 +19,13 @@ export const Dropdown: React.FunctionComponent<Props> = (props) => {
       {React.cloneElement(props.trigger, {
         onClick: handleOpen,
       })}
-      {open && (
+      {props.open && (
         <ul className="dropdown-menu">
           {props.menu.map((menuItem, idx) => (
             <li className="dropdown-item" key={idx}>
               {React.cloneElement(menuItem, {
                 onClick: () => {
-                  setOpen(false);
+                  props.setOpen(false);
                 },
               })}
             </li>
